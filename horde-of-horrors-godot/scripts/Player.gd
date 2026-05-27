@@ -43,12 +43,12 @@ func _ready() -> void:
 	_setup_visuals()
 	_update_health_ui()
 
-	# Adjust Camera limits for platformer side-scroller level
+	# Adjust Camera limits for top-down arena level
 	if camera:
-		camera.limit_left = -2000
-		camera.limit_right = 2000
-		camera.limit_top = -800
-		camera.limit_bottom = 600
+		camera.limit_left = -600
+		camera.limit_right = 600
+		camera.limit_top = -500
+		camera.limit_bottom = 500
 
 func _setup_visuals() -> void:
 	var sprite = %Sprite2D
@@ -73,53 +73,28 @@ func _physics_process(delta: float) -> void:
 	if GameManager.is_game_over:
 		return
 
-	# Apply gravity
-	if not is_on_floor():
-		velocity.y += gravity * delta
-	else:
-		double_jump_available = true
+	# Keyboard movement input
+	var keyboard_input = Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	var input_dir = Vector2.ZERO
 
-	# Read horizontal inputs
-	var keyboard_input = Input.get_axis("move_left", "move_right")
-	var direction = 0.0
-	
-	if keyboard_input != 0.0:
-		direction = keyboard_input
+	if keyboard_input != Vector2.ZERO:
+		input_dir = keyboard_input
 	else:
-		direction = move_input.x # Mobile drag horizontal input
+		input_dir = move_input # Touch/Mouse drag fallback
+
+	velocity = input_dir * move_speed
+	
+	if input_dir.x != 0:
+		$Visuals.scale.x = 1.0 if input_dir.x > 0 else -1.0
 		
-	# Apply horizontal velocity
-	if direction != 0.0:
-		velocity.x = direction * move_speed
-		# Flip visuals to face the movement direction
-		$Visuals.scale.x = 1.0 if direction > 0 else -1.0
-	else:
-		velocity.x = move_toward(velocity.x, 0.0, move_speed * 10.0 * delta)
-
-	# Handle jump inputs
-	var jump_just_pressed = Input.is_action_just_pressed("move_up") or Input.is_action_just_pressed("jump")
-	
-	if jump_just_pressed:
-		if is_on_floor():
-			velocity.y = jump_velocity
-		elif double_jump_available:
-			velocity.y = jump_velocity * 0.95 # Slightly weaker double jump
-			double_jump_available = false
-
 	move_and_slide()
 	_update_animation()
 
-	# Screen boundary clamps
-	position.x = clamp(position.x, -1950, 1950)
-	
-	# Pit check
-	if position.y > 580:
-		take_damage(20)
-		# Teleport back to center-top platform
-		position = Vector2(0, -200)
-		velocity = Vector2.ZERO
+	# Clamp to screen boundaries
+	position.x = clamp(position.x, -380, 380)
+	position.y = clamp(position.y, -280, 280)
 
-	# Aiming (Crossbow pivots towards mouse cursor on PC)
+	# Aiming (Aim at mouse cursor)
 	if crossbow_pivot:
 		var world_aim = get_global_mouse_position()
 		var dir = (world_aim - crossbow_pivot.global_position).normalized()
@@ -200,39 +175,30 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		aim_position = event.position
 
-	# Mobile platformer screen inputs:
-	# Touch/drag on the left side of the screen moves left, right moves right
-	if event is InputEventScreenDrag or event is InputEventScreenTouch:
-		var view_width = get_viewport_rect().size.x
-		var touch_x = event.position.x
-		var touch_y = event.position.y
-		
-		# Tap on the top half of the screen to jump
-		if event is InputEventScreenTouch and event.pressed and touch_y < get_viewport_rect().size.y * 0.45:
-			if is_on_floor():
-				velocity.y = jump_velocity
-			elif double_jump_available:
-				velocity.y = jump_velocity * 0.95
-				double_jump_available = false
-		
-		# Tap/drag on lower half of the screen handles horizontal movement
-		if touch_y >= get_viewport_rect().size.y * 0.45:
-			if event.pressed or event is InputEventScreenDrag:
-				if touch_x < view_width * 0.5:
-					move_input = Vector2(-1.0, 0) # Move Left
-				else:
-					move_input = Vector2(1.0, 0)  # Move Right
-			else:
-				move_input = Vector2.ZERO
+	# Handle touch dragging / mouse dragging to move
+	if event is InputEventScreenDrag or (event is InputEventMouseMotion and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)):
+		var player_screen_pos = get_global_transform_with_canvas().origin
+		move_input = (event.position - player_screen_pos).normalized()
+
+	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed:
+			var player_screen_pos = get_global_transform_with_canvas().origin
+			move_input = (event.position - player_screen_pos).normalized()
 		else:
-			if event is InputEventScreenTouch and not event.pressed:
-				move_input = Vector2.ZERO
+			move_input = Vector2.ZERO
+
+	elif event is InputEventScreenTouch:
+		if event.pressed:
+			var player_screen_pos = get_global_transform_with_canvas().origin
+			move_input = (event.position - player_screen_pos).normalized()
+		else:
+			move_input = Vector2.ZERO
 
 func _update_animation() -> void:
 	if not animation_player:
 		return
 	var anim_name = "idle"
-	if abs(velocity.x) > 10.0:
+	if velocity.length() > 10.0:
 		anim_name = "run"
 
 	if animation_player.current_animation != anim_name:

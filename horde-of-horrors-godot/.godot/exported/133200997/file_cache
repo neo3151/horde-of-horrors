@@ -4,7 +4,7 @@ res://scenes/DamageNumber.tscn::34ad61bbe35a5a0c16158f2c5ab9b576::1779892936::re
 res://scenes/EnemyFrankenstein.tscn::6a6dea84b7007cde2880657a01786f58::1779888210::res://.godot/exported/133200997/export-3ebbc84bc38c256b7da285915eccf8c1-EnemyFrankenstein.scn
 res://scenes/EnemyVampire.tscn::8d7d97c1623f5a4b3d6f2153f5bf4da6::1779888200::res://.godot/exported/133200997/export-97f78c412437bc2030f9156d1476516a-EnemyVampire.scn
 res://scenes/EnemyWerewolf.tscn::5085bfbb35f018341a6117ba87656d33::1779888189::res://.godot/exported/133200997/export-f2ba95be6b94cb6bffb7b64fad13364b-EnemyWerewolf.scn
-res://scenes/MainMenu.tscn::87088af7961aec434365501c2379702c::1779899466::res://.godot/exported/133200997/export-23c8b2a48d59a0cd018bd8ad5ce7794c-MainMenu.scn
+res://scenes/MainMenu.tscn::17d804d96686d875296bb3bde26ed3d3::1779913691::res://.godot/exported/133200997/export-23c8b2a48d59a0cd018bd8ad5ce7794c-MainMenu.scn
 res://scenes/Projectile.tscn::ae7d14a1cec65c53c8c3248ab2f951b4::1779909377::res://.godot/exported/133200997/export-a7aac28efb4a523f73f1a023aa5edacd-Projectile.scn
 res://scenes/EnemyGhost.tscn::462caf766bc3961ef086f8552f00b047::1779900288::res://.godot/exported/133200997/export-1752af9139b690209750f283fd9fd522-EnemyGhost.scn
 res://scenes/EnemyMinimapIndicator.tscn::1ba8c2805801cddcfe977261283f06c8::1779899117::res://.godot/exported/133200997/export-410b7704f8a4bd11a98b629c4d089f0d-EnemyMinimapIndicator.scn
@@ -12,6 +12,6 @@ res://scenes/Minimap.tscn::e4af62a4e3b952b8c529491e63843a22::1779899900::res://.
 res://scenes/PowerUpHealth.tscn::1ecfb1f155d461da2108db84126001fc::1779900106::res://.godot/exported/133200997/export-89546aafbe021cf802c7310fcdd893fd-PowerUpHealth.scn
 res://scenes/ProjectileHitEffect.tscn::a3804d1d4551e299e8bd9e4e65e238de::1779909371::res://.godot/exported/133200997/export-c9c980281e0399d0f869e4b5739e40da-ProjectileHitEffect.scn
 res://scenes/Enemy.tscn::62d18bbb400b151185f86d7dd5ab1d2d::1779912729::res://.godot/exported/133200997/export-e8b868f745946f74f22434b9ddd0af8d-Enemy.scn
-res://scenes/MainGame.tscn::25644f82293aeccb0a789c8aba5cc4ea::1779912531::res://.godot/exported/133200997/export-dbfc6818b022d976e0e33ac4dabecd4c-MainGame.scn
+res://scenes/MainGame.tscn::bf25f3ebb586e902cda3bd43883940ab::1779914426::res://.godot/exported/133200997/export-dbfc6818b022d976e0e33ac4dabecd4c-MainGame.scn
 res://scenes/Player.tscn::583208b2361f54f8a93450ecb7103ba5::1779912724::res://.godot/exported/133200997/export-e8220e74d1354b9e6b168b513689419c-Player.scn
 res://scenes/CharacterSelect.tscn::aa03dcca8e8747d8257ca73f9e8cdc19::1779912501::res://.godot/exported/133200997/export-3925af4e30f501cd1cabc6e961f22f4b-CharacterSelect.scn

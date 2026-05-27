@@ -13,6 +13,12 @@ extends Control
 var current_preview: String = "Hunter"
 
 func _ready() -> void:
+	# Hide all cards except Hunter
+	for card_name in ["WerewolfCard", "VampireCard", "FrankensteinCard"]:
+		var card = get_node_or_null("HBox/LeftPanel/CharacterList/" + card_name)
+		if card:
+			card.visible = false
+
 	# Default selection
 	select_character("Hunter")
 	

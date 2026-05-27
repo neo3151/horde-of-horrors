@@ -17,7 +17,7 @@ var last_charge_time: float = 0.0
 var is_charging: bool = false
 var charge_speed_multiplier: float = 2.5 # Speed multiplier during charge
 
-@onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var animation_player: AnimationPlayer = get_node_or_null("AnimationPlayer")
 
 var health_bar: ProgressBar
 
@@ -90,17 +90,13 @@ func _physics_process(delta: float) -> void:
     if not player or GameManager.is_game_over:
         return
 
-    # Apply gravity
-    if not is_on_floor():
-        velocity.y += 1400.0 * delta
-
-    var dir_x = sign(player.global_position.x - global_position.x)
+    var dir = (player.global_position - global_position).normalized()
     if not is_charging:
-        velocity.x = dir_x * speed
+        velocity = dir * speed
         # Flip visuals to face movement direction
         var visuals = $Visuals
-        if visuals:
-            visuals.scale.x = 1.0 if dir_x >= 0 else -1.0
+        if visuals and dir.x != 0:
+            visuals.scale.x = 1.0 if dir.x >= 0 else -1.0
         move_and_slide()
 
     if type == EnemyType.VAMPIRE and player:
@@ -109,10 +105,9 @@ func _physics_process(delta: float) -> void:
             last_ranged_attack_time = Time.get_ticks_msec() / 1000.0
     elif type == EnemyType.FRANKENSTEIN and player and not is_charging:
         if Time.get_ticks_msec() / 1000.0 - last_charge_time >= charge_cooldown:
-            _perform_charge_attack(Vector2(dir_x, 0))
+            _perform_charge_attack(dir)
             last_charge_time = Time.get_ticks_msec() / 1000.0
     elif is_charging:
-        # Apply gravity while charging as well
         move_and_slide()
 
     _update_animation()

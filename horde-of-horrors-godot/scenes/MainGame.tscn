@@ -128,15 +128,14 @@ amount = 30
 lifetime = 10.0
 preprocess = 10.0
 speed_scale = 0.5
-texture = ExtResource("7_floor") # Using floor texture as a placeholder for dust motes
 emission_shape = 2
 emission_sphere_radius = 500.0
 spread = 180.0
 gravity = Vector2(0, 0)
 initial_velocity_min = 5.0
 initial_velocity_max = 15.0
-scale_amount_min = 0.1
-scale_amount_max = 0.4
+scale_amount_min = 1.0
+scale_amount_max = 3.0
 color_ramp = SubResource("Gradient_Ambient")
 
 [node name="WaveManager" type="Node2D" parent="."]
