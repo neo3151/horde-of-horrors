@@ -1,5 +1,5 @@
 fc8a56933c4b1c8d796fdb8f7a9f9475
-::res://::1779914744
+::res://::1779916091
 export_presets.cfg::TextFile::-1::1779895950::0::1::::<><>::
 icon.png::CompressedTexture2D::2903976055602191075::1779896664::1779913681::1::::<><>::
 icon.svg::CompressedTexture2D::2290464501899746488::1779856145::1779887853::1::::<><>::
@@ -25,7 +25,8 @@ hunter.png::CompressedTexture2D::2806785740292887095::1779888323::1779891829::1:
 silver_bolt.png::CompressedTexture2D::2395258510419301508::1779887650::1779887853::1::::<><>::
 ::res://assets/sprites/ui/::1779895546
 blood_moon_ui.png::CompressedTexture2D::6084635255856263964::1779895527::1779895546::1::::<><>::
-::res://assets/sprites/vampire/::1779891829
+::res://assets/sprites/vampire/::1779918259
+bat.png::CompressedTexture2D::4400673182711470464::1779918355::1779918364::1::::<><>::
 vampire.png::CompressedTexture2D::2829687958593636568::1779888323::1779891829::1::::<><>::
 ::res://assets/sprites/werewolf/::1779891829
 werewolf.png::CompressedTexture2D::6990926057049890948::1779888323::1779891829::1::::<><>::
@@ -52,12 +53,12 @@ BloodDecal.gd::GDScript::-1::1779892990::0::1::::<>Node2D<>::
 BloodSplatter.gd::GDScript::-1::1779892962::0::1::::<>CPUParticles2D<>::
 CharacterSelect.gd::GDScript::-1::1779914545::0::1::::<>Control<>::
 DamageNumber.gd::GDScript::-1::1779893270::0::1::::<>Node2D<>::
-Enemy.gd::GDScript::-1::1779914533::0::1::::<>CharacterBody2D<>::
-GameManager.gd::GDScript::-1::1779912483::0::1::::<>Node<>::
+Enemy.gd::GDScript::-1::1779918250::0::1::::<>CharacterBody2D<>::
+GameManager.gd::GDScript::-1::1779915715::0::1::::<>Node<>::
 MainGame.gd::GDScript::-1::1779894644::0::1::::<>Node2D<>::
 MainMenu.gd::GDScript::-1::1779914542::0::1::::<>Control<>::
 Minimap.gd::GDScript::-1::1779899893::0::1::::<>SubViewportContainer<>::
-Player.gd::GDScript::-1::1779914240::0::1::::<>CharacterBody2D<>::
+Player.gd::GDScript::-1::1779918245::0::1::::<>CharacterBody2D<>::
 PowerUpHealth.gd::GDScript::-1::1779899397::0::1::::<>Area2D<>::
 Projectile.gd::GDScript::-1::1779909136::0::1::::<>Area2D<>::
 ProjectileHitEffect.gd::GDScript::-1::1779909367::0::1::::<>CPUParticles2D<>::

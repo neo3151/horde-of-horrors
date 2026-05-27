@@ -11,6 +11,11 @@ enum EnemyType { WEREWOLF, VAMPIRE, FRANKENSTEIN, GHOST }
 var current_health: int
 var player: Node2D
 var ranged_attack_cooldown: float = 2.0 # Cooldown for ranged attack (Vampire)
+var is_bat_form: bool = false
+var has_escaped: bool = false
+var bat_speed_multiplier: float = 2.2
+var escape_target: Vector2 = Vector2.ZERO
+var human_texture: Texture2D
 var last_ranged_attack_time: float = 0.0
 var charge_cooldown: float = 3.0 # Cooldown for charge attack (Frankenstein)
 var last_charge_time: float = 0.0
@@ -22,6 +27,15 @@ var charge_speed_multiplier: float = 2.5 # Speed multiplier during charge
 var health_bar: ProgressBar
 
 func _ready() -> void:
+    match type:
+        EnemyType.FRANKENSTEIN:
+            speed = 100.0
+        EnemyType.WEREWOLF:
+            speed = 175.0
+        EnemyType.VAMPIRE:
+            speed = 240.0
+        EnemyType.GHOST:
+            speed = 140.0
     current_health = max_health
     player = GameManager.player
     _configure_visuals()
@@ -53,13 +67,13 @@ func _create_health_bar() -> void:
 func _configure_visuals() -> void:
     var body = $Visuals/Body
     var features = $Visuals/Features
-    var sprite = %Sprite2D
+    var sprite = $Visuals/Sprite2D
     
     if not body:
         return
         
     # If a custom sprite is assigned in the inspector, hide the blocks
-    if sprite.texture:
+    if sprite and sprite.texture:
         body.visible = false
         features.visible = false
         return
@@ -90,6 +104,18 @@ func _physics_process(delta: float) -> void:
     if not player or GameManager.is_game_over:
         return
 
+    if is_bat_form:
+        var dir = (escape_target - global_position).normalized()
+        velocity = dir * speed * bat_speed_multiplier
+        var visuals = $Visuals
+        if visuals and dir.x != 0:
+            visuals.scale.x = 1.0 if dir.x >= 0 else -1.0
+        move_and_slide()
+        
+        if global_position.distance_to(escape_target) < 15.0:
+            _exit_bat_form()
+        return
+
     var dir = (player.global_position - global_position).normalized()
     if not is_charging:
         velocity = dir * speed
@@ -99,7 +125,7 @@ func _physics_process(delta: float) -> void:
             visuals.scale.x = 1.0 if dir.x >= 0 else -1.0
         move_and_slide()
 
-    if type == EnemyType.VAMPIRE and player:
+    if type == EnemyType.VAMPIRE and player and not is_bat_form:
         if Time.get_ticks_msec() / 1000.0 - last_ranged_attack_time >= ranged_attack_cooldown:
             _perform_ranged_attack()
             last_ranged_attack_time = Time.get_ticks_msec() / 1000.0
@@ -123,8 +149,14 @@ func _update_animation() -> void:
         animation_player.play(anim_name)
 
 func take_damage(amount: int) -> void:
+    if is_bat_form:
+        return
     current_health -= amount
     _flash()
+    
+    if type == EnemyType.VAMPIRE and current_health < max_health * 0.35 and not has_escaped:
+        _enter_bat_form()
+        return
     
     # Update and show floating health bar
     if health_bar:
@@ -203,7 +235,81 @@ func _perform_charge_attack(charge_dir: Vector2) -> void:
     )
 
 func _on_body_entered(body: Node) -> void:
+    if is_bat_form:
+        return
     if body.is_in_group("player"):
         var pc = body as CharacterBody2D
         if pc.has_method("take_damage"):
             pc.take_damage(damage)
+
+func _enter_bat_form() -> void:
+    is_bat_form = true
+    has_escaped = true
+    
+    if health_bar:
+        health_bar.visible = false
+    
+    # Find opposite quadrant from player
+    var target_x = -320 if player.global_position.x > 0 else 320
+    var target_y = -220 if player.global_position.y > 0 else 220
+    target_x += randf_range(-50, 50)
+    target_y += randf_range(-50, 50)
+    escape_target = Vector2(target_x, target_y)
+    
+    _spawn_puff_particles(global_position, Color(0.18, 0.05, 0.28, 0.8))
+    
+    var sprite = $Visuals/Sprite2D
+    var bat_texture = load("res://assets/sprites/vampire/bat.png")
+    if sprite and sprite.texture:
+        human_texture = sprite.texture
+        sprite.texture = bat_texture
+        sprite.self_modulate = Color(0.65, 0.25, 0.85, 0.85)
+        
+        # Squash animation transition
+        var tween = create_tween()
+        sprite.scale = Vector2(0.1, 0.1)
+        tween.tween_property(sprite, "scale", Vector2(0.55, 0.55), 0.25).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+    else:
+        var body = $Visuals/Body
+        if body:
+            body.color = Color(0.3, 0.0, 0.5, 0.7)
+            
+    print("Enemy Dracula entered Bat Escape to: ", escape_target)
+
+func _exit_bat_form() -> void:
+    is_bat_form = false
+    
+    _spawn_puff_particles(global_position, Color(0.18, 0.05, 0.28, 0.8))
+    
+    var sprite = $Visuals/Sprite2D
+    if sprite and sprite.texture:
+        sprite.texture = human_texture
+        sprite.self_modulate = Color.WHITE
+        
+        var tween = create_tween()
+        sprite.scale = Vector2(0.1, 0.1)
+        tween.tween_property(sprite, "scale", Vector2(1.0, 1.0), 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+    else:
+        var body = $Visuals/Body
+        if body:
+            body.color = Color(0.1, 0.1, 0.1)
+            
+    print("Enemy Dracula transformed back to humanoid form.")
+
+func _spawn_puff_particles(pos: Vector2, color: Color) -> void:
+    var particles = CPUParticles2D.new()
+    particles.emitting = false
+    particles.amount = 24
+    particles.one_shot = true
+    particles.explosiveness = 0.85
+    particles.spread = 180.0
+    particles.gravity = Vector2.ZERO
+    particles.initial_velocity_min = 55.0
+    particles.initial_velocity_max = 110.0
+    particles.scale_amount_min = 3.0
+    particles.scale_amount_max = 6.0
+    particles.color = color
+    get_parent().add_child(particles)
+    particles.global_position = pos
+    particles.emitting = true
+    get_tree().create_timer(1.0).timeout.connect(particles.queue_free)

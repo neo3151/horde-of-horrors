@@ -7,6 +7,13 @@ extends CharacterBody2D
 
 var current_health: int
 var last_fire_time: float = 0.0
+var is_aiming_with_mouse: bool = true
+var last_movement_direction: Vector2 = Vector2.RIGHT
+var is_bat_form: bool = false
+var can_trigger_bat_escape: bool = true
+var bat_escape_duration: float = 2.5
+var bat_escape_cooldown: float = 20.0
+var human_texture: Texture2D
 
 @onready var crossbow_pivot: Node2D = $CrossbowPivot
 @onready var fire_point: Node2D = $CrossbowPivot/FirePoint
@@ -35,8 +42,9 @@ func _ready() -> void:
 		fire_rate = data["fire_rate"]
 		
 		var tex = load(data["texture"])
-		if tex and %Sprite2D:
-			%Sprite2D.texture = tex
+		var sprite = $Visuals/Sprite2D
+		if tex and sprite:
+			sprite.texture = tex
 			
 	current_health = max_health
 	GameManager.player = self
@@ -51,10 +59,10 @@ func _ready() -> void:
 		camera.limit_bottom = 500
 
 func _setup_visuals() -> void:
-	var sprite = %Sprite2D
+	var sprite = $Visuals/Sprite2D
 	var polygons = $Visuals.get_children().filter(func(node): return node is Polygon2D)
 	
-	if sprite and sprite.texture:
+	if sprite:
 		for p in polygons:
 			p.visible = false
 		if has_node("CrossbowPivot/Weapon"):
@@ -79,6 +87,8 @@ func _physics_process(delta: float) -> void:
 
 	if keyboard_input != Vector2.ZERO:
 		input_dir = keyboard_input
+		last_movement_direction = keyboard_input.normalized()
+		is_aiming_with_mouse = false
 	else:
 		input_dir = move_input # Touch/Mouse drag fallback
 
@@ -94,18 +104,22 @@ func _physics_process(delta: float) -> void:
 	position.x = clamp(position.x, -380, 380)
 	position.y = clamp(position.y, -280, 280)
 
-	# Aiming (Aim at mouse cursor)
+	# Aiming (Aim at mouse or follow last movement direction)
 	if crossbow_pivot:
-		var world_aim = get_global_mouse_position()
-		var dir = (world_aim - crossbow_pivot.global_position).normalized()
-		crossbow_pivot.rotation = dir.angle()
+		if is_aiming_with_mouse:
+			var world_aim = get_global_mouse_position()
+			var dir = (world_aim - crossbow_pivot.global_position).normalized()
+			crossbow_pivot.rotation = dir.angle()
+		else:
+			crossbow_pivot.rotation = last_movement_direction.angle()
 
 	# Mobile auto-fire, PC manual fire
-	if OS.has_feature("mobile"):
-		_try_auto_fire()
-	else:
-		if Input.is_action_pressed("fire"):
-			_try_manual_fire()
+	if not is_bat_form:
+		if OS.has_feature("mobile"):
+			_try_auto_fire()
+		else:
+			if Input.is_action_pressed("fire"):
+				_try_manual_fire()
 
 func _try_manual_fire() -> void:
 	if Time.get_ticks_msec() / 1000.0 - last_fire_time < fire_rate:
@@ -149,6 +163,8 @@ func _try_auto_fire() -> void:
 	muzzle_flash.restart()
 
 func take_damage(amount: int) -> void:
+	if is_bat_form:
+		return
 	current_health -= amount
 	if current_health <= 0:
 		current_health = 0
@@ -156,12 +172,82 @@ func take_damage(amount: int) -> void:
 		
 	_update_health_ui()
 	
+	if GameManager.selected_character == "Vampire" and current_health < max_health * 0.30 and can_trigger_bat_escape:
+		trigger_bat_escape()
+	
 	var dmg_scene = load("res://scenes/DamageNumber.tscn")
 	if dmg_scene:
 		var dmg_num = dmg_scene.instantiate()
 		get_parent().add_child(dmg_num)
 		dmg_num.global_position = global_position
 		dmg_num.setup(amount, true)
+
+func trigger_bat_escape() -> void:
+	is_bat_form = true
+	can_trigger_bat_escape = false
+	
+	var normal_speed = move_speed
+	move_speed = normal_speed * 1.6
+	
+	var sprite = $Visuals/Sprite2D
+	var bat_texture = load("res://assets/sprites/vampire/bat.png")
+	
+	# Spawn dark mist/particles
+	_spawn_puff_particles(global_position, Color(0.18, 0.05, 0.28, 0.8))
+	
+	if sprite:
+		human_texture = sprite.texture
+		sprite.texture = bat_texture
+		sprite.self_modulate = Color(0.65, 0.25, 0.85, 0.85)
+		
+		# Squash animation transition
+		var tween = create_tween()
+		sprite.scale = Vector2(0.1, 0.1)
+		tween.tween_property(sprite, "scale", Vector2(0.55, 0.55), 0.25).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+		
+	print("Player Dracula entered Bat Form (invulnerable, high speed)!")
+	
+	get_tree().create_timer(bat_escape_duration).timeout.connect(func():
+		is_bat_form = false
+		move_speed = normal_speed
+		
+		_spawn_puff_particles(global_position, Color(0.18, 0.05, 0.28, 0.8))
+		
+		if sprite:
+			sprite.texture = human_texture
+			sprite.self_modulate = Color.WHITE
+			
+			var tween = create_tween()
+			sprite.scale = Vector2(0.1, 0.1)
+			tween.tween_property(sprite, "scale", Vector2(1.0, 1.0), 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+			
+		print("Player Dracula transformed back to humanoid form.")
+		
+		get_tree().create_timer(bat_escape_cooldown).timeout.connect(func():
+			can_trigger_bat_escape = true
+			print("Player Dracula's Bat Escape is off cooldown.")
+		)
+	)
+
+func _spawn_puff_particles(pos: Vector2, color: Color) -> void:
+	var particles = CPUParticles2D.new()
+	particles.emitting = false
+	particles.amount = 24
+	particles.one_shot = true
+	particles.explosiveness = 0.85
+	particles.spread = 180.0
+	particles.gravity = Vector2.ZERO
+	particles.initial_velocity_min = 55.0
+	particles.initial_velocity_max = 110.0
+	particles.scale_amount_min = 3.0
+	particles.scale_amount_max = 6.0
+	particles.color = color
+	get_parent().add_child(particles)
+	particles.global_position = pos
+	particles.emitting = true
+	get_tree().create_timer(1.0).timeout.connect(func():
+		particles.queue_free()
+	)
 
 func upgrade_damage(amount: int) -> void:
 	damage += amount
@@ -174,6 +260,12 @@ func heal(amount: int) -> void:
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		aim_position = event.position
+		is_aiming_with_mouse = true
+	elif event is InputEventMouseButton:
+		is_aiming_with_mouse = true
+	elif event is InputEventKey:
+		if event.pressed:
+			is_aiming_with_mouse = false
 
 	# Handle touch dragging / mouse dragging to move
 	if event is InputEventScreenDrag or (event is InputEventMouseMotion and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)):
