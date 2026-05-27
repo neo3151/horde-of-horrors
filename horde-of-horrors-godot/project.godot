@@ -13,7 +13,7 @@ config_version=5
 config/name="Horde of Horrors"
 run/main_scene="res://scenes/MainMenu.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
-config/icon="res://icon.png"
+config/icon="res://icon.svg"
 
 [autoload]
 
@@ -52,14 +52,6 @@ fire={
 2d_physics/layer_1="Player"
 2d_physics/layer_2="Enemies"
 2d_physics/layer_3="Projectiles"
-
-[display]
-
-window/size/viewport_width=960
-window/size/viewport_height=540
-window/stretch/mode="canvas_items"
-window/stretch/aspect="expand"
-window/handheld/orientation=1
 
 [rendering]
 
