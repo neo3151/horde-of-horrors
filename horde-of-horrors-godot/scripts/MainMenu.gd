@@ -23,7 +23,7 @@ func _ready() -> void:
 	brightness_slider.value_changed.connect(_on_brightness_changed)
 
 func _on_play_pressed() -> void:
-	get_tree().change_scene_to_file("res://scenes/MainGame.tscn")
+	get_tree().change_scene_to_file("res://scenes/CharacterSelect.tscn")
 
 func _on_scoreboard_pressed() -> void:
 	# Clean list

@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://maingame001"]
+[gd_scene load_steps=18 format=3 uid="uid://maingame001"]
 
 [ext_resource type="Script" path="res://scripts/MainGame.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://player001" path="res://scenes/Player.tscn" id="1"]
@@ -10,12 +10,16 @@
 [ext_resource type="PackedScene" uid="uid://minimap001" path="res://scenes/Minimap.tscn" id="8"]
 [ext_resource type="Texture2D" uid="uid://floortile01" path="res://assets/sprites/floor_tiles.png" id="7_floor"]
 [ext_resource type="PackedScene" uid="uid://enemy_ghost" path="res://scenes/EnemyGhost.tscn" id="9"]
+[ext_resource type="Texture2D" uid="uid://bloodmoon01" path="res://assets/sprites/ui/blood_moon_ui.png" id="7_moon"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
-size = Vector2(40, 200)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
+size = Vector2(1850, 40)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_2"]
-size = Vector2(200, 40)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
+size = Vector2(250, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_center_platform"]
+size = Vector2(260, 20)
 
 [sub_resource type="Environment" id="Environment_1"]
 background_mode = 3
@@ -36,7 +40,7 @@ colors = PackedColorArray(0.8, 0.8, 0.9, 0, 0.8, 0.8, 0.9, 0.2, 0.8, 0.8, 0.9, 0
 script = ExtResource("1_script")
 
 [node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
-volume_db = -10.0 # Adjust as needed
+volume_db = -10.0
 autoplay = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -45,90 +49,150 @@ environment = SubResource("Environment_1")
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
 color = Color(0.35, 0.35, 0.45, 1)
 
-[node name="Floor" type="Sprite2D" parent="."]
-z_index = -5
-texture_repeat = 2
-texture = ExtResource("7_floor")
-region_enabled = true
-region_rect = Rect2(-2000, -2000, 4000, 4000)
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 
-[node name="Background" type="CanvasLayer" parent="."]
-layer = -1
+[node name="SkyLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2(0.02, 0.02)
 
-[node name="ColorRect" type="ColorRect" parent="Background"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.04, 0.04, 0.06, 1)
+[node name="SkyColor" type="ColorRect" parent="ParallaxBackground/SkyLayer"]
+offset_left = -3000.0
+offset_top = -1200.0
+offset_right = 3000.0
+offset_bottom = 800.0
+color = Color(0.03, 0.03, 0.05, 1)
+
+[node name="BloodMoon" type="TextureRect" parent="ParallaxBackground/SkyLayer"]
+self_modulate = Color(1, 0.8, 0.8, 1)
+offset_left = -100.0
+offset_top = -360.0
+offset_right = 300.0
+offset_bottom = 40.0
+texture = ExtResource("7_moon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ForestLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2(0.12, 0.12)
+motion_mirroring = Vector2(1600, 0)
+
+[node name="DistantHills" type="Polygon2D" parent="ParallaxBackground/ForestLayer"]
+color = Color(0.06, 0.05, 0.08, 1)
+polygon = PackedVector2Array(-800, 400, -600, 200, -400, 280, -200, 150, 0, 220, 200, 130, 400, 240, 600, 160, 800, 400)
+
+[node name="RuinsLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2(0.35, 0.35)
+motion_mirroring = Vector2(2000, 0)
+
+[node name="CastleTowers" type="Polygon2D" parent="ParallaxBackground/RuinsLayer"]
+color = Color(0.09, 0.07, 0.12, 1)
+polygon = PackedVector2Array(-1000, 500, -900, 500, -900, 100, -850, 100, -850, 500, -600, 500, -600, 200, -500, 200, -500, 500, -200, 500, -200, 80, -100, 80, -100, 500, 300, 500, 300, 250, 400, 250, 400, 500, 800, 500)
 
 [node name="FloorGrid" type="Node2D" parent="."]
+visible = false
 modulate = Color(1, 1, 1, 0.1)
 
 [node name="Player" parent="." instance=ExtResource("1")]
-position = Vector2(0, 0)
+position = Vector2(0, -100)
 
-[node name="Obstacles" type="Node2D" parent="."]
+[node name="Platforms" type="Node2D" parent="."]
 
-[node name="Wall1" type="StaticBody2D" parent="Obstacles"]
-position = Vector2(-200, 0)
+[node name="LeftGround" type="StaticBody2D" parent="Platforms"]
+position = Vector2(-1075, 200)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Wall1"]
-shape = SubResource("RectangleShape2D_1")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/LeftGround"]
+shape = SubResource("RectangleShape2D_ground")
 
-[node name="ColorRect" type="ColorRect" parent="Obstacles/Wall1"]
-offset_left = -20.0
-offset_top = -100.0
-offset_right = 20.0
-offset_bottom = 100.0
-color = Color(0.3, 0.3, 0.4, 1)
-
-[node name="Wall2" type="StaticBody2D" parent="Obstacles"]
-position = Vector2(200, 0)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Wall2"]
-shape = SubResource("RectangleShape2D_1")
-
-[node name="ColorRect" type="ColorRect" parent="Obstacles/Wall2"]
-offset_left = -20.0
-offset_top = -100.0
-offset_right = 20.0
-offset_bottom = 100.0
-color = Color(0.4, 0.3, 0.3, 1)
-
-[node name="Wall3" type="StaticBody2D" parent="Obstacles"]
-position = Vector2(0, -150)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Wall3"]
-shape = SubResource("RectangleShape2D_2")
-
-[node name="ColorRect" type="ColorRect" parent="Obstacles/Wall3"]
-offset_left = -100.0
+[node name="Visual" type="ColorRect" parent="Platforms/LeftGround"]
+offset_left = -925.0
 offset_top = -20.0
-offset_right = 100.0
+offset_right = 925.0
 offset_bottom = 20.0
-color = Color(0.3, 0.4, 0.3, 1)
+color = Color(0.12, 0.12, 0.16, 1)
 
-[node name="Wall4" type="StaticBody2D" parent="Obstacles"]
-position = Vector2(0, 150)
+[node name="RightGround" type="StaticBody2D" parent="Platforms"]
+position = Vector2(1075, 200)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Wall4"]
-shape = SubResource("RectangleShape2D_2")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/RightGround"]
+shape = SubResource("RectangleShape2D_ground")
 
-[node name="ColorRect" type="ColorRect" parent="Obstacles/Wall4"]
-offset_left = -100.0
+[node name="Visual" type="ColorRect" parent="Platforms/RightGround"]
+offset_left = -925.0
 offset_top = -20.0
-offset_right = 100.0
+offset_right = 925.0
 offset_bottom = 20.0
-color = Color(0.4, 0.4, 0.3, 1)
+color = Color(0.12, 0.12, 0.16, 1)
+
+[node name="StepLeft1" type="StaticBody2D" parent="Platforms"]
+position = Vector2(-350, 80)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/StepLeft1"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Visual" type="ColorRect" parent="Platforms/StepLeft1"]
+offset_left = -125.0
+offset_top = -10.0
+offset_right = 125.0
+offset_bottom = 10.0
+color = Color(0.18, 0.18, 0.22, 1)
+
+[node name="StepLeft2" type="StaticBody2D" parent="Platforms"]
+position = Vector2(-650, -20)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/StepLeft2"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Visual" type="ColorRect" parent="Platforms/StepLeft2"]
+offset_left = -125.0
+offset_top = -10.0
+offset_right = 125.0
+offset_bottom = 10.0
+color = Color(0.18, 0.18, 0.22, 1)
+
+[node name="StepRight1" type="StaticBody2D" parent="Platforms"]
+position = Vector2(350, 80)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/StepRight1"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Visual" type="ColorRect" parent="Platforms/StepRight1"]
+offset_left = -125.0
+offset_top = -10.0
+offset_right = 125.0
+offset_bottom = 10.0
+color = Color(0.18, 0.18, 0.22, 1)
+
+[node name="StepRight2" type="StaticBody2D" parent="Platforms"]
+position = Vector2(650, -20)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/StepRight2"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Visual" type="ColorRect" parent="Platforms/StepRight2"]
+offset_left = -125.0
+offset_top = -10.0
+offset_right = 125.0
+offset_bottom = 10.0
+color = Color(0.18, 0.18, 0.22, 1)
+
+[node name="CenterFloat" type="StaticBody2D" parent="Platforms"]
+position = Vector2(0, -60)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/CenterFloat"]
+shape = SubResource("RectangleShape2D_center_platform")
+
+[node name="Visual" type="ColorRect" parent="Platforms/CenterFloat"]
+offset_left = -130.0
+offset_top = -10.0
+offset_right = 130.0
+offset_bottom = 10.0
+color = Color(0.24, 0.15, 0.15, 1)
 
 [node name="AmbientParticles" type="CPUParticles2D" parent="."]
 amount = 30
 lifetime = 10.0
 preprocess = 10.0
 speed_scale = 0.5
-texture = ExtResource("7_floor") # Using floor texture as a placeholder for dust motes
+texture = ExtResource("7_floor")
 emission_shape = 2
 emission_sphere_radius = 500.0
 spread = 180.0
@@ -172,34 +236,12 @@ text = "Kills: 0"
 theme_override_font_sizes/font_size = 24
 
 [node name="CurrencyLabel" type="Label" parent="UI"]
-    offset_left = 20.0
-    offset_top = 150.0
-    offset_right = 200.0
-    offset_bottom = 190.0
-    text = "Gold: 0"
-    theme_override_font_sizes/font_size = 24
-
-[node name="HealthBar" type="ProgressBar" parent="UI"]
-    offset_left = 20.0
-    offset_top = 200.0
-    offset_right = 220.0
-    offset_bottom = 225.0
-    value = 100.0
-    show_percentage = false
-
-[node name="HealthLabel" type="Label" parent="UI/HealthBar"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "100 / 100"
-horizontal_alignment = 1
-vertical_alignment = 1
-theme_override_font_sizes/font_size = 13
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
+offset_left = 20.0
+offset_top = 150.0
+offset_right = 200.0
+offset_bottom = 190.0
+text = "Gold: 0"
+theme_override_font_sizes/font_size = 24
 
 [node name="UpgradePanel" type="Panel" parent="UI"]
 anchors_preset = 3
@@ -224,11 +266,11 @@ grow_vertical = 2
 theme_override_font_sizes/font_size = 14
 text = "Upgrade Damage (10 Gold)"
 
-
 [node name="Minimap" parent="UI" instance=ExtResource("8")]
+visible = false
 
 [node name="GameOverPanel" type="Panel" parent="UI"]
-    visible = false
+visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

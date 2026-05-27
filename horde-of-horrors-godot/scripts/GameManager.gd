@@ -17,6 +17,51 @@ var is_game_over: bool = false
 var player: Node2D
 var wave_manager: Node
 
+var selected_character: String = "Hunter"
+
+const CHARACTERS = {
+	"Hunter": {
+		"name": "Hunter",
+		"texture": "res://assets/sprites/player/hunter.png",
+		"health": 100,
+		"speed": 320.0,
+		"damage": 12,
+		"fire_rate": 0.28,
+		"bio": "A veteran hunter wielding a repeating silver crossbow. Balanced stats and high rate of fire.",
+		"ability": "Rapid Crossbow Bolts"
+	},
+	"Werewolf": {
+		"name": "Werewolf",
+		"texture": "res://assets/sprites/werewolf/werewolf.png",
+		"health": 120,
+		"speed": 390.0,
+		"damage": 22,
+		"fire_rate": 0.45,
+		"bio": "A feral beast that broke free from the horde. Unmatched movement speed and devastating melee claws.",
+		"ability": "Feral Swiftness & Shredding Claws"
+	},
+	"Vampire": {
+		"name": "Vampire",
+		"texture": "res://assets/sprites/vampire/vampire.png",
+		"health": 100,
+		"speed": 300.0,
+		"damage": 16,
+		"fire_rate": 0.35,
+		"bio": "A dark noble who rebelled against the elders. Shoots seeking bats and manipulates shadow power.",
+		"ability": "Lifestealing Blood Orbs"
+	},
+	"Frankenstein": {
+		"name": "Frankenstein",
+		"texture": "res://assets/sprites/frankenstein/frankenstein.png",
+		"health": 180,
+		"speed": 220.0,
+		"damage": 26,
+		"fire_rate": 0.60,
+		"bio": "A towering construct built from stitched remnants. Immune to minor knockback, boasts titanic health.",
+		"ability": "Superhuman Fortitude"
+	}
+}
+
 const SCORES_SAVE_PATH = "user://scoreboard.cfg"
 const SETTINGS_SAVE_PATH = "user://settings.cfg"
 

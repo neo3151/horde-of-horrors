@@ -90,9 +90,17 @@ func _physics_process(delta: float) -> void:
     if not player or GameManager.is_game_over:
         return
 
-    var dir = (player.global_position - global_position).normalized()
+    # Apply gravity
+    if not is_on_floor():
+        velocity.y += 1400.0 * delta
+
+    var dir_x = sign(player.global_position.x - global_position.x)
     if not is_charging:
-        velocity = dir * speed
+        velocity.x = dir_x * speed
+        # Flip visuals to face movement direction
+        var visuals = $Visuals
+        if visuals:
+            visuals.scale.x = 1.0 if dir_x >= 0 else -1.0
         move_and_slide()
 
     if type == EnemyType.VAMPIRE and player:
@@ -101,15 +109,17 @@ func _physics_process(delta: float) -> void:
             last_ranged_attack_time = Time.get_ticks_msec() / 1000.0
     elif type == EnemyType.FRANKENSTEIN and player and not is_charging:
         if Time.get_ticks_msec() / 1000.0 - last_charge_time >= charge_cooldown:
-            _perform_charge_attack(dir)
+            _perform_charge_attack(Vector2(dir_x, 0))
             last_charge_time = Time.get_ticks_msec() / 1000.0
     elif is_charging:
-        # Continue charging in the direction set by _perform_charge_attack
+        # Apply gravity while charging as well
         move_and_slide()
 
     _update_animation()
 
 func _update_animation() -> void:
+    if not animation_player:
+        return
     var anim_name = "idle"
     if velocity.length() > 0:
         anim_name = "run"
