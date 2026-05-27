@@ -11,6 +11,7 @@ res://scenes/EnemyMinimapIndicator.tscn::1ba8c2805801cddcfe977261283f06c8::17798
 res://scenes/Minimap.tscn::e4af62a4e3b952b8c529491e63843a22::1779899900::res://.godot/exported/133200997/export-bcc4e2127dcbca57532252fab209c5bd-Minimap.scn
 res://scenes/PowerUpHealth.tscn::1ecfb1f155d461da2108db84126001fc::1779900106::res://.godot/exported/133200997/export-89546aafbe021cf802c7310fcdd893fd-PowerUpHealth.scn
 res://scenes/ProjectileHitEffect.tscn::a3804d1d4551e299e8bd9e4e65e238de::1779909371::res://.godot/exported/133200997/export-c9c980281e0399d0f869e4b5739e40da-ProjectileHitEffect.scn
-res://scenes/Enemy.tscn::0c6d337f7ce42d6b2d54269509ccb831::1779909923::res://.godot/exported/133200997/export-e8b868f745946f74f22434b9ddd0af8d-Enemy.scn
-res://scenes/MainGame.tscn::8f74ebc9ad07da0d61b3c5b4c6687e22::1779909431::res://.godot/exported/133200997/export-dbfc6818b022d976e0e33ac4dabecd4c-MainGame.scn
-res://scenes/Player.tscn::fd6c0b9906f260581d0958280fd27326::1779909918::res://.godot/exported/133200997/export-e8220e74d1354b9e6b168b513689419c-Player.scn
+res://scenes/Enemy.tscn::62d18bbb400b151185f86d7dd5ab1d2d::1779912729::res://.godot/exported/133200997/export-e8b868f745946f74f22434b9ddd0af8d-Enemy.scn
+res://scenes/MainGame.tscn::25644f82293aeccb0a789c8aba5cc4ea::1779912531::res://.godot/exported/133200997/export-dbfc6818b022d976e0e33ac4dabecd4c-MainGame.scn
+res://scenes/Player.tscn::583208b2361f54f8a93450ecb7103ba5::1779912724::res://.godot/exported/133200997/export-e8220e74d1354b9e6b168b513689419c-Player.scn
+res://scenes/CharacterSelect.tscn::aa03dcca8e8747d8257ca73f9e8cdc19::1779912501::res://.godot/exported/133200997/export-3925af4e30f501cd1cabc6e961f22f4b-CharacterSelect.scn
