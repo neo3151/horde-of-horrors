@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://cmf3h73t66f7h_villagestreets"]
+
+[node name="VillageStreets" type="Node2D"]
+
+[node name="TileMap" type="TileMap" parent="."]
+cell_quadrant_size = 16
+format = 1
+

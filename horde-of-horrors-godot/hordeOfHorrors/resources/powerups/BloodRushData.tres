@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="PowerUpData" load_steps=2 format=3 uid="uid://cmf3h73t66f7h_bloodrush"]
+
+[ext_resource type="Script" path="res://hordeOfHorrors/scripts/PowerUpData.gd" id="1_g33y6"]
+
+[resource]
+script = ExtResource("1_g33y6")
+power_up_name = "Blood Rush"
+texture_path = "res://hordeOfHorrors/assets/sprites/powerups/blood_rush.png"
+duration = 12.0
+effect_amount = 0.4 # +40% movement speed
+rarity = "Common"
+bio = "A vial of concentrated blood from the Wound itself. Drinking it feels like swallowing liquid fire."

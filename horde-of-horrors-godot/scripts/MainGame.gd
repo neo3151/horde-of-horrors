@@ -4,6 +4,7 @@ extends Node2D
 @onready var score_label = $UI/ScoreLabel
 @onready var kills_label = $UI/KillsLabel
 @onready var currency_label = $UI/CurrencyLabel
+@onready var ability_button = $UI/AbilityButton
 
 @onready var upgrade_button = $UI/UpgradePanel/UpgradeButton
 
@@ -33,6 +34,7 @@ func _ready() -> void:
     save_button.pressed.connect(_on_save_pressed)
     skip_button.pressed.connect(_on_skip_pressed)
     upgrade_button.pressed.connect(_on_upgrade_button_pressed)
+    ability_button.pressed.connect(_on_ability_button_pressed)
 
     # Start the game loop
     GameManager.start_game()
@@ -53,6 +55,10 @@ func _on_upgrade_button_pressed() -> void:
     var upgrade_cost = 10 # Example cost
     if GameManager.spend_currency(upgrade_cost):
         GameManager.player.upgrade_damage(5) # Example damage increase
+
+func _on_ability_button_pressed() -> void:
+    if GameManager.player:
+        GameManager.player.use_ability()
 
 func _on_game_over(final_score: int, waves_survived: int) -> void:
     stats_label.text = "Score: " + str(final_score) + " | Wave: " + str(waves_survived)

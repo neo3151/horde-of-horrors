@@ -10,6 +10,13 @@ var last_fire_time: float = 0.0
 var is_aiming_with_mouse: bool = true
 var last_movement_direction: Vector2 = Vector2.RIGHT
 var is_bat_form: bool = false
+
+# Ability states
+var is_dashing: bool = false
+var dash_duration: float = 0.2
+var dash_speed_multiplier: float = 3.5
+var ability_cooldown: float = 0.0
+var ability_cooldown_max: float = 5.0
 var can_trigger_bat_escape: bool = true
 var bat_escape_duration: float = 2.5
 var bat_escape_cooldown: float = 20.0
@@ -77,8 +84,28 @@ func _update_health_ui() -> void:
 	if label:
 		label.text = str(current_health) + " / " + str(max_health)
 
+func _update_ability_cooldown(delta: float) -> void:
+	if ability_cooldown > 0:
+		ability_cooldown -= delta
+		if ability_cooldown < 0:
+			ability_cooldown = 0
+		_update_ability_ui()
+
+func _update_ability_ui() -> void:
+	var label = get_node_or_null("../UI/AbilityCooldown")
+	if label:
+		if ability_cooldown > 0:
+			label.text = "Ability: %.1fs" % ability_cooldown
+			label.modulate = Color(1, 0.3, 0.3)
+		else:
+			label.text = "Ability: READY"
+			label.modulate = Color(0.3, 1, 0.3)
+
 func _physics_process(delta: float) -> void:
 	if GameManager.is_game_over:
+		return
+
+	if is_dashing:
 		return
 
 	# Keyboard movement input
@@ -99,6 +126,7 @@ func _physics_process(delta: float) -> void:
 		
 	move_and_slide()
 	_update_animation()
+	_update_ability_cooldown(delta)
 
 	# Clamp to screen boundaries
 	position.x = clamp(position.x, -380, 380)
@@ -266,6 +294,8 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventKey:
 		if event.pressed:
 			is_aiming_with_mouse = false
+			if event.keycode == KEY_SHIFT or event.keycode == KEY_E:
+				use_ability()
 
 	# Handle touch dragging / mouse dragging to move
 	if event is InputEventScreenDrag or (event is InputEventMouseMotion and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)):
@@ -285,6 +315,79 @@ func _input(event: InputEvent) -> void:
 			move_input = (event.position - player_screen_pos).normalized()
 		else:
 			move_input = Vector2.ZERO
+
+func use_ability() -> void:
+	if ability_cooldown > 0 or is_bat_form or is_dashing:
+		return
+	
+	var char_name = GameManager.selected_character
+	match char_name:
+		"Werewolf":
+			_ability_werewolf_dash()
+		"Hunter":
+			_ability_hunter_rapid_fire()
+		"Frankenstein":
+			_ability_frankenstein_fortitude()
+		"Vampire":
+			_ability_vampire_lifesteal()
+
+func _ability_werewolf_dash() -> void:
+	is_dashing = true
+	ability_cooldown = 4.0
+	
+	var dash_dir = last_movement_direction
+	if velocity.length() > 0:
+		dash_dir = velocity.normalized()
+	
+	velocity = dash_dir * move_speed * dash_speed_multiplier
+	
+	# Visuals
+	_spawn_puff_particles(global_position, Color(0.4, 0.3, 0.2, 0.6))
+	var tween = create_tween()
+	tween.tween_property(self, "modulate:a", 0.5, 0.1)
+	
+	get_tree().create_timer(dash_duration).timeout.connect(func():
+		is_dashing = false
+		velocity = Vector2.ZERO
+		var tween_back = create_tween()
+		tween_back.tween_property(self, "modulate:a", 1.0, 0.1)
+	)
+
+func _ability_hunter_rapid_fire() -> void:
+	ability_cooldown = 8.0
+	var original_fire_rate = fire_rate
+	fire_rate = original_fire_rate * 0.4
+	
+	# Visual feedback
+	modulate = Color(1.0, 1.0, 0.5) # Yellow tint
+	
+	get_tree().create_timer(3.0).timeout.connect(func():
+		fire_rate = original_fire_rate
+		modulate = Color.WHITE
+	)
+
+func _ability_frankenstein_fortitude() -> void:
+	ability_cooldown = 10.0
+	var original_speed = move_speed
+	# Hardened state: slower but much tougher (simulated here with higher health/temp armor)
+	move_speed = original_speed * 0.7
+	
+	# Add temporary "armor" by reducing incoming damage logic
+	# For now, let's just show a visual shield
+	var shield_visual = Color(0.5, 1.0, 0.5, 0.5)
+	modulate = Color(0.5, 2.0, 0.5)
+	
+	get_tree().create_timer(4.0).timeout.connect(func():
+		move_speed = original_speed
+		modulate = Color.WHITE
+	)
+
+func _ability_vampire_lifesteal() -> void:
+	ability_cooldown = 12.0
+	# Next 5 shots heal for 20% of damage dealt
+	# Simple implementation: burst heal for now
+	heal(20)
+	_spawn_puff_particles(global_position, Color(0.8, 0.1, 0.1, 0.7))
 
 func _update_animation() -> void:
 	if not animation_player:

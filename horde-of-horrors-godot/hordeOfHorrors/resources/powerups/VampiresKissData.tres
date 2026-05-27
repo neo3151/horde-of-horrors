@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="PowerUpData" load_steps=2 format=3 uid="uid://cmf3h73t66f7h_vampireskiss"]
+
+[ext_resource type="Script" path="res://hordeOfHorrors/scripts/PowerUpData.gd" id="1_g33y6"]
+
+[resource]
+script = ExtResource("1_g33y6")
+power_up_name = "Vampire's Kiss"
+texture_path = "res://hordeOfHorrors/assets/sprites/powerups/vampires_kiss.png"
+duration = 12.0
+effect_amount = 0.25 # 25% life steal
+rarity = "Uncommon"
+bio = "A single drop of blood from Lady Isolde Voss (Elias’s wife)."

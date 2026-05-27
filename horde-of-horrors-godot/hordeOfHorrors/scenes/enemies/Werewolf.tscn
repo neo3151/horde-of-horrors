@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://cmf3h73t66f7g"]
+
+[ext_resource type="Script" path="res://hordeOfHorrors/scripts/EnemyBase.gd" id="1_vcyg1"]
+[ext_resource type="Resource" uid="uid://djq128y36lrb1" path="res://hordeOfHorrors/resources/enemies/WerewolfData.tres" id="2_werewolf_data"]
+
+[node name="Werewolf" type="CharacterBody2D"]
+script = ExtResource("1_vcyg1")
+enemy_stats = ExtResource("2_werewolf_data")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = preload("res://hordeOfHorrors/assets/sprites/werewolf.png") # Placeholder, replace with actual werewolf sprite
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape =RectangleShape2D.new()

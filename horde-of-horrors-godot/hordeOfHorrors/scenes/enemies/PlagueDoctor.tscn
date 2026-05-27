@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://doq128y36lrb1_plaguedoctor_scene"]
+
+[ext_resource type="Script" path="res://hordeOfHorrors/scripts/EnemyBase.gd" id="1_vcyg1"]
+[ext_resource type="Resource" uid="uid://doq128y36lrb1_plaguedoctor" path="res://hordeOfHorrors/resources/enemies/PlagueDoctorData.tres" id="2_plaguedoctor_data"]
+
+[node name="PlagueDoctor" type="CharacterBody2D"]
+script = ExtResource("1_vcyg1")
+enemy_stats = ExtResource("2_plaguedoctor_data")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = preload("res://hordeOfHorrors/assets/sprites/plague_doctor.png") # Placeholder, replace with actual plague doctor sprite
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = RectangleShape2D.new()

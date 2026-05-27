@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyStats" load_steps=2 format=3 uid="uid://doq128y36lrb1_bloodgolem"]
+
+[ext_resource type="Script" path="res://hordeOfHorrors/scripts/EnemyStats.gd" id="1_g33y6"]
+
+[resource]
+script = ExtResource("1_g33y6")
+enemy_name = "Blood Golem"
+texture_path = "res://hordeOfHorrors/assets/sprites/enemies/blood_golem.png"
+health = 200.0
+speed = 70.0
+damage = 25.0
+attack_cooldown = 3.0
+score_value = 40
+enemy_type = "blood_golem"
+bio = "Created from the pooled blood of every victim killed under the Blood Moon in a single night. It is literally the valley’s collective trauma given form."
+abilities = Array[String](["Blood Split", "Blood Lash", "Blood Pools"])

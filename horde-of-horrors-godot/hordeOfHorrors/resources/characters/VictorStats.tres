@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="PlayerStats" load_steps=2 format=3 uid="uid://ct310h5660s4h"]
+
+[ext_resource type="Script" path="res://hordeOfHorrors/scripts/PlayerStats.gd" id="1_vcyg1"]
+
+[resource]
+script = ExtResource("1_vcyg1")
+char_name = "Victor Van Helsing"
+texture_path = "res://hordeOfHorrors/assets/sprites/player/victor.png"
+health = 150.0
+max_health = 150.0
+speed = 250.0
+damage = 22.0
+fire_rate = 0.8 # Slower, but powerful rifle
+bio = "Direct descendant of the legendary Abraham Van Helsing. A fanatic who believes he was chosen by God to finish what his ancestor started."
+ability = "Holy Judgment"
+dash_speed = 500.0
+dash_duration = 0.2
+dash_cooldown = 0.8

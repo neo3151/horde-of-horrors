@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://cp7x8e3s0s688_vampire"]
+
+[ext_resource type="Script" path="res://hordeOfHorrors/scripts/EnemyBase.gd" id="1_vcyg1"]
+[ext_resource type="Resource" uid="uid://cp7x8e3s0s688" path="res://hordeOfHorrors/resources/enemies/VampireData.tres" id="2_vampire_data"]
+
+[node name="Vampire" type="CharacterBody2D"]
+script = ExtResource("1_vcyg1")
+enemy_stats = ExtResource("2_vampire_data")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = preload("res://hordeOfHorrors/assets/sprites/vampire.png") # Placeholder, replace with actual vampire sprite
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = RectangleShape2D.new()
