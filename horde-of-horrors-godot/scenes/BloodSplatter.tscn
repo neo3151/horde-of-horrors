@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3 uid="uid://bldspl001"]
+
+[ext_resource type="Script" path="res://scripts/BloodSplatter.gd" id="1"]
+
+[node name="BloodSplatter" type="CPUParticles2D"]
+z_index = -1
+emitting = false
+amount = 15
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.95
+spread = 35.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 100.0
+initial_velocity_max = 250.0
+damping_min = 150.0
+damping_max = 250.0
+scale_amount_min = 3.0
+scale_amount_max = 6.0
+color = Color(0.65, 0.0, 0.0, 1.0)
+script = ExtResource("1")

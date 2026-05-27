@@ -1,0 +1,12 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Head -->
+  <rect x="16" y="8" width="32" height="40" fill="#3D7A4D"/>
+  <!-- Hair -->
+  <rect x="16" y="8" width="32" height="8" fill="black"/>
+  <!-- Bolts -->
+  <rect x="12" y="32" width="4" height="8" fill="#808080"/>
+  <rect x="48" y="32" width="4" height="8" fill="#808080"/>
+  <!-- Eyes -->
+  <rect x="22" y="24" width="4" height="4" fill="black"/>
+  <rect x="38" y="24" width="4" height="4" fill="black"/>
+</svg>

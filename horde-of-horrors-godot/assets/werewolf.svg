@@ -1,0 +1,12 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Body -->
+  <path d="M10 50 L32 10 L54 50 Z" fill="#4B382A"/>
+  <!-- Head -->
+  <circle cx="32" cy="20" r="12" fill="#3B281A"/>
+  <!-- Ears -->
+  <path d="M22 12 L26 4 L30 12 Z" fill="#3B281A"/>
+  <path d="M34 12 L38 4 L42 12 Z" fill="#3B281A"/>
+  <!-- Eyes -->
+  <circle cx="28" cy="18" r="2" fill="#FFD700"/>
+  <circle cx="36" cy="18" r="2" fill="#FFD700"/>
+</svg>

@@ -1,0 +1,11 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Body -->
+  <rect x="16" y="20" width="32" height="32" rx="4" fill="#2D4D9A"/>
+  <!-- Head -->
+  <rect x="22" y="4" width="20" height="20" rx="2" fill="#3D5DBA"/>
+  <!-- Eyes -->
+  <rect x="26" y="10" width="4" height="4" fill="white"/>
+  <rect x="34" y="10" width="4" height="4" fill="white"/>
+  <!-- Crossbow stub -->
+  <rect x="40" y="32" width="16" height="4" fill="#4A3728"/>
+</svg>
