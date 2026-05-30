@@ -12,6 +12,12 @@ extends Control
 @onready var brightness_val_label = $SettingsPanel/VBox/HBox/BrightnessValLabel
 
 func _ready() -> void:
+	# Force Portrait Orientation for Mobile (1 = Portrait)
+	DisplayServer.screen_set_orientation(1)
+	
+	# Debug print screen size
+	print("Viewport Size: ", get_viewport().get_visible_rect().size)
+	
 	# Show main options, hide others
 	main_panel.visible = true
 	scoreboard_panel.visible = false

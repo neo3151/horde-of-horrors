@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-enum EnemyType { WEREWOLF, VAMPIRE, FRANKENSTEIN, GHOST }
+enum EnemyType { WEREWOLF, VAMPIRE, FRANKENSTEIN, GHOST, LICH, WRAITH, PLAGUE_DOCTOR, BLOOD_GOLEM }
 
 @export var type: EnemyType = EnemyType.WEREWOLF
 @export var speed: float = 180.0
@@ -25,6 +25,7 @@ var charge_speed_multiplier: float = 2.5 # Speed multiplier during charge
 @onready var animation_player: AnimationPlayer = get_node_or_null("AnimationPlayer")
 
 var health_bar: ProgressBar
+var nav_agent: NavigationAgent2D
 
 func _ready() -> void:
     match type:
@@ -40,6 +41,13 @@ func _ready() -> void:
     player = GameManager.player
     _configure_visuals()
     _create_health_bar()
+    
+    # Initialize dynamic NavigationAgent2D for obstacle avoidance pathfinding
+    nav_agent = NavigationAgent2D.new()
+    add_child(nav_agent)
+    nav_agent.avoidance_enabled = false
+    nav_agent.target_desired_distance = 15.0
+    nav_agent.path_max_distance = 50.0
 
 func _create_health_bar() -> void:
     health_bar = ProgressBar.new()
@@ -117,6 +125,14 @@ func _physics_process(delta: float) -> void:
         return
 
     var dir = (player.global_position - global_position).normalized()
+    
+    # Use NavigationAgent2D pathfinding if available to bypass walls/obstacles
+    if is_instance_valid(nav_agent):
+        nav_agent.target_position = player.global_position
+        var next_pos = nav_agent.get_next_path_position()
+        if next_pos != global_position:
+            dir = (next_pos - global_position).normalized()
+
     if not is_charging:
         velocity = dir * speed
         # Flip visuals to face movement direction
@@ -203,12 +219,29 @@ func _die() -> void:
         get_parent().add_child(decal)
         decal.global_position = global_position
         
-    # Chance to drop a power-up
-    if randf() < 0.2: # 20% chance to drop a power-up
-        var powerup_scene = preload("res://scenes/PowerUpHealth.tscn")
-        var powerup = powerup_scene.instantiate()
-        get_parent().add_child(powerup)
-        powerup.global_position = global_position
+	# Chance to drop a power-up (25% chance)
+	if randf() < 0.25:
+		var rolls = randf()
+		var drop_path = ""
+		
+		# 50% health drop, 20% speed drop, 15% shield drop, 15% damage drop
+		if rolls < 0.50:
+			drop_path = "res://resources/powerups/VampiresKissData.tres"
+		elif rolls < 0.70:
+			drop_path = "res://resources/powerups/BloodRushData.tres"
+		elif rolls < 0.85:
+			drop_path = "res://resources/powerups/IronSkinData.tres"
+		else:
+			drop_path = "res://resources/powerups/FuryData.tres"
+			
+		var res = load(drop_path)
+		if res:
+			var drop_scene = preload("res://scenes/PowerUpDrop.tscn")
+			var drop_node = drop_scene.instantiate()
+			get_parent().add_child(drop_node)
+			drop_node.global_position = global_position
+			if drop_node.has_method("setup"):
+				drop_node.setup(res)
 
     GameManager.add_score(points)
     GameManager.add_kill()
@@ -267,8 +300,8 @@ func _enter_bat_form() -> void:
         
         # Squash animation transition
         var tween = create_tween()
-        sprite.scale = Vector2(0.1, 0.1)
-        tween.tween_property(sprite, "scale", Vector2(0.55, 0.55), 0.25).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+        sprite.scale = Vector2(0.05, 0.05)
+        tween.tween_property(sprite, "scale", Vector2(0.15, 0.15), 0.25).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
     else:
         var body = $Visuals/Body
         if body:
@@ -288,7 +321,7 @@ func _exit_bat_form() -> void:
         
         var tween = create_tween()
         sprite.scale = Vector2(0.1, 0.1)
-        tween.tween_property(sprite, "scale", Vector2(1.0, 1.0), 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+        tween.tween_property(sprite, "scale", Vector2(0.55, 0.55), 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
     else:
         var body = $Visuals/Body
         if body:

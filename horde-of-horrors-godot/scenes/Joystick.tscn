@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3 uid="uid://joystick_tscn"]
+
+[ext_resource type="Script" path="res://scripts/Joystick.gd" id="1_script"]
+
+[node name="Joystick" type="Control"]
+custom_minimum_size = Vector2(200, 200)
+script = ExtResource("1_script")
+joystick_radius = 60.0
+dead_zone = 8.0
+
+[node name="Base" type="TextureRect" parent="."]
+layout_mode = 0
+position = Vector2(20, 20)
+size = Vector2(160, 160)
+modulate = Color(1, 1, 1, 0.35)
+
+[node name="Nub" type="TextureRect" parent="."]
+layout_mode = 0
+position = Vector2(80, 80)
+size = Vector2(60, 60)
+modulate = Color(1, 1, 1, 0.6)

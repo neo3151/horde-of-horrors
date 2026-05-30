@@ -38,27 +38,28 @@ theme_override_colors/font_color = Color(0.85, 0.15, 0.15, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
 
-[node name="HBox" type="HBoxContainer" parent="."]
+[node name="VBoxMain" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -440.0
-offset_top = -180.0
-offset_right = 440.0
-offset_bottom = 180.0
+offset_left = -320.0
+offset_top = -540.0
+offset_right = 320.0
+offset_bottom = 460.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 40
+theme_override_constants/separation = 20
+alignment = 1
 
-[node name="LeftPanel" type="Panel" parent="HBox"]
-custom_minimum_size = Vector2(480, 0)
+[node name="LeftPanel" type="Panel" parent="VBoxMain"]
+custom_minimum_size = Vector2(0, 360)
 layout_mode = 2
 self_modulate = Color(1, 1, 1, 0)
 
-[node name="CharacterList" type="GridContainer" parent="HBox/LeftPanel"]
+[node name="CharacterList" type="GridContainer" parent="VBoxMain/LeftPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -69,105 +70,108 @@ theme_override_constants/h_separation = 20
 theme_override_constants/v_separation = 20
 columns = 2
 
-[node name="HunterCard" type="PanelContainer" parent="HBox/LeftPanel/CharacterList"]
-custom_minimum_size = Vector2(230, 170)
+[node name="HunterCard" type="PanelContainer" parent="VBoxMain/LeftPanel/CharacterList"]
+custom_minimum_size = Vector2(300, 160)
 layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="VBox" type="VBoxContainer" parent="HBox/LeftPanel/CharacterList/HunterCard"]
+[node name="VBox" type="VBoxContainer" parent="VBoxMain/LeftPanel/CharacterList/HunterCard"]
 layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="Name" type="Label" parent="HBox/LeftPanel/CharacterList/HunterCard/VBox"]
+[node name="Name" type="Label" parent="VBoxMain/LeftPanel/CharacterList/HunterCard/VBox"]
 layout_mode = 2
 text = "HUNTER"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 20
 theme_override_colors/font_color = Color(0.85, 0.75, 0.65, 1)
 
-[node name="SelectButton" type="Button" parent="HBox/LeftPanel/CharacterList/HunterCard"]
+[node name="SelectButton" type="Button" parent="VBoxMain/LeftPanel/CharacterList/HunterCard"]
 layout_mode = 2
 size_flags_vertical = 8
 text = "SELECT"
 
-[node name="WerewolfCard" type="PanelContainer" parent="HBox/LeftPanel/CharacterList"]
-custom_minimum_size = Vector2(230, 170)
+[node name="WerewolfCard" type="PanelContainer" parent="VBoxMain/LeftPanel/CharacterList"]
+custom_minimum_size = Vector2(300, 160)
 layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="VBox" type="VBoxContainer" parent="HBox/LeftPanel/CharacterList/WerewolfCard"]
+[node name="VBox" type="VBoxContainer" parent="VBoxMain/LeftPanel/CharacterList/WerewolfCard"]
 layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="Name" type="Label" parent="HBox/LeftPanel/CharacterList/WerewolfCard/VBox"]
+[node name="Name" type="Label" parent="VBoxMain/LeftPanel/CharacterList/WerewolfCard/VBox"]
 layout_mode = 2
 text = "WEREWOLF"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 20
 theme_override_colors/font_color = Color(0.85, 0.75, 0.65, 1)
 
-[node name="SelectButton" type="Button" parent="HBox/LeftPanel/CharacterList/WerewolfCard"]
+[node name="SelectButton" type="Button" parent="VBoxMain/LeftPanel/CharacterList/WerewolfCard"]
 layout_mode = 2
 size_flags_vertical = 8
 text = "SELECT"
 
-[node name="VampireCard" type="PanelContainer" parent="HBox/LeftPanel/CharacterList"]
-custom_minimum_size = Vector2(230, 170)
+[node name="VampireCard" type="PanelContainer" parent="VBoxMain/LeftPanel/CharacterList"]
+custom_minimum_size = Vector2(300, 160)
 layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="VBox" type="VBoxContainer" parent="HBox/LeftPanel/CharacterList/VampireCard"]
+[node name="VBox" type="VBoxContainer" parent="VBoxMain/LeftPanel/CharacterList/VampireCard"]
 layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="Name" type="Label" parent="HBox/LeftPanel/CharacterList/VampireCard/VBox"]
+[node name="Name" type="Label" parent="VBoxMain/LeftPanel/CharacterList/VampireCard/VBox"]
 layout_mode = 2
 text = "VAMPIRE"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 20
 theme_override_colors/font_color = Color(0.85, 0.75, 0.65, 1)
 
-[node name="SelectButton" type="Button" parent="HBox/LeftPanel/CharacterList/VampireCard"]
+[node name="SelectButton" type="Button" parent="VBoxMain/LeftPanel/CharacterList/VampireCard"]
 layout_mode = 2
 size_flags_vertical = 8
 text = "SELECT"
 
-[node name="FrankensteinCard" type="PanelContainer" parent="HBox/LeftPanel/CharacterList"]
-custom_minimum_size = Vector2(230, 170)
+[node name="FrankensteinCard" type="PanelContainer" parent="VBoxMain/LeftPanel/CharacterList"]
+custom_minimum_size = Vector2(300, 160)
 layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="VBox" type="VBoxContainer" parent="HBox/LeftPanel/CharacterList/FrankensteinCard"]
+[node name="VBox" type="VBoxContainer" parent="VBoxMain/LeftPanel/CharacterList/FrankensteinCard"]
 layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="Name" type="Label" parent="HBox/LeftPanel/CharacterList/FrankensteinCard/VBox"]
+[node name="Name" type="Label" parent="VBoxMain/LeftPanel/CharacterList/FrankensteinCard/VBox"]
 layout_mode = 2
 text = "FRANKENSTEIN"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 20
 theme_override_colors/font_color = Color(0.85, 0.75, 0.65, 1)
 
-[node name="SelectButton" type="Button" parent="HBox/LeftPanel/CharacterList/FrankensteinCard"]
+[node name="SelectButton" type="Button" parent="VBoxMain/LeftPanel/CharacterList/FrankensteinCard"]
 layout_mode = 2
 size_flags_vertical = 8
 text = "SELECT"
 
-[node name="RightPanel" type="PanelContainer" parent="HBox"]
-custom_minimum_size = Vector2(360, 0)
+[node name="RightPanel" type="PanelContainer" parent="VBoxMain"]
 layout_mode = 2
 
-[node name="VBox" type="VBoxContainer" parent="HBox/RightPanel"]
+[node name="VBox" type="VBoxContainer" parent="VBoxMain/RightPanel"]
 layout_mode = 2
 theme_override_constants/separation = 12
 alignment = 1
 
-[node name="PreviewPanel" type="Panel" parent="HBox/RightPanel/VBox"]
-custom_minimum_size = Vector2(100, 100)
+[node name="PreviewPanel" type="Panel" parent="VBoxMain/RightPanel/VBox"]
+custom_minimum_size = Vector2(150, 150)
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="PreviewTexture" type="TextureRect" parent="HBox/RightPanel/VBox/PreviewPanel"]
+[node name="PreviewTexture" type="TextureRect" parent="VBoxMain/RightPanel/VBox/PreviewPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -178,77 +182,79 @@ texture = ExtResource("2_preview")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="CharTitle" type="Label" parent="HBox/RightPanel/VBox"]
+[node name="CharTitle" type="Label" parent="VBoxMain/RightPanel/VBox"]
 layout_mode = 2
 text = "HUNTER"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 32
 theme_override_colors/font_color = Color(0.85, 0.15, 0.15, 1)
 
-[node name="BioLabel" type="Label" parent="HBox/RightPanel/VBox"]
-custom_minimum_size = Vector2(300, 50)
+[node name="BioLabel" type="Label" parent="VBoxMain/RightPanel/VBox"]
+custom_minimum_size = Vector2(500, 80)
 layout_mode = 2
+size_flags_horizontal = 4
 text = "A veteran hunter wielding a repeating silver crossbow..."
 horizontal_alignment = 1
 autowrap_mode = 3
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(0.7, 0.7, 0.75, 1)
 
-[node name="AbilityLabel" type="Label" parent="HBox/RightPanel/VBox"]
+[node name="AbilityLabel" type="Label" parent="VBoxMain/RightPanel/VBox"]
 layout_mode = 2
 text = "SPECIALTY: Double Jump & Fire Rate"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(0.9, 0.8, 0.3, 1)
 
-[node name="StatsGrid" type="GridContainer" parent="HBox/RightPanel/VBox"]
+[node name="StatsGrid" type="GridContainer" parent="VBoxMain/RightPanel/VBox"]
 layout_mode = 2
-theme_override_constants/h_separation = 10
+size_flags_horizontal = 4
+theme_override_constants/h_separation = 20
 columns = 2
 
-[node name="HealthLabel" type="Label" parent="HBox/RightPanel/VBox/StatsGrid"]
+[node name="HealthLabel" type="Label" parent="VBoxMain/RightPanel/VBox/StatsGrid"]
 layout_mode = 2
 text = "Health:"
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 18
 
-[node name="HealthBar" type="ProgressBar" parent="HBox/RightPanel/VBox/StatsGrid"]
-custom_minimum_size = Vector2(200, 10)
+[node name="HealthBar" type="ProgressBar" parent="VBoxMain/RightPanel/VBox/StatsGrid"]
+custom_minimum_size = Vector2(300, 15)
 layout_mode = 2
 size_flags_vertical = 4
 max_value = 200.0
 show_percentage = false
 
-[node name="SpeedLabel" type="Label" parent="HBox/RightPanel/VBox/StatsGrid"]
+[node name="SpeedLabel" type="Label" parent="VBoxMain/RightPanel/VBox/StatsGrid"]
 layout_mode = 2
 text = "Speed:"
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 18
 
-[node name="SpeedBar" type="ProgressBar" parent="HBox/RightPanel/VBox/StatsGrid"]
-custom_minimum_size = Vector2(200, 10)
+[node name="SpeedBar" type="ProgressBar" parent="VBoxMain/RightPanel/VBox/StatsGrid"]
+custom_minimum_size = Vector2(300, 15)
 layout_mode = 2
 size_flags_vertical = 4
 max_value = 450.0
 show_percentage = false
 
-[node name="DamageLabel" type="Label" parent="HBox/RightPanel/VBox/StatsGrid"]
+[node name="DamageLabel" type="Label" parent="VBoxMain/RightPanel/VBox/StatsGrid"]
 layout_mode = 2
 text = "Damage:"
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 18
 
-[node name="DamageBar" type="ProgressBar" parent="HBox/RightPanel/VBox/StatsGrid"]
-custom_minimum_size = Vector2(200, 10)
+[node name="DamageBar" type="ProgressBar" parent="VBoxMain/RightPanel/VBox/StatsGrid"]
+custom_minimum_size = Vector2(300, 15)
 layout_mode = 2
 size_flags_vertical = 4
 max_value = 30.0
 show_percentage = false
 
-[node name="FireRateLabel" type="Label" parent="HBox/RightPanel/VBox/StatsGrid"]
+[node name="FireRateLabel" type="Label" parent="VBoxMain/RightPanel/VBox/StatsGrid"]
 layout_mode = 2
 text = "Attack:"
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 18
 
-[node name="FireRateBar" type="ProgressBar" parent="HBox/RightPanel/VBox/StatsGrid"]
-custom_minimum_size = Vector2(200, 10)
+[node name="FireRateBar" type="ProgressBar" parent="VBoxMain/RightPanel/VBox/StatsGrid"]
+custom_minimum_size = Vector2(300, 15)
 layout_mode = 2
 size_flags_vertical = 4
 show_percentage = false

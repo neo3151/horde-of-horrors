@@ -7,15 +7,48 @@ extends Node2D
 var active_enemies: Array = []
 var enemies_to_spawn: int = 0
 var next_spawn_time: float = 0.0
+var wave_in_progress: bool = false
+
+func _ready() -> void:
+    GameManager.wave_manager = self
 
 func start_wave(wave_number: int) -> void:
-    enemies_to_spawn = base_enemies_per_wave + (wave_number - 1) * 4
-    active_enemies.clear()
-    next_spawn_time = Time.get_ticks_msec() / 1000.0 + 1.0
+	active_enemies.clear()
+	wave_in_progress = true
+	
+	if wave_number > 0 and wave_number % 10 == 0:
+		enemies_to_spawn = 0
+		var boss_scene = load("res://scenes/AlphaWerewolf.tscn")
+		if boss_scene:
+			var boss = boss_scene.instantiate()
+			boss.global_position = Vector2.ZERO
+			add_child(boss)
+			active_enemies.append(boss)
+			GameManager.emit_signal("enemy_spawned", boss)
+			
+			# Teleport player near the center to ensure they are inside the arena
+			if is_instance_valid(GameManager.player):
+				GameManager.player.global_position = Vector2(0, 80)
+				
+			var arena_script = load("res://scripts/ForceFieldArena.gd")
+			if arena_script:
+				var arena = arena_script.new()
+				add_child(arena)
+				arena.activate(boss, Vector2.ZERO)
+	else:
+		enemies_to_spawn = base_enemies_per_wave + (wave_number - 1) * 4
+		next_spawn_time = Time.get_ticks_msec() / 1000.0 + 1.0
 
 func _process(delta: float) -> void:
+    if not wave_in_progress:
+        return
+
     if enemies_to_spawn <= 0 and active_enemies.size() == 0:
-        GameManager.next_wave()
+        wave_in_progress = false
+        if has_node("/root/UIManager"):
+            get_node("/root/UIManager").show_upgrade_shop()
+        else:
+            GameManager.next_wave()
         return
 
     if enemies_to_spawn > 0 and Time.get_ticks_msec() / 1000.0 >= next_spawn_time:
@@ -29,8 +62,22 @@ func _spawn_enemy() -> void:
     if enemy_scenes.is_empty():
         return
 
+    var wave = GameManager.current_wave
+    var max_index = 1 # Start with only basic enemies
+    
+    if wave >= 3:
+        max_index = 3 # Add ghosts and vampires
+    if wave >= 5:
+        max_index = 4 # Add Frankensteins
+    if wave >= 7:
+        max_index = 5 # Add Lich
+    if wave >= 10:
+        max_index = 7 # Add Wraith and Plague Doctor
+    if wave >= 13:
+        max_index = enemy_scenes.size() # Allow everything including Blood Golem
+
     var spawn_pos = _get_random_spawn_position()
-    var index = randi() % enemy_scenes.size()
+    var index = randi() % max_index
     var enemy = enemy_scenes[index].instantiate()
     add_child(enemy)
     enemy.global_position = spawn_pos

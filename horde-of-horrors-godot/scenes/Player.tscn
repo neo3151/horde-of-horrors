@@ -1,7 +1,7 @@
-[gd_scene load_steps=11 format=3 uid="uid://player001"]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/Player.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://hunter001" path="res://assets/sprites/player/hunter.png" id="2"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/hunter.png" id="2"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1"]
 radius = 18.0

@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/victor/victor.png" id="2"]
+
+[node name="Victor" instance=ExtResource("1")]
+
+[node name="Sprite2D" parent="Visuals" index="0"]
+texture = ExtResource("2")
+hframes = 2
+vframes = 2

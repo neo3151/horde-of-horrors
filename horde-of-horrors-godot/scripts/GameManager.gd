@@ -59,6 +59,36 @@ const CHARACTERS = {
 		"fire_rate": 0.60,
 		"bio": "A towering construct built from stitched remnants. Immune to minor knockback, boasts titanic health.",
 		"ability": "Superhuman Fortitude"
+	},
+	"Elias": {
+		"name": "Elias",
+		"texture": "res://assets/sprites/player/elias/elias.png",
+		"health": 80,
+		"speed": 340.0,
+		"damage": 30,
+		"fire_rate": 0.45,
+		"bio": "A master of runic arts who found the 'Book of Dead Whispers'. Fragile but deals massive burst damage.",
+		"ability": "Runic Burst"
+	},
+	"Serena": {
+		"name": "Serena",
+		"texture": "res://assets/sprites/player/serena/serena.png",
+		"health": 90,
+		"speed": 420.0,
+		"damage": 14,
+		"fire_rate": 0.22,
+		"bio": "The swiftest huntress of the Silent Woods. Can dash through shadows and fire at lightning speeds.",
+		"ability": "Shadow Dash"
+	},
+	"Victor": {
+		"name": "Victor",
+		"texture": "res://assets/sprites/player/victor/victor.png",
+		"health": 140,
+		"speed": 280.0,
+		"damage": 20,
+		"fire_rate": 0.40,
+		"bio": "A grizzled veteran who has survived a hundred full moons. High health and reliable stopping power.",
+		"ability": "Holy Stopping Power"
 	}
 }
 

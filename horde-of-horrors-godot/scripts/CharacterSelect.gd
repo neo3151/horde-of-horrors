@@ -1,30 +1,24 @@
 extends Control
 
-@onready var character_list_container = $HBox/LeftPanel/CharacterList
-@onready var bio_label = $HBox/RightPanel/VBox/BioLabel
-@onready var ability_label = $HBox/RightPanel/VBox/AbilityLabel
-@onready var health_bar = $HBox/RightPanel/VBox/StatsGrid/HealthBar
-@onready var speed_bar = $HBox/RightPanel/VBox/StatsGrid/SpeedBar
-@onready var damage_bar = $HBox/RightPanel/VBox/StatsGrid/DamageBar
-@onready var firerate_bar = $HBox/RightPanel/VBox/StatsGrid/FireRateBar
-@onready var preview_texture = $HBox/RightPanel/VBox/PreviewPanel/PreviewTexture
-@onready var char_title_label = $HBox/RightPanel/VBox/CharTitle
+@onready var character_list_container = $VBoxMain/LeftPanel/CharacterList
+@onready var bio_label = $VBoxMain/RightPanel/VBox/BioLabel
+@onready var ability_label = $VBoxMain/RightPanel/VBox/AbilityLabel
+@onready var health_bar = $VBoxMain/RightPanel/VBox/StatsGrid/HealthBar
+@onready var speed_bar = $VBoxMain/RightPanel/VBox/StatsGrid/SpeedBar
+@onready var damage_bar = $VBoxMain/RightPanel/VBox/StatsGrid/DamageBar
+@onready var firerate_bar = $VBoxMain/RightPanel/VBox/StatsGrid/FireRateBar
+@onready var preview_texture = $VBoxMain/RightPanel/VBox/PreviewPanel/PreviewTexture
+@onready var char_title_label = $VBoxMain/RightPanel/VBox/CharTitle
 
 var current_preview: String = "Hunter"
 
 func _ready() -> void:
-	# Hide all cards except Hunter
-	for card_name in ["WerewolfCard", "VampireCard", "FrankensteinCard"]:
-		var card = get_node_or_null("HBox/LeftPanel/CharacterList/" + card_name)
-		if card:
-			card.visible = false
-
 	# Default selection
 	select_character("Hunter")
 	
-	# Connect buttons for left panel items
+	# Connect buttons for items
 	for char_name in GameManager.CHARACTERS.keys():
-		var btn = get_node_or_null("HBox/LeftPanel/CharacterList/" + char_name + "Card/SelectButton")
+		var btn = get_node_or_null("VBoxMain/LeftPanel/CharacterList/" + char_name + "Card/SelectButton")
 		if btn:
 			btn.pressed.connect(func(): select_character(char_name))
 
@@ -54,7 +48,7 @@ func select_character(char_name: String) -> void:
 		
 	# Update active highlights (modulate unselected cards)
 	for other_name in GameManager.CHARACTERS.keys():
-		var card = get_node_or_null("HBox/LeftPanel/CharacterList/" + other_name + "Card")
+		var card = get_node_or_null("VBoxMain/LeftPanel/CharacterList/" + other_name + "Card")
 		if card:
 			if other_name == char_name:
 				card.self_modulate = Color(1.2, 1.2, 1.2, 1.0) # Bright/Highlighted

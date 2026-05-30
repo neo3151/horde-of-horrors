@@ -10,6 +10,9 @@ var last_fire_time: float = 0.0
 var is_aiming_with_mouse: bool = true
 var last_movement_direction: Vector2 = Vector2.RIGHT
 var is_bat_form: bool = false
+var is_shielded: bool = false
+var speed_boost_multiplier: float = 1.0
+var damage_boost_flat: int = 0
 
 # Ability states
 var is_dashing: bool = false
@@ -28,6 +31,7 @@ var human_texture: Texture2D
 @onready var muzzle_flash: CPUParticles2D = $CrossbowPivot/FirePoint/MuzzleFlash
 @onready var shoot_sound: AudioStreamPlayer2D = $ShootSound
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var ability_icon: Control = get_node_or_null("../UI/AbilityIcon")
 
 var move_input: Vector2 = Vector2.ZERO
 var aim_position: Vector2 = Vector2.ZERO
@@ -57,6 +61,7 @@ func _ready() -> void:
 	GameManager.player = self
 	_setup_visuals()
 	_update_health_ui()
+	_setup_ability_icon()
 
 	# Adjust Camera limits for top-down arena level
 	if camera:
@@ -76,13 +81,26 @@ func _setup_visuals() -> void:
 			$CrossbowPivot/Weapon.visible = false
 
 func _update_health_ui() -> void:
-	var bar = get_node_or_null("../UI/HealthBar")
-	var label = get_node_or_null("../UI/HealthBar/HealthLabel")
-	if bar:
-		bar.max_value = max_health
-		bar.value = current_health
-	if label:
-		label.text = str(current_health) + " / " + str(max_health)
+	if has_node("/root/UIManager"):
+		get_node("/root/UIManager").update_player_health(current_health, max_health)
+
+func _setup_ability_icon() -> void:
+	if not ability_icon: return
+	
+	var char_name = GameManager.selected_character
+	var icon_container = ability_icon.get_node("IconContainer")
+	for child in icon_container.get_children():
+		child.visible = false
+		
+	match char_name:
+		"Werewolf":
+			icon_container.get_node("Dash").visible = true
+		"Hunter":
+			icon_container.get_node("RapidFire").visible = true
+		"Frankenstein":
+			icon_container.get_node("Fortitude").visible = true
+		"Vampire":
+			icon_container.get_node("Lifesteal").visible = true
 
 func _update_ability_cooldown(delta: float) -> void:
 	if ability_cooldown > 0:
@@ -90,16 +108,20 @@ func _update_ability_cooldown(delta: float) -> void:
 		if ability_cooldown < 0:
 			ability_cooldown = 0
 		_update_ability_ui()
+		_update_ability_icon_visual()
+
+func _update_ability_icon_visual() -> void:
+	if not ability_icon: return
+	var overlay = ability_icon.get_node("CooldownOverlay")
+	if ability_cooldown > 0:
+		overlay.visible = true
+		# We could even scale the overlay to show progress
+	else:
+		overlay.visible = false
 
 func _update_ability_ui() -> void:
-	var label = get_node_or_null("../UI/AbilityCooldown")
-	if label:
-		if ability_cooldown > 0:
-			label.text = "Ability: %.1fs" % ability_cooldown
-			label.modulate = Color(1, 0.3, 0.3)
-		else:
-			label.text = "Ability: READY"
-			label.modulate = Color(0.3, 1, 0.3)
+	if has_node("/root/UIManager"):
+		get_node("/root/UIManager").update_ability_cooldown(ability_cooldown)
 
 func _physics_process(delta: float) -> void:
 	if GameManager.is_game_over:
@@ -119,7 +141,7 @@ func _physics_process(delta: float) -> void:
 	else:
 		input_dir = move_input # Touch/Mouse drag fallback
 
-	velocity = input_dir * move_speed
+	velocity = input_dir * move_speed * speed_boost_multiplier
 	
 	if input_dir.x != 0:
 		$Visuals.scale.x = 1.0 if input_dir.x > 0 else -1.0
@@ -153,12 +175,14 @@ func _try_manual_fire() -> void:
 	if Time.get_ticks_msec() / 1000.0 - last_fire_time < fire_rate:
 		return
 
-	var proj_scene = preload("res://scenes/Projectile.tscn")
-	var proj = proj_scene.instantiate()
-	get_tree().current_scene.add_child(proj)
-	proj.global_position = fire_point.global_position
-	var dir = (fire_point.global_position - crossbow_pivot.global_position).normalized()
-	proj.initialize(dir, damage)
+	var proj = PoolManager.get_object("res://scenes/Projectile.tscn")
+	if proj:
+		if proj.get_parent() != get_tree().current_scene:
+			proj.get_parent().remove_child(proj)
+			get_tree().current_scene.add_child(proj)
+		proj.global_position = fire_point.global_position
+		var dir = (fire_point.global_position - crossbow_pivot.global_position).normalized()
+		proj.initialize(dir, damage + damage_boost_flat)
 
 	last_fire_time = Time.get_ticks_msec() / 1000.0
 	muzzle_flash.restart()
@@ -175,23 +199,25 @@ func _try_auto_fire() -> void:
 	if not nearest:
 		return
 
-	var proj_scene = preload("res://scenes/Projectile.tscn")
-	var proj = proj_scene.instantiate()
-	get_tree().current_scene.add_child(proj)
-	proj.global_position = fire_point.global_position
-	
-	var dir = (nearest.global_position - global_position).normalized()
-	if crossbow_pivot:
-		crossbow_pivot.rotation = dir.angle()
-	
-	var proj_dir = (fire_point.global_position - crossbow_pivot.global_position).normalized()
-	proj.initialize(proj_dir, damage)
+	var proj = PoolManager.get_object("res://scenes/Projectile.tscn")
+	if proj:
+		if proj.get_parent() != get_tree().current_scene:
+			proj.get_parent().remove_child(proj)
+			get_tree().current_scene.add_child(proj)
+		proj.global_position = fire_point.global_position
+		
+		var dir = (nearest.global_position - global_position).normalized()
+		if crossbow_pivot:
+			crossbow_pivot.rotation = dir.angle()
+		
+		var proj_dir = (fire_point.global_position - crossbow_pivot.global_position).normalized()
+		proj.initialize(proj_dir, damage + damage_boost_flat)
 
 	last_fire_time = Time.get_ticks_msec() / 1000.0
 	muzzle_flash.restart()
 
 func take_damage(amount: int) -> void:
-	if is_bat_form:
+	if is_bat_form or is_shielded:
 		return
 	current_health -= amount
 	if current_health <= 0:
@@ -398,3 +424,42 @@ func _update_animation() -> void:
 
 	if animation_player.current_animation != anim_name:
 		animation_player.play(anim_name)
+
+func apply_powerup(powerup: PowerUpData) -> void:
+	if not powerup:
+		return
+	
+	match powerup.type:
+		PowerUpData.PowerUpType.HEAL:
+			heal(int(powerup.value))
+			_spawn_puff_particles(global_position, Color(0.2, 0.8, 0.2, 0.6))
+		
+		PowerUpData.PowerUpType.SPEED_BOOST:
+			speed_boost_multiplier = powerup.value
+			_spawn_puff_particles(global_position, Color(0.8, 0.8, 0.2, 0.6))
+			modulate = Color(1.2, 1.2, 0.8)
+			
+			get_tree().create_timer(powerup.duration).timeout.connect(func():
+				speed_boost_multiplier = 1.0
+				modulate = Color.WHITE
+			)
+			
+		PowerUpData.PowerUpType.DAMAGE_BOOST:
+			damage_boost_flat = int(powerup.value)
+			_spawn_puff_particles(global_position, Color(0.8, 0.2, 0.2, 0.6))
+			modulate = Color(1.5, 0.8, 0.8)
+			
+			get_tree().create_timer(powerup.duration).timeout.connect(func():
+				damage_boost_flat = 0
+				modulate = Color.WHITE
+			)
+			
+		PowerUpData.PowerUpType.SHIELD:
+			is_shielded = true
+			_spawn_puff_particles(global_position, Color(0.2, 0.6, 0.8, 0.6))
+			modulate = Color(0.8, 0.8, 1.5)
+			
+			get_tree().create_timer(powerup.duration).timeout.connect(func():
+				is_shielded = false
+				modulate = Color.WHITE
+			)

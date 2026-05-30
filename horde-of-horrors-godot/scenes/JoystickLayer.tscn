@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://joystick_layer_tscn"]
+
+[ext_resource type="Script" path="res://scripts/JoystickLayer.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://joystick_tscn" path="res://scenes/Joystick.tscn" id="2_joystick"]
+
+[node name="JoystickLayer" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_script")
+
+[node name="Joystick" parent="." instance=ExtResource("2_joystick")]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -180.0
+offset_right = 220.0
+offset_bottom = -20.0
+grow_vertical = 0
+visible = false

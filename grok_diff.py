@@ -177,6 +177,63 @@ def dump_to_markdown(responses, title, conv_id, filepath):
     except Exception as e:
         print(f"Error writing markdown dump: {e}", file=sys.stderr)
 
+def send_message(id_, message, headers):
+    url = f"https://grok.com/rest/app-chat/conversations/{id_}/responses"
+    payload = {
+        "message": message,
+        "modelName": "grok-3",
+        "fileAttachments": [],
+        "imageAttachments": []
+    }
+    
+    # Copy headers and set content type for JSON streaming
+    post_headers = headers.copy()
+    post_headers["Content-Type"] = "application/json"
+    post_headers["Accept"] = "text/event-stream"
+    
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    
+    req = urllib.request.Request(
+        url, 
+        data=json.dumps(payload).encode("utf-8"), 
+        headers=post_headers, 
+        method="POST"
+    )
+    
+    print(f"{BLUE}{BOLD}Sending message...{RESET}\n")
+    try:
+        with urllib.request.urlopen(req, context=ctx) as response:
+            print(f"{GREEN}{BOLD}--- GROK (Streaming) ---{RESET}")
+            buffer = ""
+            for line in response:
+                decoded_line = line.decode("utf-8").strip()
+                if not decoded_line:
+                    continue
+                if decoded_line.startswith("data:"):
+                    data_str = decoded_line[5:].strip()
+                    if data_str == "[DONE]":
+                        break
+                    try:
+                        data_json = json.loads(data_str)
+                        token = data_json.get("token") or data_json.get("text")
+                        if token:
+                            print(token, end="", flush=True)
+                        elif "message" in data_json:
+                            # Fallback delta logic
+                            msg = data_json["message"]
+                            if msg.startswith(buffer):
+                                delta = msg[len(buffer):]
+                                print(delta, end="", flush=True)
+                                buffer = msg
+                    except Exception:
+                        pass
+            print("\n")
+    except Exception as e:
+        print(f"{YELLOW}Error sending message: {e}{RESET}", file=sys.stderr)
+        sys.exit(1)
+
 def main():
     parser = argparse.ArgumentParser(description="Track updates to a Grok share link or live conversation.")
     parser.add_argument("url", nargs="?", help="Grok share URL, live conversation URL, or ID")
@@ -185,6 +242,7 @@ def main():
     parser.add_argument("--show-all", action="store_true", help="Show all messages from the beginning without caching")
     parser.add_argument("--import-curl", action="store_true", help="Manually trigger import of curl.txt")
     parser.add_argument("--dump", metavar="FILE", help="Dump the entire conversation text to a beautifully formatted Markdown file")
+    parser.add_argument("--send", help="Send a message to the tracked live conversation")
     args = parser.parse_args()
 
     if args.import_curl or os.path.exists(CURL_FILE):
@@ -207,8 +265,31 @@ def main():
 
     headers = get_headers(args.cookie)
 
+    if args.send:
+        if type_ != "live":
+            print(f"{YELLOW}Error: Sending messages is only supported for live conversations, not share links.{RESET}", file=sys.stderr)
+            sys.exit(1)
+        send_message(extracted_id, args.send, headers)
+        
+        # Save cache state so we don't double show the user's prompt on next check
+        # First fetch updated responses to get their IDs
+        try:
+            print("Refreshing message history cache...")
+            updated_data = fetch_data(type_, extracted_id, headers)
+            if isinstance(updated_data, list):
+                responses = updated_data
+            else:
+                responses = updated_data.get("responses", [])
+            seen_ids = set([r.get("responseId") for r in responses if r.get("responseId")])
+            cache[extracted_id] = list(seen_ids)
+            save_cache(cache)
+        except Exception:
+            pass
+        return
+
     print(f"Fetching conversation updates (Mode: {type_}, ID: {extracted_id})...")
     data = fetch_data(type_, extracted_id, headers)
+
     
     if isinstance(data, list):
         responses = data

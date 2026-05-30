@@ -1,0 +1,68 @@
+[gd_scene load_steps=6 format=3 uid="uid://ability_icon"]
+
+[ext_resource type="Texture2D" uid="uid://icon_dash" path="res://assets/sprites/ui/icons/dash.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://icon_rapid" path="res://assets/sprites/ui/icons/rapid.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://icon_shield" path="res://assets/sprites/ui/icons/shield.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://icon_heart" path="res://assets/sprites/ui/icons/heart.png" id="4"]
+
+[node name="AbilityIcon" type="Control"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 3
+anchors_preset = 0
+
+[node name="BG" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.1, 0.1, 0.1, 0.8)
+
+[node name="Border" type="ReferenceRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+border_color = Color(0.8, 0.8, 0.8, 1)
+border_width = 2.0
+editor_only = false
+
+[node name="IconContainer" type="Node2D" parent="."]
+position = Vector2(20, 20)
+
+[node name="Dash" type="Sprite2D" parent="IconContainer"]
+visible = false
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("1")
+vframes = 1
+
+[node name="RapidFire" type="Sprite2D" parent="IconContainer"]
+visible = false
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("2")
+vframes = 1
+
+[node name="Fortitude" type="Sprite2D" parent="IconContainer"]
+visible = false
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("3")
+vframes = 1
+
+[node name="Lifesteal" type="Sprite2D" parent="IconContainer"]
+visible = false
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("4")
+vframes = 1
+
+[node name="CooldownOverlay" type="ColorRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
