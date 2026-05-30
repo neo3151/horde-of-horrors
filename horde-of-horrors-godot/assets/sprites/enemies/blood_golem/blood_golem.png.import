@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ctqwlna1y6mae"
-valid=false
+path="res://.godot/imported/blood_golem.png-d1f1b94587594bd05946a6b9e53e6566.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/sprites/enemies/blood_golem/blood_golem.png"
+dest_files=["res://.godot/imported/blood_golem.png-d1f1b94587594bd05946a6b9e53e6566.ctex"]
 
 [params]
 

@@ -4,11 +4,12 @@
 
 [node name="UpgradeShop" type="Control"]
 script = ExtResource("1_script")
+process_mode = 3
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-visible = false # Initially hidden
+visible = false
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1

@@ -138,3 +138,8 @@ script = ExtResource("2")
 enemy_scenes = [ExtResource("3"), ExtResource("5"), ExtResource("6"), ExtResource("9"), ExtResource("10"), ExtResource("12"), ExtResource("13"), ExtResource("14")]
 spawn_rate = 1.1
 base_enemies_per_wave = 5
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="Minimap" parent="UILayer" instance=ExtResource("8")]

@@ -41,7 +41,7 @@ func _ready() -> void:
     player = GameManager.player
     _configure_visuals()
     _create_health_bar()
-    
+
     # Initialize dynamic NavigationAgent2D for obstacle avoidance pathfinding
     nav_agent = NavigationAgent2D.new()
     add_child(nav_agent)
@@ -55,20 +55,20 @@ func _create_health_bar() -> void:
     health_bar.show_percentage = false
     health_bar.max_value = max_health
     health_bar.value = current_health
-    
+
     # Position above the enemy's head
     health_bar.position = Vector2(-22, -38)
     health_bar.size = Vector2(44, 5)
-    
+
     # Style styling
     var fill_style = StyleBoxFlat.new()
     fill_style.bg_color = Color(0.85, 0.15, 0.15) # Rich blood red
     health_bar.add_theme_stylebox_override("fill", fill_style)
-    
+
     var bg_style = StyleBoxFlat.new()
     bg_style.bg_color = Color(0.08, 0.08, 0.08, 0.6) # Dark transparent
     health_bar.add_theme_stylebox_override("background", bg_style)
-    
+
     # Hide health bar initially until they take damage
     health_bar.visible = false
 
@@ -76,16 +76,16 @@ func _configure_visuals() -> void:
     var body = $Visuals/Body
     var features = $Visuals/Features
     var sprite = $Visuals/Sprite2D
-    
+
     if not body:
         return
-        
+
     # If a custom sprite is assigned in the inspector, hide the blocks
     if sprite and sprite.texture:
         body.visible = false
         features.visible = false
         return
-        
+
     match type:
         EnemyType.WEREWOLF:
             body.color = Color(0.4, 0.3, 0.2) # Brown
@@ -119,13 +119,13 @@ func _physics_process(delta: float) -> void:
         if visuals and dir.x != 0:
             visuals.scale.x = 1.0 if dir.x >= 0 else -1.0
         move_and_slide()
-        
+
         if global_position.distance_to(escape_target) < 15.0:
             _exit_bat_form()
         return
 
     var dir = (player.global_position - global_position).normalized()
-    
+
     # Use NavigationAgent2D pathfinding if available to bypass walls/obstacles
     if is_instance_valid(nav_agent):
         nav_agent.target_position = player.global_position
@@ -169,11 +169,11 @@ func take_damage(amount: int) -> void:
         return
     current_health -= amount
     _flash()
-    
+
     if type == EnemyType.VAMPIRE and current_health < max_health * 0.35 and not has_escaped:
         _enter_bat_form()
         return
-    
+
     # Update and show floating health bar
     if health_bar:
         health_bar.visible = true
@@ -218,30 +218,30 @@ func _die() -> void:
         var decal = decal_scene.instantiate()
         get_parent().add_child(decal)
         decal.global_position = global_position
-        
-	# Chance to drop a power-up (25% chance)
-	if randf() < 0.25:
-		var rolls = randf()
-		var drop_path = ""
-		
-		# 50% health drop, 20% speed drop, 15% shield drop, 15% damage drop
-		if rolls < 0.50:
-			drop_path = "res://resources/powerups/VampiresKissData.tres"
-		elif rolls < 0.70:
-			drop_path = "res://resources/powerups/BloodRushData.tres"
-		elif rolls < 0.85:
-			drop_path = "res://resources/powerups/IronSkinData.tres"
-		else:
-			drop_path = "res://resources/powerups/FuryData.tres"
-			
-		var res = load(drop_path)
-		if res:
-			var drop_scene = preload("res://scenes/PowerUpDrop.tscn")
-			var drop_node = drop_scene.instantiate()
-			get_parent().add_child(drop_node)
-			drop_node.global_position = global_position
-			if drop_node.has_method("setup"):
-				drop_node.setup(res)
+
+    # Chance to drop a power-up (25% chance)
+    if randf() < 0.25:
+        var rolls = randf()
+        var drop_path = ""
+
+        # 50% health drop, 20% speed drop, 15% shield drop, 15% damage drop
+        if rolls < 0.50:
+            drop_path = "res://resources/powerups/VampiresKissData.tres"
+        elif rolls < 0.70:
+            drop_path = "res://resources/powerups/BloodRushData.tres"
+        elif rolls < 0.85:
+            drop_path = "res://resources/powerups/IronSkinData.tres"
+        else:
+            drop_path = "res://resources/powerups/FuryData.tres"
+
+        var res = load(drop_path)
+        if res:
+            var drop_scene = preload("res://scenes/PowerUpDrop.tscn")
+            var drop_node = drop_scene.instantiate()
+            get_parent().add_child(drop_node)
+            drop_node.global_position = global_position
+            if drop_node.has_method("setup"):
+                drop_node.setup(res)
 
     GameManager.add_score(points)
     GameManager.add_kill()
@@ -278,26 +278,26 @@ func _on_body_entered(body: Node) -> void:
 func _enter_bat_form() -> void:
     is_bat_form = true
     has_escaped = true
-    
+
     if health_bar:
         health_bar.visible = false
-    
+
     # Find opposite quadrant from player
     var target_x = -320 if player.global_position.x > 0 else 320
     var target_y = -220 if player.global_position.y > 0 else 220
     target_x += randf_range(-50, 50)
     target_y += randf_range(-50, 50)
     escape_target = Vector2(target_x, target_y)
-    
+
     _spawn_puff_particles(global_position, Color(0.18, 0.05, 0.28, 0.8))
-    
+
     var sprite = $Visuals/Sprite2D
     var bat_texture = load("res://assets/sprites/vampire/bat.png")
     if sprite and sprite.texture:
         human_texture = sprite.texture
         sprite.texture = bat_texture
         sprite.self_modulate = Color(0.65, 0.25, 0.85, 0.85)
-        
+
         # Squash animation transition
         var tween = create_tween()
         sprite.scale = Vector2(0.05, 0.05)
@@ -306,19 +306,19 @@ func _enter_bat_form() -> void:
         var body = $Visuals/Body
         if body:
             body.color = Color(0.3, 0.0, 0.5, 0.7)
-            
+
     print("Enemy Dracula entered Bat Escape to: ", escape_target)
 
 func _exit_bat_form() -> void:
     is_bat_form = false
-    
+
     _spawn_puff_particles(global_position, Color(0.18, 0.05, 0.28, 0.8))
-    
+
     var sprite = $Visuals/Sprite2D
     if sprite and sprite.texture:
         sprite.texture = human_texture
         sprite.self_modulate = Color.WHITE
-        
+
         var tween = create_tween()
         sprite.scale = Vector2(0.1, 0.1)
         tween.tween_property(sprite, "scale", Vector2(0.55, 0.55), 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
@@ -326,7 +326,7 @@ func _exit_bat_form() -> void:
         var body = $Visuals/Body
         if body:
             body.color = Color(0.1, 0.1, 0.1)
-            
+
     print("Enemy Dracula transformed back to humanoid form.")
 
 func _spawn_puff_particles(pos: Vector2, color: Color) -> void:

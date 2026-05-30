@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bmhblbqk3y63s"
-valid=false
+path="res://.godot/imported/lich.png-ede8cc0bafd2df3ed20d46035923e24f.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/sprites/enemies/lich/lich.png"
+dest_files=["res://.godot/imported/lich.png-ede8cc0bafd2df3ed20d46035923e24f.ctex"]
 
 [params]
 

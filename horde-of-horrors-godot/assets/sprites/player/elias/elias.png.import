@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bcovuefleh2nv"
-valid=false
+path="res://.godot/imported/elias.png-23f172d98798a527a9d2b579a39e6967.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/sprites/player/elias/elias.png"
+dest_files=["res://.godot/imported/elias.png-23f172d98798a527a9d2b579a39e6967.ctex"]
 
 [params]
 

@@ -13,31 +13,31 @@ func _ready() -> void:
     GameManager.wave_manager = self
 
 func start_wave(wave_number: int) -> void:
-	active_enemies.clear()
-	wave_in_progress = true
-	
-	if wave_number > 0 and wave_number % 10 == 0:
-		enemies_to_spawn = 0
-		var boss_scene = load("res://scenes/AlphaWerewolf.tscn")
-		if boss_scene:
-			var boss = boss_scene.instantiate()
-			boss.global_position = Vector2.ZERO
-			add_child(boss)
-			active_enemies.append(boss)
-			GameManager.emit_signal("enemy_spawned", boss)
-			
-			# Teleport player near the center to ensure they are inside the arena
-			if is_instance_valid(GameManager.player):
-				GameManager.player.global_position = Vector2(0, 80)
-				
-			var arena_script = load("res://scripts/ForceFieldArena.gd")
-			if arena_script:
-				var arena = arena_script.new()
-				add_child(arena)
-				arena.activate(boss, Vector2.ZERO)
-	else:
-		enemies_to_spawn = base_enemies_per_wave + (wave_number - 1) * 4
-		next_spawn_time = Time.get_ticks_msec() / 1000.0 + 1.0
+    active_enemies.clear()
+    wave_in_progress = true
+
+    if wave_number > 0 and wave_number % 10 == 0:
+        enemies_to_spawn = 0
+        var boss_scene = load("res://scenes/AlphaWerewolf.tscn")
+        if boss_scene:
+            var boss = boss_scene.instantiate()
+            boss.global_position = Vector2.ZERO
+            add_child(boss)
+            active_enemies.append(boss)
+            GameManager.emit_signal("enemy_spawned", boss)
+
+            # Teleport player near the center to ensure they are inside the arena
+            if is_instance_valid(GameManager.player):
+                GameManager.player.global_position = Vector2(0, 80)
+
+            var arena_script = load("res://scripts/ForceFieldArena.gd")
+            if arena_script:
+                var arena = arena_script.new()
+                add_child(arena)
+                arena.activate(boss, Vector2.ZERO)
+    else:
+        enemies_to_spawn = base_enemies_per_wave + (wave_number - 1) * 4
+        next_spawn_time = Time.get_ticks_msec() / 1000.0 + 1.0
 
 func _process(delta: float) -> void:
     if not wave_in_progress:
@@ -64,7 +64,7 @@ func _spawn_enemy() -> void:
 
     var wave = GameManager.current_wave
     var max_index = 1 # Start with only basic enemies
-    
+
     if wave >= 3:
         max_index = 3 # Add ghosts and vampires
     if wave >= 5:

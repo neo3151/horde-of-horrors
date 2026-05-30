@@ -51,12 +51,12 @@ func _ready() -> void:
 		move_speed = data["speed"]
 		damage = data["damage"]
 		fire_rate = data["fire_rate"]
-		
+
 		var tex = load(data["texture"])
 		var sprite = $Visuals/Sprite2D
 		if tex and sprite:
 			sprite.texture = tex
-			
+
 	current_health = max_health
 	GameManager.player = self
 	_setup_visuals()
@@ -73,7 +73,7 @@ func _ready() -> void:
 func _setup_visuals() -> void:
 	var sprite = $Visuals/Sprite2D
 	var polygons = $Visuals.get_children().filter(func(node): return node is Polygon2D)
-	
+
 	if sprite:
 		for p in polygons:
 			p.visible = false
@@ -86,12 +86,12 @@ func _update_health_ui() -> void:
 
 func _setup_ability_icon() -> void:
 	if not ability_icon: return
-	
+
 	var char_name = GameManager.selected_character
 	var icon_container = ability_icon.get_node("IconContainer")
 	for child in icon_container.get_children():
 		child.visible = false
-		
+
 	match char_name:
 		"Werewolf":
 			icon_container.get_node("Dash").visible = true
@@ -142,10 +142,10 @@ func _physics_process(delta: float) -> void:
 		input_dir = move_input # Touch/Mouse drag fallback
 
 	velocity = input_dir * move_speed * speed_boost_multiplier
-	
+
 	if input_dir.x != 0:
 		$Visuals.scale.x = 1.0 if input_dir.x > 0 else -1.0
-		
+
 	move_and_slide()
 	_update_animation()
 	_update_ability_cooldown(delta)
@@ -205,11 +205,11 @@ func _try_auto_fire() -> void:
 			proj.get_parent().remove_child(proj)
 			get_tree().current_scene.add_child(proj)
 		proj.global_position = fire_point.global_position
-		
+
 		var dir = (nearest.global_position - global_position).normalized()
 		if crossbow_pivot:
 			crossbow_pivot.rotation = dir.angle()
-		
+
 		var proj_dir = (fire_point.global_position - crossbow_pivot.global_position).normalized()
 		proj.initialize(proj_dir, damage + damage_boost_flat)
 
@@ -223,12 +223,12 @@ func take_damage(amount: int) -> void:
 	if current_health <= 0:
 		current_health = 0
 		GameManager.trigger_game_over()
-		
+
 	_update_health_ui()
-	
+
 	if GameManager.selected_character == "Vampire" and current_health < max_health * 0.30 and can_trigger_bat_escape:
 		trigger_bat_escape()
-	
+
 	var dmg_scene = load("res://scenes/DamageNumber.tscn")
 	if dmg_scene:
 		var dmg_num = dmg_scene.instantiate()
@@ -239,44 +239,44 @@ func take_damage(amount: int) -> void:
 func trigger_bat_escape() -> void:
 	is_bat_form = true
 	can_trigger_bat_escape = false
-	
+
 	var normal_speed = move_speed
 	move_speed = normal_speed * 1.6
-	
+
 	var sprite = $Visuals/Sprite2D
 	var bat_texture = load("res://assets/sprites/vampire/bat.png")
-	
+
 	# Spawn dark mist/particles
 	_spawn_puff_particles(global_position, Color(0.18, 0.05, 0.28, 0.8))
-	
+
 	if sprite:
 		human_texture = sprite.texture
 		sprite.texture = bat_texture
 		sprite.self_modulate = Color(0.65, 0.25, 0.85, 0.85)
-		
+
 		# Squash animation transition
 		var tween = create_tween()
 		sprite.scale = Vector2(0.1, 0.1)
 		tween.tween_property(sprite, "scale", Vector2(0.55, 0.55), 0.25).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
-		
+
 	print("Player Dracula entered Bat Form (invulnerable, high speed)!")
-	
+
 	get_tree().create_timer(bat_escape_duration).timeout.connect(func():
 		is_bat_form = false
 		move_speed = normal_speed
-		
+
 		_spawn_puff_particles(global_position, Color(0.18, 0.05, 0.28, 0.8))
-		
+
 		if sprite:
 			sprite.texture = human_texture
 			sprite.self_modulate = Color.WHITE
-			
+
 			var tween = create_tween()
 			sprite.scale = Vector2(0.1, 0.1)
 			tween.tween_property(sprite, "scale", Vector2(1.0, 1.0), 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-			
+
 		print("Player Dracula transformed back to humanoid form.")
-		
+
 		get_tree().create_timer(bat_escape_cooldown).timeout.connect(func():
 			can_trigger_bat_escape = true
 			print("Player Dracula's Bat Escape is off cooldown.")
@@ -345,7 +345,7 @@ func _input(event: InputEvent) -> void:
 func use_ability() -> void:
 	if ability_cooldown > 0 or is_bat_form or is_dashing:
 		return
-	
+
 	var char_name = GameManager.selected_character
 	match char_name:
 		"Werewolf":
@@ -360,18 +360,18 @@ func use_ability() -> void:
 func _ability_werewolf_dash() -> void:
 	is_dashing = true
 	ability_cooldown = 4.0
-	
+
 	var dash_dir = last_movement_direction
 	if velocity.length() > 0:
 		dash_dir = velocity.normalized()
-	
+
 	velocity = dash_dir * move_speed * dash_speed_multiplier
-	
+
 	# Visuals
 	_spawn_puff_particles(global_position, Color(0.4, 0.3, 0.2, 0.6))
 	var tween = create_tween()
 	tween.tween_property(self, "modulate:a", 0.5, 0.1)
-	
+
 	get_tree().create_timer(dash_duration).timeout.connect(func():
 		is_dashing = false
 		velocity = Vector2.ZERO
@@ -383,10 +383,10 @@ func _ability_hunter_rapid_fire() -> void:
 	ability_cooldown = 8.0
 	var original_fire_rate = fire_rate
 	fire_rate = original_fire_rate * 0.4
-	
+
 	# Visual feedback
 	modulate = Color(1.0, 1.0, 0.5) # Yellow tint
-	
+
 	get_tree().create_timer(3.0).timeout.connect(func():
 		fire_rate = original_fire_rate
 		modulate = Color.WHITE
@@ -397,12 +397,12 @@ func _ability_frankenstein_fortitude() -> void:
 	var original_speed = move_speed
 	# Hardened state: slower but much tougher (simulated here with higher health/temp armor)
 	move_speed = original_speed * 0.7
-	
+
 	# Add temporary "armor" by reducing incoming damage logic
 	# For now, let's just show a visual shield
 	var shield_visual = Color(0.5, 1.0, 0.5, 0.5)
 	modulate = Color(0.5, 2.0, 0.5)
-	
+
 	get_tree().create_timer(4.0).timeout.connect(func():
 		move_speed = original_speed
 		modulate = Color.WHITE
@@ -428,37 +428,37 @@ func _update_animation() -> void:
 func apply_powerup(powerup: PowerUpData) -> void:
 	if not powerup:
 		return
-	
+
 	match powerup.type:
 		PowerUpData.PowerUpType.HEAL:
 			heal(int(powerup.value))
 			_spawn_puff_particles(global_position, Color(0.2, 0.8, 0.2, 0.6))
-		
+
 		PowerUpData.PowerUpType.SPEED_BOOST:
 			speed_boost_multiplier = powerup.value
 			_spawn_puff_particles(global_position, Color(0.8, 0.8, 0.2, 0.6))
 			modulate = Color(1.2, 1.2, 0.8)
-			
+
 			get_tree().create_timer(powerup.duration).timeout.connect(func():
 				speed_boost_multiplier = 1.0
 				modulate = Color.WHITE
 			)
-			
+
 		PowerUpData.PowerUpType.DAMAGE_BOOST:
 			damage_boost_flat = int(powerup.value)
 			_spawn_puff_particles(global_position, Color(0.8, 0.2, 0.2, 0.6))
 			modulate = Color(1.5, 0.8, 0.8)
-			
+
 			get_tree().create_timer(powerup.duration).timeout.connect(func():
 				damage_boost_flat = 0
 				modulate = Color.WHITE
 			)
-			
+
 		PowerUpData.PowerUpType.SHIELD:
 			is_shielded = true
 			_spawn_puff_particles(global_position, Color(0.2, 0.6, 0.8, 0.6))
 			modulate = Color(0.8, 0.8, 1.5)
-			
+
 			get_tree().create_timer(powerup.duration).timeout.connect(func():
 				is_shielded = false
 				modulate = Color.WHITE
