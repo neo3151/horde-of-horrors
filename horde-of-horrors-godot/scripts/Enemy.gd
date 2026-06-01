@@ -146,9 +146,9 @@ func _create_health_bar() -> void:
     health_bar.visible = false
 
 func _configure_visuals() -> void:
-    var body = $Visuals/Body
-    var features = $Visuals/Features
-    var sprite = $Visuals/Sprite2D
+    var body = get_node_or_null("Visuals/Body")
+    var features = get_node_or_null("Visuals/Features")
+    var sprite = get_node_or_null("Visuals/Sprite2D")
 
     if not body:
         return
@@ -465,7 +465,7 @@ func _enter_bat_form() -> void:
 
     _spawn_puff_particles(global_position, Color(0.18, 0.05, 0.28, 0.8))
 
-    var sprite = $Visuals/Sprite2D
+    var sprite = get_node_or_null("Visuals/Sprite2D")
     if sprite and sprite.texture:
         human_texture = sprite.texture
         sprite.texture = BAT_TEXTURE
@@ -476,7 +476,7 @@ func _enter_bat_form() -> void:
         sprite.scale = Vector2(0.05, 0.05)
         tween.tween_property(sprite, "scale", Vector2(0.15, 0.15), 0.25).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
     else:
-        var body = $Visuals/Body
+        var body = get_node_or_null("Visuals/Body")
         if body:
             body.color = Color(0.3, 0.0, 0.5, 0.7)
 
@@ -487,7 +487,7 @@ func _exit_bat_form() -> void:
 
     _spawn_puff_particles(global_position, Color(0.18, 0.05, 0.28, 0.8))
 
-    var sprite = $Visuals/Sprite2D
+    var sprite = get_node_or_null("Visuals/Sprite2D")
     if sprite and sprite.texture:
         sprite.texture = human_texture
         sprite.self_modulate = Color.WHITE
@@ -496,7 +496,7 @@ func _exit_bat_form() -> void:
         sprite.scale = Vector2(0.1, 0.1)
         tween.tween_property(sprite, "scale", Vector2(0.55, 0.55), 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
     else:
-        var body = $Visuals/Body
+        var body = get_node_or_null("Visuals/Body")
         if body:
             body.color = Color(0.1, 0.1, 0.1)
 
