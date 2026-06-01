@@ -8,14 +8,25 @@
 [ext_resource type="PackedScene" uid="uid://enemy_frankenstein" path="res://scenes/EnemyFrankenstein.tscn" id="6"]
 [ext_resource type="PackedScene" uid="uid://proj001" path="res://scenes/Projectile.tscn" id="4"]
 [ext_resource type="PackedScene" uid="uid://minimap001" path="res://scenes/Minimap.tscn" id="8"]
-[ext_resource type="Texture2D" uid="uid://floortile01" path="res://assets/sprites/floor_tiles.png" id="7_floor"]
+[ext_resource type="Texture2D" path="res://assets/sprites/environment/graveyard_props.png" id="8_props"]
+[ext_resource type="Texture2D" path="res://assets/sprites/environment/graveyard_floor.png" id="7_floor"]
 [ext_resource type="PackedScene" uid="uid://enemy_ghost" path="res://scenes/EnemyGhost.tscn" id="9"]
-[ext_resource type="PackedScene" uid="uid://lich_high_priest" path="res://scenes/LichHighPriest.tscn" id="10"]
+[ext_resource type="PackedScene" uid="uid://enemy_lich" path="res://scenes/EnemyLich.tscn" id="10"]
 [ext_resource type="PackedScene" uid="uid://enemy_wraith" path="res://scenes/EnemyWraith.tscn" id="12"]
 [ext_resource type="PackedScene" uid="uid://enemy_plague_doctor" path="res://scenes/EnemyPlagueDoctor.tscn" id="13"]
 [ext_resource type="PackedScene" uid="uid://enemy_blood_golem" path="res://scenes/EnemyBloodGolem.tscn" id="14"]
+[ext_resource type="PackedScene" path="res://scenes/PauseMenu.tscn" id="15_pause"]
 
 [ext_resource type="PackedScene" uid="uid://ability_icon" path="res://scenes/AbilityIcon.tscn" id="11"]
+[ext_resource type="PackedScene" uid="uid://enemy_crimson_harpy" path="res://scenes/EnemyCrimsonHarpy.tscn" id="101"]
+[ext_resource type="PackedScene" uid="uid://enemy_lich_priest" path="res://scenes/EnemyLichPriest.tscn" id="102"]
+[ext_resource type="PackedScene" uid="uid://enemy_bone_archer" path="res://scenes/EnemyBoneArcher.tscn" id="103"]
+[ext_resource type="PackedScene" uid="uid://enemy_graveyard_brute" path="res://scenes/EnemyGraveyardBrute.tscn" id="104"]
+[ext_resource type="PackedScene" uid="uid://enemy_nightmare_stalker" path="res://scenes/EnemyNightmareStalker.tscn" id="105"]
+[ext_resource type="PackedScene" uid="uid://enemy_blood_moon_cultist" path="res://scenes/EnemyBloodMoonCultist.tscn" id="106"]
+[ext_resource type="PackedScene" uid="uid://enemy_abyssal_horror" path="res://scenes/EnemyAbyssalHorror.tscn" id="107"]
+[ext_resource type="PackedScene" uid="uid://enemy_flesh_weaver" path="res://scenes/EnemyFleshWeaver.tscn" id="108"]
+[ext_resource type="PackedScene" uid="uid://enemy_the_first_one" path="res://scenes/EnemyTheFirstOne.tscn" id="109"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
 size = Vector2(40, 200)
@@ -39,17 +50,15 @@ offsets = PackedFloat32Array(0, 0.2, 0.8, 1)
 colors = PackedColorArray(0.8, 0.8, 0.9, 0, 0.8, 0.8, 0.9, 0.2, 0.8, 0.8, 0.9, 0.2, 0.8, 0.8, 0.9, 0)
 
 [node name="MainGame" type="Node2D"]
+y_sort_enabled = true
 script = ExtResource("1_script")
 
-[node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
-volume_db = -10.0 # Adjust as needed
-autoplay = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_1")
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
-color = Color(0.35, 0.35, 0.45, 1)
+color = Color(0.2, 0.2, 0.3, 1)
 
 [node name="Floor" type="Sprite2D" parent="."]
 z_index = -5
@@ -72,12 +81,6 @@ position = Vector2(-200, 0)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Wall1"]
 shape = SubResource("RectangleShape2D_1")
 
-[node name="ColorRect" type="ColorRect" parent="Obstacles/Wall1"]
-offset_left = -20.0
-offset_top = -100.0
-offset_right = 20.0
-offset_bottom = 100.0
-color = Color(0.3, 0.3, 0.4, 1)
 
 [node name="Wall2" type="StaticBody2D" parent="Obstacles"]
 position = Vector2(200, 0)
@@ -85,12 +88,6 @@ position = Vector2(200, 0)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Wall2"]
 shape = SubResource("RectangleShape2D_1")
 
-[node name="ColorRect" type="ColorRect" parent="Obstacles/Wall2"]
-offset_left = -20.0
-offset_top = -100.0
-offset_right = 20.0
-offset_bottom = 100.0
-color = Color(0.4, 0.3, 0.3, 1)
 
 [node name="Wall3" type="StaticBody2D" parent="Obstacles"]
 position = Vector2(0, -150)
@@ -98,12 +95,6 @@ position = Vector2(0, -150)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Wall3"]
 shape = SubResource("RectangleShape2D_2")
 
-[node name="ColorRect" type="ColorRect" parent="Obstacles/Wall3"]
-offset_left = -100.0
-offset_top = -20.0
-offset_right = 100.0
-offset_bottom = 20.0
-color = Color(0.3, 0.4, 0.3, 1)
 
 [node name="Wall4" type="StaticBody2D" parent="Obstacles"]
 position = Vector2(0, 150)
@@ -111,12 +102,170 @@ position = Vector2(0, 150)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Wall4"]
 shape = SubResource("RectangleShape2D_2")
 
-[node name="ColorRect" type="ColorRect" parent="Obstacles/Wall4"]
-offset_left = -100.0
-offset_top = -20.0
-offset_right = 100.0
-offset_bottom = 20.0
-color = Color(0.4, 0.4, 0.3, 1)
+
+
+[node name="Props" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Prop_Grave_0" type="Sprite2D" parent="Props"]
+position = Vector2(138, 363)
+scale = Vector2(0.25, 0.25)
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("8_props")
+region_enabled = true
+region_rect = Rect2(44, 638, 225, 305)
+
+[node name="Prop_Grave_1" type="Sprite2D" parent="Props"]
+position = Vector2(-300, -394)
+scale = Vector2(0.25, 0.25)
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("8_props")
+region_enabled = true
+region_rect = Rect2(44, 638, 225, 305)
+
+[node name="Prop_Grave_2" type="Sprite2D" parent="Props"]
+position = Vector2(189, -285)
+scale = Vector2(0.25, 0.25)
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("8_props")
+region_enabled = true
+region_rect = Rect2(44, 638, 225, 305)
+
+[node name="Prop_Grave_3" type="Sprite2D" parent="Props"]
+position = Vector2(34, 11)
+scale = Vector2(0.25, 0.25)
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("8_props")
+region_enabled = true
+region_rect = Rect2(44, 638, 225, 305)
+
+[node name="Prop_Grave_4" type="Sprite2D" parent="Props"]
+position = Vector2(-209, 98)
+scale = Vector2(0.25, 0.25)
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("8_props")
+region_enabled = true
+region_rect = Rect2(44, 638, 225, 305)
+
+[node name="Prop_Grave_5" type="Sprite2D" parent="Props"]
+position = Vector2(-217, -201)
+scale = Vector2(0.25, 0.25)
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("8_props")
+region_enabled = true
+region_rect = Rect2(44, 638, 225, 305)
+
+[node name="Prop_Grave_6" type="Sprite2D" parent="Props"]
+position = Vector2(51, -182)
+scale = Vector2(0.25, 0.25)
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("8_props")
+region_enabled = true
+region_rect = Rect2(44, 638, 225, 305)
+
+[node name="Prop_Grave_7" type="Sprite2D" parent="Props"]
+position = Vector2(209, -50)
+scale = Vector2(0.25, 0.25)
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("8_props")
+region_enabled = true
+region_rect = Rect2(44, 638, 225, 305)
+
+[node name="Prop_Grave_8" type="Sprite2D" parent="Props"]
+position = Vector2(257, 70)
+scale = Vector2(0.25, 0.25)
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("8_props")
+region_enabled = true
+region_rect = Rect2(44, 638, 225, 305)
+
+[node name="Prop_Grave_9" type="Sprite2D" parent="Props"]
+position = Vector2(226, 264)
+scale = Vector2(0.25, 0.25)
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("8_props")
+region_enabled = true
+region_rect = Rect2(44, 638, 225, 305)
+
+[node name="Prop_Grave_10" type="Sprite2D" parent="Props"]
+position = Vector2(-348, -282)
+scale = Vector2(0.25, 0.25)
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("8_props")
+region_enabled = true
+region_rect = Rect2(44, 638, 225, 305)
+
+[node name="Prop_Grave_11" type="Sprite2D" parent="Props"]
+position = Vector2(183, -353)
+scale = Vector2(0.25, 0.25)
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("8_props")
+region_enabled = true
+region_rect = Rect2(44, 638, 225, 305)
+
+[node name="Prop_Grave_12" type="Sprite2D" parent="Props"]
+position = Vector2(-357, -8)
+scale = Vector2(0.25, 0.25)
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("8_props")
+region_enabled = true
+region_rect = Rect2(44, 638, 225, 305)
+
+[node name="Prop_Grave_13" type="Sprite2D" parent="Props"]
+position = Vector2(-123, -64)
+scale = Vector2(0.25, 0.25)
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("8_props")
+region_enabled = true
+region_rect = Rect2(44, 638, 225, 305)
+
+[node name="Prop_Grave_14" type="Sprite2D" parent="Props"]
+position = Vector2(-105, 302)
+scale = Vector2(0.25, 0.25)
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("8_props")
+region_enabled = true
+region_rect = Rect2(44, 638, 225, 305)
+
+[node name="Prop_Tree_0" type="Sprite2D" parent="Props"]
+position = Vector2(396, -20)
+scale = Vector2(0.35, 0.35)
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("8_props")
+region_enabled = true
+region_rect = Rect2(10, 20, 450, 600)
+
+[node name="Prop_Tree_1" type="Sprite2D" parent="Props"]
+position = Vector2(299, -148)
+scale = Vector2(0.35, 0.35)
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("8_props")
+region_enabled = true
+region_rect = Rect2(10, 20, 450, 600)
+
+[node name="Prop_Tree_2" type="Sprite2D" parent="Props"]
+position = Vector2(370, 323)
+scale = Vector2(0.35, 0.35)
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("8_props")
+region_enabled = true
+region_rect = Rect2(10, 20, 450, 600)
+
+[node name="Prop_Tree_3" type="Sprite2D" parent="Props"]
+position = Vector2(355, 383)
+scale = Vector2(0.35, 0.35)
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("8_props")
+region_enabled = true
+region_rect = Rect2(10, 20, 450, 600)
+
+[node name="Prop_Tree_4" type="Sprite2D" parent="Props"]
+position = Vector2(-47, -181)
+scale = Vector2(0.35, 0.35)
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("8_props")
+region_enabled = true
+region_rect = Rect2(10, 20, 450, 600)
 
 [node name="AmbientParticles" type="CPUParticles2D" parent="."]
 amount = 30
@@ -134,8 +283,9 @@ scale_amount_max = 3.0
 color_ramp = SubResource("Gradient_Ambient")
 
 [node name="WaveManager" type="Node2D" parent="."]
+y_sort_enabled = true
 script = ExtResource("2")
-enemy_scenes = [ExtResource("3"), ExtResource("5"), ExtResource("6"), ExtResource("9"), ExtResource("10"), ExtResource("12"), ExtResource("13"), ExtResource("14")]
+enemy_scenes = [ExtResource("3"), ExtResource("5"), ExtResource("6"), ExtResource("9"), ExtResource("10"), ExtResource("12"), ExtResource("13"), ExtResource("14"), ExtResource("101"), ExtResource("102"), ExtResource("103"), ExtResource("104"), ExtResource("105"), ExtResource("106"), ExtResource("107"), ExtResource("108"), ExtResource("109")]
 spawn_rate = 1.1
 base_enemies_per_wave = 5
 
@@ -143,3 +293,15 @@ base_enemies_per_wave = 5
 layer = 10
 
 [node name="Minimap" parent="UILayer" instance=ExtResource("8")]
+
+[node name="MobilePauseButton" type="Button" parent="UILayer"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -128.0
+offset_top = 220.0
+offset_right = -16.0
+offset_bottom = 268.0
+text = "PAUSE ⏸️"
+
+[node name="PauseMenu" parent="UILayer" instance=ExtResource("15_pause")]

@@ -13,3 +13,11 @@ func _ready() -> void:
 func _process(delta: float) -> void:
     if is_instance_valid(player) and minimap_camera:
         minimap_camera.global_position = player.global_position
+
+func _unhandled_input(event: InputEvent) -> void:
+    if event is InputEventKey and event.pressed and not event.echo:
+        if event.keycode == KEY_M or event.keycode == KEY_TAB:
+            set_minimap_visible(not visible)
+
+func set_minimap_visible(is_visible: bool) -> void:
+    visible = is_visible

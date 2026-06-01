@@ -1,0 +1,96 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/PauseMenu.gd" id="1_script"]
+
+[node name="PauseMenu" type="Control"]
+script = ExtResource("1_script")
+process_mode = 3
+layout_mode = 3
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="BackgroundDim" type="ColorRect" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.7)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="MainVBox" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+
+[node name="PauseLabel" type="Label" parent="CenterContainer/MainVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "PAUSED"
+horizontal_alignment = 1
+
+[node name="ResumeButton" type="Button" parent="CenterContainer/MainVBox"]
+layout_mode = 2
+text = "Resume Game"
+
+[node name="OptionsButton" type="Button" parent="CenterContainer/MainVBox"]
+layout_mode = 2
+text = "Options"
+
+[node name="RestartButton" type="Button" parent="CenterContainer/MainVBox"]
+layout_mode = 2
+text = "Restart Game"
+
+[node name="ExitButton" type="Button" parent="CenterContainer/MainVBox"]
+layout_mode = 2
+text = "Main Menu"
+
+[node name="OptionsVBox" type="VBoxContainer" parent="CenterContainer"]
+visible = false
+layout_mode = 2
+
+[node name="OptionsLabel" type="Label" parent="CenterContainer/OptionsVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "OPTIONS"
+horizontal_alignment = 1
+
+[node name="MinimapToggle" type="CheckButton" parent="CenterContainer/OptionsVBox"]
+layout_mode = 2
+button_pressed = true
+text = "Show Minimap"
+
+[node name="MasterVolLabel" type="Label" parent="CenterContainer/OptionsVBox"]
+layout_mode = 2
+text = "Master Volume"
+
+[node name="MasterVolSlider" type="HSlider" parent="CenterContainer/OptionsVBox"]
+layout_mode = 2
+max_value = 1.0
+step = 0.05
+value = 1.0
+
+[node name="MusicVolLabel" type="Label" parent="CenterContainer/OptionsVBox"]
+layout_mode = 2
+text = "Music Volume"
+
+[node name="MusicVolSlider" type="HSlider" parent="CenterContainer/OptionsVBox"]
+layout_mode = 2
+max_value = 1.0
+step = 0.05
+value = 1.0
+
+[node name="SfxVolLabel" type="Label" parent="CenterContainer/OptionsVBox"]
+layout_mode = 2
+text = "SFX Volume"
+
+[node name="SfxVolSlider" type="HSlider" parent="CenterContainer/OptionsVBox"]
+layout_mode = 2
+max_value = 1.0
+step = 0.05
+value = 1.0
+
+[node name="BackButton" type="Button" parent="CenterContainer/OptionsVBox"]
+layout_mode = 2
+text = "Back"

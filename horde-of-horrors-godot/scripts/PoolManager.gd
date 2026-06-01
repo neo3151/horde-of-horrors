@@ -8,6 +8,10 @@ var pools: Dictionary = {}
 const PRE_SPAWN_COUNTS = {
 	"res://scenes/Projectile.tscn": 40,
 	"res://scenes/ProjectileHitEffect.tscn": 20,
+	"res://scenes/EnemyWerewolf.tscn": 15,
+	"res://scenes/EnemyVampire.tscn": 12,
+	"res://scenes/EnemyGhost.tscn": 10,
+	"res://scenes/EnemyFrankenstein.tscn": 5,
 }
 
 func _ready() -> void:

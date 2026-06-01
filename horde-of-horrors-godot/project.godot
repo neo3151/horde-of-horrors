@@ -12,16 +12,26 @@ config_version=5
 
 config/name="Horde of Horrors"
 run/main_scene="res://scenes/MainMenu.tscn"
-config/features=PackedStringArray("4.3", "Forward Plus")
-config/icon="res://icon.svg"
+config/features=PackedStringArray("4.3", "Mobile")
+config/icon="res://assets/sprites/ui/icon_192.png"
 
 [autoload]
 
+AudioManager="*res://scripts/AudioManager.gd"
 GameManager="*res://scripts/GameManager.gd"
 PoolManager="*res://scripts/PoolManager.gd"
 UIManager="*res://scenes/UIManager.tscn"
 
+[display]
 
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/size/resizable=false
+window/size/window_width_override=360
+window/size/window_height_override=640
+window/stretch/mode="canvas_items"
+window/handheld/orientation="portrait"
+window/size/initial_screen_orientation=1
 
 [input]
 
@@ -50,6 +60,11 @@ fire={
 "events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":0,"position":Vector2(0, 0),"global_position":Vector2(0, 0),"factor":1.0,"button_index":1,"canceled":false,"pressed":false,"double_click":false,"script":null)
 ]
 }
+dash={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194325,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
+}
 
 [layer_names]
 
@@ -59,4 +74,5 @@ fire={
 
 [rendering]
 
+renderer/rendering_method="mobile"
 textures/vram_compression/import_etc2_astc=true

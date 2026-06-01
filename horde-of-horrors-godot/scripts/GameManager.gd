@@ -140,6 +140,55 @@ func spend_currency(amount: int) -> bool:
 		return true
 	return false
 
+func load_unlocked_characters() -> Array:
+	var config = ConfigFile.new()
+	var err = config.load(SETTINGS_SAVE_PATH)
+	if err == OK:
+		return config.get_value("unlocks", "characters", ["Hunter"])
+	return ["Hunter"]
+
+func save_unlocked_characters(chars: Array) -> void:
+	var config = ConfigFile.new()
+	config.load(SETTINGS_SAVE_PATH)
+	config.set_value("unlocks", "characters", chars)
+	config.save(SETTINGS_SAVE_PATH)
+
+func purchase_character(char_name: String) -> bool:
+	var chars = load_unlocked_characters()
+	var char_data = CHARACTERS.get(char_name)
+	if not char_data or chars.has(char_name):
+		return false # Already unlocked or invalid
+		
+	var cost = char_data.get("cost", 500)
+	if spend_currency(cost):
+		chars.append(char_name)
+		save_unlocked_characters(chars)
+		return true
+	return false
+
+func _unhandled_input(event: InputEvent) -> void:
+	if OS.is_debug_build() or OS.has_feature("editor"):
+		if event is InputEventKey and event.pressed and not event.echo:
+			# Press N to skip current wave
+			if event.keycode == KEY_N:
+				if wave_manager and wave_manager.wave_in_progress:
+					wave_manager.enemies_to_spawn = 0
+					for enemy in wave_manager.active_enemies:
+						if is_instance_valid(enemy):
+							enemy.queue_free()
+					wave_manager.active_enemies.clear()
+					print("Debug: Skipped Wave ", current_wave)
+			# Press M to jump forward 10 waves
+			elif event.keycode == KEY_M:
+				if wave_manager and wave_manager.wave_in_progress:
+					current_wave += 9
+					wave_manager.enemies_to_spawn = 0
+					for enemy in wave_manager.active_enemies:
+						if is_instance_valid(enemy):
+							enemy.queue_free()
+					wave_manager.active_enemies.clear()
+					print("Debug: Jumped forward 10 Waves")
+
 func trigger_game_over() -> void:
 	is_game_over = true
 	emit_signal("game_over", score, current_wave)

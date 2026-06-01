@@ -18,7 +18,15 @@ func start_wave(wave_number: int) -> void:
 
     if wave_number > 0 and wave_number % 10 == 0:
         enemies_to_spawn = 0
-        var boss_scene = load("res://scenes/AlphaWerewolf.tscn")
+        var boss_path = ""
+        match wave_number:
+            10: boss_path = "res://scenes/AlphaWerewolf.tscn"
+            20: boss_path = "res://scenes/VampireMatriarch.tscn"
+            30: boss_path = "res://scenes/RevenantFrankenstein.tscn"
+            40: boss_path = "res://scenes/LichHighPriest.tscn"
+            _: boss_path = "res://scenes/AlphaWerewolf.tscn" # Fallback
+
+        var boss_scene = load(boss_path)
         if boss_scene:
             var boss = boss_scene.instantiate()
             boss.global_position = Vector2.ZERO
@@ -74,7 +82,15 @@ func _spawn_enemy() -> void:
     if wave >= 10:
         max_index = 7 # Add Wraith and Plague Doctor
     if wave >= 13:
-        max_index = enemy_scenes.size() # Allow everything including Blood Golem
+        max_index = 9 # Add Blood Golem and Crimson Harpy
+    if wave >= 16:
+        max_index = 11 # Add Lich Priest and Bone Archer
+    if wave >= 20:
+        max_index = 13 # Add Graveyard Brute and Nightmare Stalker
+    if wave >= 25:
+        max_index = 15 # Add Blood Moon Cultist and Abyssal Horror
+    if wave >= 30:
+        max_index = enemy_scenes.size() # Allow everything
 
     var spawn_pos = _get_random_spawn_position()
     var index = randi() % max_index

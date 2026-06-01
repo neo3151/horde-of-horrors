@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-enum EnemyType { WEREWOLF, VAMPIRE, FRANKENSTEIN, GHOST, LICH, WRAITH, PLAGUE_DOCTOR, BLOOD_GOLEM }
+enum EnemyType { WEREWOLF, VAMPIRE, FRANKENSTEIN, GHOST, LICH, WRAITH, PLAGUE_DOCTOR, BLOOD_GOLEM, CRIMSON_HARPY, LICH_PRIEST, BONE_ARCHER, GRAVEYARD_BRUTE, NIGHTMARE_STALKER, BLOOD_MOON_CULTIST, ABYSSAL_HORROR, FLESH_WEAVER, THE_FIRST_ONE }
 
 @export var type: EnemyType = EnemyType.WEREWOLF
 @export var speed: float = 180.0
@@ -22,7 +22,12 @@ var last_charge_time: float = 0.0
 var is_charging: bool = false
 var charge_speed_multiplier: float = 2.5 # Speed multiplier during charge
 
+var knockback_velocity: Vector2 = Vector2.ZERO
+var knockback_decay: float = 12.0
+var separation_force: float = 1200.0
+
 @onready var animation_player: AnimationPlayer = get_node_or_null("AnimationPlayer")
+@onready var separation_area: Area2D = get_node_or_null("SeparationArea")
 
 var health_bar: ProgressBar
 var nav_agent: NavigationAgent2D
@@ -37,6 +42,24 @@ func _ready() -> void:
             speed = 240.0
         EnemyType.GHOST:
             speed = 140.0
+        EnemyType.CRIMSON_HARPY:
+            speed = 220.0
+        EnemyType.LICH_PRIEST:
+            speed = 120.0
+        EnemyType.BONE_ARCHER:
+            speed = 130.0
+        EnemyType.GRAVEYARD_BRUTE:
+            speed = 110.0
+        EnemyType.NIGHTMARE_STALKER:
+            speed = 200.0
+        EnemyType.BLOOD_MOON_CULTIST:
+            speed = 150.0
+        EnemyType.ABYSSAL_HORROR:
+            speed = 250.0
+        EnemyType.FLESH_WEAVER:
+            speed = 90.0
+        EnemyType.THE_FIRST_ONE:
+            speed = 160.0
     current_health = max_health
     player = GameManager.player
     _configure_visuals()
@@ -48,6 +71,18 @@ func _ready() -> void:
     nav_agent.avoidance_enabled = false
     nav_agent.target_desired_distance = 15.0
     nav_agent.path_max_distance = 50.0
+
+    # Add a separation area if it doesn't exist
+    if not has_node("SeparationArea"):
+        var area = Area2D.new()
+        area.name = "SeparationArea"
+        var collision = CollisionShape2D.new()
+        var circle = CircleShape2D.new()
+        circle.radius = 25.0
+        collision.shape = circle
+        area.add_child(collision)
+        add_child(area)
+        separation_area = area
 
 func _create_health_bar() -> void:
     health_bar = ProgressBar.new()
@@ -112,6 +147,13 @@ func _physics_process(delta: float) -> void:
     if not player or GameManager.is_game_over:
         return
 
+    # Apply and decay knockback
+    if knockback_velocity.length() > 5.0:
+        velocity = knockback_velocity
+        knockback_velocity = knockback_velocity.lerp(Vector2.ZERO, knockback_decay * delta)
+        move_and_slide()
+        return
+
     if is_bat_form:
         var dir = (escape_target - global_position).normalized()
         velocity = dir * speed * bat_speed_multiplier
@@ -133,8 +175,11 @@ func _physics_process(delta: float) -> void:
         if next_pos != global_position:
             dir = (next_pos - global_position).normalized()
 
+    # Apply separation force from other enemies
+    var separation = _get_separation_vector()
+
     if not is_charging:
-        velocity = dir * speed
+        velocity = (dir * speed) + (separation * separation_force * delta)
         # Flip visuals to face movement direction
         var visuals = $Visuals
         if visuals and dir.x != 0:
@@ -164,11 +209,48 @@ func _update_animation() -> void:
     if animation_player.current_animation != anim_name:
         animation_player.play(anim_name)
 
+func _get_separation_vector() -> Vector2:
+    var separation = Vector2.ZERO
+    if not is_instance_valid(separation_area):
+        return separation
+        
+    var neighbors = separation_area.get_overlapping_bodies()
+    for body in neighbors:
+        if body == self:
+            continue
+        if body.is_in_group("enemy") or body.is_in_group("player"):
+            var diff = global_position - body.global_position
+            if diff.length() > 0:
+                separation += diff.normalized() / diff.length()
+    return separation.normalized()
+
+func apply_knockback(source_pos: Vector2, strength: float) -> void:
+    var dir = (global_position - source_pos).normalized()
+    knockback_velocity = dir * strength
+
 func take_damage(amount: int) -> void:
     if is_bat_form:
         return
     current_health -= amount
+    AudioManager.play_sfx("hit")
     _flash()
+    
+    # Apply small knockback on hit
+    if player:
+        apply_knockback(player.global_position, 400.0)
+    
+    # Spawn blood splatter on hit
+    var splatter_scene = load("res://scenes/BloodSplatter.tscn")
+    if splatter_scene:
+        var splatter = splatter_scene.instantiate()
+        get_parent().add_child(splatter)
+        splatter.global_position = global_position
+        splatter.rotation = randf_range(0, 2 * PI)
+        splatter.emitting = true
+        
+    # Camera shake on hit
+    if GameManager.player and GameManager.player.has_method("shake_camera"):
+        GameManager.player.shake_camera(3.0, 0.1)
 
     if type == EnemyType.VAMPIRE and current_health < max_health * 0.35 and not has_escaped:
         _enter_bat_form()
@@ -208,10 +290,26 @@ func _flash() -> void:
     var visuals = $Visuals
     if visuals and visuals.material:
         visuals.material.set_shader_parameter("active", true)
-        await get_tree().create_timer(0.08).timeout
+        await get_tree().create_timer(0.12).timeout
         visuals.material.set_shader_parameter("active", false)
 
 func _die() -> void:
+    AudioManager.play_sfx("die")
+    # Bigger camera shake on death
+    if GameManager.player and GameManager.player.has_method("shake_camera"):
+        GameManager.player.shake_camera(6.0, 0.2)
+        
+    # Extra blood splatter on death
+    var splatter_scene = load("res://scenes/BloodSplatter.tscn")
+    if splatter_scene:
+        for i in range(2):
+            var splatter = splatter_scene.instantiate()
+            get_parent().add_child(splatter)
+            splatter.global_position = global_position
+            splatter.rotation = randf_range(0, 2 * PI)
+            splatter.scale = Vector2(1.5, 1.5)
+            splatter.emitting = true
+
     # Spawn floor blood puddle decal
     var decal_scene = load("res://scenes/BloodDecal.tscn")
     if decal_scene:

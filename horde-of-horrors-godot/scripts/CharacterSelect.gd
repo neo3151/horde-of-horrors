@@ -22,6 +22,9 @@ func _ready() -> void:
 		if btn:
 			btn.pressed.connect(func(): select_character(char_name))
 
+	if has_node("/root/UIManager"):
+		get_node("/root/UIManager").hide_hud()
+
 func select_character(char_name: String) -> void:
 	current_preview = char_name
 	GameManager.selected_character = char_name

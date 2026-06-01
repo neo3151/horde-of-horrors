@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://proj001"]
 
 [ext_resource type="Script" path="res://scripts/Projectile.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://silverbolt01" path="res://assets/sprites/projectile/silver_bolt.png" id="2"]
+[ext_resource type="Texture2D" path="res://assets/sprites/projectile/silver_bolt.png" id="2"]
 
 [sub_resource type="Gradient" id="Gradient_trail"]
 offsets = PackedFloat32Array(0, 1)

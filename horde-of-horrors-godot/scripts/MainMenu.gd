@@ -28,6 +28,9 @@ func _ready() -> void:
 	brightness_val_label.text = str(int(brightness_slider.value * 100)) + "%"
 	brightness_slider.value_changed.connect(_on_brightness_changed)
 
+	if has_node("/root/UIManager"):
+		get_node("/root/UIManager").hide_hud()
+
 func _on_play_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/CharacterSelect.tscn")
 

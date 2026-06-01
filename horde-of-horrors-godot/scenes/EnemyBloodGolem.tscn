@@ -1,8 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://enemy_blood_golem"]
 
+[ext_resource type="Shader" path="res://assets/shaders/remove_bg.gdshader" id="bg_shader"]
 [ext_resource type="Script" path="res://scripts/Enemy.gd" id="1"]
 [ext_resource type="Shader" path="res://assets/shaders/hit_flash.gdshader" id="2"]
-[ext_resource type="Texture2D" uid="uid://blood_golem_tex" path="res://assets/sprites/enemies/blood_golem/blood_golem.png" id="3"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/blood_golem/blood_golem.png" id="3"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_1"]
 resource_local_to_scene = true
@@ -12,6 +13,12 @@ shader_parameter/flash_color = Color(1, 1, 1, 1)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1"]
 radius = 25.0
+
+[sub_resource type="ShaderMaterial" id="RemoveBgMat"]
+resource_local_to_scene = true
+shader = ExtResource("bg_shader")
+shader_parameter/bg_color = Color(0.88, 0.88, 0.88, 1)
+shader_parameter/tolerance = 0.22
 
 [node name="EnemyBloodGolem" type="CharacterBody2D" groups=["enemy"]]
 collision_layer = 2
@@ -30,7 +37,7 @@ shape = SubResource("CircleShape2D_1")
 material = SubResource("ShaderMaterial_1")
 
 [node name="Sprite2D" type="Sprite2D" parent="Visuals"]
-use_parent_material = true
+material = SubResource("RemoveBgMat")
 texture = ExtResource("3")
 scale = Vector2(0.8, 0.8)
 hframes = 2

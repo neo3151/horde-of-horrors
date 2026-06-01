@@ -13,6 +13,8 @@ var is_bat_form: bool = false
 var is_shielded: bool = false
 var speed_boost_multiplier: float = 1.0
 var damage_boost_flat: int = 0
+var invulnerability_timer: float = 0.0
+var invulnerability_duration: float = 0.6  # i-frames after hit
 
 # Ability states
 var is_dashing: bool = false
@@ -29,7 +31,7 @@ var human_texture: Texture2D
 @onready var fire_point: Node2D = $CrossbowPivot/FirePoint
 @onready var camera: Camera2D = $Camera2D
 @onready var muzzle_flash: CPUParticles2D = $CrossbowPivot/FirePoint/MuzzleFlash
-@onready var shoot_sound: AudioStreamPlayer2D = $ShootSound
+
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var ability_icon: Control = get_node_or_null("../UI/AbilityIcon")
 
@@ -42,7 +44,15 @@ var jump_velocity: float = -520.0
 var double_jump_available: bool = true
 var was_on_floor: bool = true
 
+# Camera shake
+var shake_intensity: float = 0.0
+var shake_duration: float = 0.0
+var shake_timer: float = 0.0
+var base_camera_pos: Vector2 = Vector2.ZERO
+
 func _ready() -> void:
+	if camera:
+		base_camera_pos = camera.position
 	# Load selected character data dynamically
 	var char_name = GameManager.selected_character
 	if GameManager.CHARACTERS.has(char_name):
@@ -127,6 +137,15 @@ func _physics_process(delta: float) -> void:
 	if GameManager.is_game_over:
 		return
 
+	if invulnerability_timer > 0:
+		invulnerability_timer -= delta
+		if invulnerability_timer <= 0:
+			invulnerability_timer = 0
+			modulate.a = 1.0
+		else:
+			# Flashing effect
+			modulate.a = 0.5 if Engine.get_frames_drawn() % 4 < 2 else 1.0
+
 	if is_dashing:
 		return
 
@@ -186,8 +205,7 @@ func _try_manual_fire() -> void:
 
 	last_fire_time = Time.get_ticks_msec() / 1000.0
 	muzzle_flash.restart()
-	if shoot_sound:
-		shoot_sound.play()
+	AudioManager.play_sfx("shoot")
 
 func _try_auto_fire() -> void:
 	if Time.get_ticks_msec() / 1000.0 - last_fire_time < fire_rate:
@@ -215,11 +233,22 @@ func _try_auto_fire() -> void:
 
 	last_fire_time = Time.get_ticks_msec() / 1000.0
 	muzzle_flash.restart()
+	AudioManager.play_sfx("shoot")
 
 func take_damage(amount: int) -> void:
-	if is_bat_form or is_shielded:
+	if is_bat_form or is_shielded or invulnerability_timer > 0:
 		return
+	
 	current_health -= amount
+	AudioManager.play_sfx("player_hurt")
+	invulnerability_timer = invulnerability_duration
+	
+	# Repel nearby enemies when hit
+	for enemy in get_tree().get_nodes_in_group("enemy"):
+		if enemy.global_position.distance_to(global_position) < 80.0:
+			if enemy.has_method("apply_knockback"):
+				enemy.apply_knockback(global_position, 600.0)
+	
 	if current_health <= 0:
 		current_health = 0
 		GameManager.trigger_game_over()
@@ -381,6 +410,7 @@ func _ability_werewolf_dash() -> void:
 
 func _ability_hunter_rapid_fire() -> void:
 	ability_cooldown = 8.0
+	_panic_knockback(200.0, 800.0) # Clear immediate area
 	var original_fire_rate = fire_rate
 	fire_rate = original_fire_rate * 0.4
 
@@ -394,6 +424,7 @@ func _ability_hunter_rapid_fire() -> void:
 
 func _ability_frankenstein_fortitude() -> void:
 	ability_cooldown = 10.0
+	_panic_knockback(250.0, 1000.0) # Stronger knockback for Frank
 	var original_speed = move_speed
 	# Hardened state: slower but much tougher (simulated here with higher health/temp armor)
 	move_speed = original_speed * 0.7
@@ -410,6 +441,7 @@ func _ability_frankenstein_fortitude() -> void:
 
 func _ability_vampire_lifesteal() -> void:
 	ability_cooldown = 12.0
+	_panic_knockback(180.0, 700.0)
 	# Next 5 shots heal for 20% of damage dealt
 	# Simple implementation: burst heal for now
 	heal(20)
@@ -424,6 +456,13 @@ func _update_animation() -> void:
 
 	if animation_player.current_animation != anim_name:
 		animation_player.play(anim_name)
+
+func _panic_knockback(radius: float, force: float) -> void:
+	_spawn_puff_particles(global_position, Color(1, 1, 1, 0.5))
+	for enemy in get_tree().get_nodes_in_group("enemy"):
+		if enemy.global_position.distance_to(global_position) < radius:
+			if enemy.has_method("apply_knockback"):
+				enemy.apply_knockback(global_position, force)
 
 func apply_powerup(powerup: PowerUpData) -> void:
 	if not powerup:
@@ -463,3 +502,7 @@ func apply_powerup(powerup: PowerUpData) -> void:
 				is_shielded = false
 				modulate = Color.WHITE
 			)
+
+func shake_camera(intensity: float, duration: float) -> void:
+	shake_intensity = max(shake_intensity, intensity)
+	shake_timer = duration

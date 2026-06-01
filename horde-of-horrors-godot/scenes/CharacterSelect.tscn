@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://characterselect001"]
 
 [ext_resource type="Script" path="res://scripts/CharacterSelect.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://hunter001" path="res://assets/sprites/player/hunter.png" id="2_preview"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/hunter.png" id="2_preview"]
 
 [node name="CharacterSelect" type="Control"]
 layout_mode = 3

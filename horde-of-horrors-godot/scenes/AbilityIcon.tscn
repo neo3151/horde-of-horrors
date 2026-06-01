@@ -1,9 +1,9 @@
 [gd_scene load_steps=6 format=3 uid="uid://ability_icon"]
 
-[ext_resource type="Texture2D" uid="uid://icon_dash" path="res://assets/sprites/ui/icons/dash.png" id="1"]
-[ext_resource type="Texture2D" uid="uid://icon_rapid" path="res://assets/sprites/ui/icons/rapid.png" id="2"]
-[ext_resource type="Texture2D" uid="uid://icon_shield" path="res://assets/sprites/ui/icons/shield.png" id="3"]
-[ext_resource type="Texture2D" uid="uid://icon_heart" path="res://assets/sprites/ui/icons/heart.png" id="4"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/icons/dash.png" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/icons/rapid.png" id="2"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/icons/shield.png" id="3"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/icons/heart.png" id="4"]
 
 [node name="AbilityIcon" type="Control"]
 custom_minimum_size = Vector2(40, 40)

@@ -3,6 +3,7 @@ extends CanvasLayer
 @onready var main_game = get_tree().current_scene
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	# Keep HUD hidden by default — it should only show during gameplay
 	var hud = get_node_or_null("HUD")
 	if hud:
@@ -13,20 +14,38 @@ func _ready() -> void:
 	GameManager.score_changed.connect(update_score)
 	GameManager.kills_changed.connect(update_kills)
 	GameManager.player_currency_changed.connect(update_currency)
+	GameManager.game_over.connect(_on_game_over)
 	
-	# Listen for scene changes to show/hide HUD appropriately
-	get_tree().tree_changed.connect(_on_tree_changed)
+	var ability_btn = get_node_or_null("HUD/AbilityButton")
+	if ability_btn:
+		ability_btn.pressed.connect(_on_ability_button_pressed)
+	
+	var save_btn = get_node_or_null("GameOverPanel/VBox/SaveButton")
+	if save_btn:
+		save_btn.pressed.connect(_on_save_score_pressed)
+		
+	var skip_btn = get_node_or_null("GameOverPanel/VBox/SkipButton")
+	if skip_btn:
+		skip_btn.pressed.connect(_on_skip_pressed)
+	
+	# Explicit methods to show/hide HUD called from game scenes
+	hide_hud()
 
-func _on_tree_changed() -> void:
-	var current = get_tree().current_scene
+func show_hud() -> void:
 	var hud = get_node_or_null("HUD")
-	if not hud:
-		return
-	# Only show HUD when we're in the MainGame scene
-	if current and current.name == "MainGame":
+	if hud:
 		hud.visible = true
-	else:
+	var panel = get_node_or_null("GameOverPanel")
+	if panel:
+		panel.visible = false
+
+func hide_hud() -> void:
+	var hud = get_node_or_null("HUD")
+	if hud:
 		hud.visible = false
+	var panel = get_node_or_null("GameOverPanel")
+	if panel:
+		panel.visible = false
 
 func update_player_health(current: int, max_health: int) -> void:
 	var bar = get_node_or_null("HUD/HealthBar")
@@ -72,3 +91,34 @@ func show_upgrade_shop() -> void:
 	if shop:
 		shop.show_shop()
 
+
+func _on_ability_button_pressed() -> void:
+	if GameManager.player and GameManager.player.has_method("use_ability"):
+		GameManager.player.use_ability()
+
+func _on_game_over(final_score: int, waves: int) -> void:
+	var panel = get_node_or_null("GameOverPanel")
+	if panel:
+		panel.visible = true
+		var stats_label = panel.get_node("VBox/Stats")
+		if stats_label:
+			stats_label.text = "Score: %d | Waves Survived: %d" % [final_score, waves]
+		
+		# Hide the HUD
+		var hud = get_node_or_null("HUD")
+		if hud:
+			hud.visible = false
+
+func _on_save_score_pressed() -> void:
+	print("Save score pressed!")
+	var input = get_node_or_null("GameOverPanel/VBox/NameInput")
+	var player_name = "Unknown Hunter"
+	if input and input.text != "":
+		player_name = input.text
+	
+	GameManager.add_new_score(player_name, GameManager.score)
+	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
+
+func _on_skip_pressed() -> void:
+	print("Skip pressed!")
+	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
