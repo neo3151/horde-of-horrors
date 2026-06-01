@@ -1,0 +1,48 @@
+[gd_scene load_steps=5 format=3 uid="uid://enemy_the_stitcher"]
+
+[ext_resource type="Script" path="res://scripts/Enemy.gd" id="1"]
+[ext_resource type="Shader" path="res://assets/shaders/hit_flash.gdshader" id="2"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/the_stitcher/the_stitcher.png" id="3"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1"]
+resource_local_to_scene = true
+shader = ExtResource("2")
+shader_parameter/active = false
+shader_parameter/flash_color = Color(1, 1, 1, 1)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
+radius = 18.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2"]
+radius = 20.0
+
+[node name="EnemyStitcher" type="CharacterBody2D" groups=["enemy"]]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1")
+type = 17
+speed = 260.0
+max_health = 35
+damage = 12
+points = 25
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_1")
+
+[node name="Visuals" type="Node2D" parent="."]
+material = SubResource("ShaderMaterial_1")
+
+[node name="Sprite2D" type="Sprite2D" parent="Visuals"]
+use_parent_material = true
+unique_name_in_owner = true
+texture = ExtResource("3")
+scale = Vector2(0.3, 0.3)
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 1
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_2")
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_body_entered"]

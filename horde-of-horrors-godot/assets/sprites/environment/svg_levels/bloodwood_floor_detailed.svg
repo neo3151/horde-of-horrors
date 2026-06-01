@@ -1,0 +1,38 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="forestGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#1B5E20;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0D3B0D;stop-opacity:1" />
+    </radialGradient>
+    <filter id="foliage">
+      <feTurbulence type="fractalNoise" baseFrequency="0.4" numOctaves="4" stitchTiles="stitch" />
+      <feColorMatrix type="matrix" values="0 0 0 0 0  0 0.4 0 0 0  0 0 0.1 0 0  0 0 0 0.4 0" />
+    </filter>
+  </defs>
+  <rect width="512" height="512" fill="url(#forestGrad)" />
+  <rect width="512" height="512" filter="url(#foliage)" opacity="0.3" />
+  
+  <!-- Massive Gnarled Roots -->
+  <g stroke="#3E2723" fill="none" stroke-linecap="round">
+    <path d="M50 0 Q100 150 20 300 Q150 350 200 200 Q300 400 400 350" stroke-width="12" opacity="0.7" />
+    <path d="M450 0 Q400 200 480 400 M100 512 Q150 400 80 300" stroke-width="8" opacity="0.5" />
+    <path d="M512 256 Q400 280 350 512" stroke-width="10" opacity="0.6" />
+  </g>
+  
+  <!-- Glowing Spores (Emissive) -->
+  <g fill="#A5D6A7">
+    <circle cx="120" cy="120" r="3" opacity="0.8">
+      <animate attributeName="opacity" values="0.4;1;0.4" dur="2s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="340" cy="280" r="2" opacity="0.6">
+      <animate attributeName="opacity" values="0.2;0.8;0.2" dur="3s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="200" cy="450" r="4" opacity="0.7">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="2.5s" repeatCount="indefinite" />
+    </circle>
+  </g>
+  
+  <!-- Moss patches -->
+  <path d="M300 50 Q350 20 400 60 Q380 100 320 80 Z" fill="#4CAF50" opacity="0.2" />
+  <path d="M50 400 Q100 380 120 430 Q80 460 40 440 Z" fill="#4CAF50" opacity="0.15" />
+</svg>

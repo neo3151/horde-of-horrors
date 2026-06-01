@@ -1,5 +1,9 @@
 extends CharacterBody2D
 
+# Preloaded scenes to prevent dynamic disk reads during gameplay
+const DAMAGE_NUMBER_SCENE = preload("res://scenes/DamageNumber.tscn")
+const BAT_TEXTURE = preload("res://assets/sprites/vampire/bat.png")
+
 @export var move_speed: float = 320.0
 @export var max_health: int = 100
 @export var fire_rate: float = 0.28
@@ -32,6 +36,8 @@ var human_texture: Texture2D
 @onready var camera: Camera2D = $Camera2D
 @onready var muzzle_flash: CPUParticles2D = $CrossbowPivot/FirePoint/MuzzleFlash
 
+var current_weapon_node: Node2D = null
+
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var ability_icon: Control = get_node_or_null("../UI/AbilityIcon")
 
@@ -44,15 +50,7 @@ var jump_velocity: float = -520.0
 var double_jump_available: bool = true
 var was_on_floor: bool = true
 
-# Camera shake
-var shake_intensity: float = 0.0
-var shake_duration: float = 0.0
-var shake_timer: float = 0.0
-var base_camera_pos: Vector2 = Vector2.ZERO
-
 func _ready() -> void:
-	if camera:
-		base_camera_pos = camera.position
 	# Load selected character data dynamically
 	var char_name = GameManager.selected_character
 	if GameManager.CHARACTERS.has(char_name):
@@ -70,6 +68,7 @@ func _ready() -> void:
 	current_health = max_health
 	GameManager.player = self
 	_setup_visuals()
+	_setup_weapon()
 	_update_health_ui()
 	_setup_ability_icon()
 
@@ -89,6 +88,39 @@ func _setup_visuals() -> void:
 			p.visible = false
 		if has_node("CrossbowPivot/Weapon"):
 			$CrossbowPivot/Weapon.visible = false
+
+func _setup_weapon() -> void:
+	var char_name = GameManager.selected_character
+	if GameManager.CHARACTERS.has(char_name):
+		var weapon_id = GameManager.CHARACTERS[char_name].get("starting_weapon", "crossbow")
+		change_weapon(weapon_id)
+
+func change_weapon(weapon_id: String) -> void:
+	if not GameManager.WEAPONS.has(weapon_id):
+		return
+	
+	# Clear existing weapon
+	if current_weapon_node:
+		current_weapon_node.queue_free()
+		current_weapon_node = null
+	
+	var weapon_data = GameManager.WEAPONS[weapon_id]
+	if weapon_data["scene"] != "":
+		var scene = load(weapon_data["scene"])
+		if scene:
+			current_weapon_node = scene.instantiate()
+			add_child(current_weapon_node)
+			# Standard position for handheld weapons
+			current_weapon_node.position = Vector2(10, 0)
+			
+		if crossbow_pivot:
+			crossbow_pivot.visible = false
+	else:
+		# Use default crossbow
+		if crossbow_pivot:
+			crossbow_pivot.visible = true
+	
+	print("Player changed weapon to: ", weapon_data["name"])
 
 func _update_health_ui() -> void:
 	if has_node("/root/UIManager"):
@@ -194,6 +226,11 @@ func _try_manual_fire() -> void:
 	if Time.get_ticks_msec() / 1000.0 - last_fire_time < fire_rate:
 		return
 
+	if current_weapon_node and current_weapon_node.has_method("attack"):
+		current_weapon_node.attack()
+		last_fire_time = Time.get_ticks_msec() / 1000.0
+		return
+
 	var proj = PoolManager.get_object("res://scenes/Projectile.tscn")
 	if proj:
 		if proj.get_parent() != get_tree().current_scene:
@@ -215,6 +252,14 @@ func _try_auto_fire() -> void:
 
 	var nearest = GameManager.wave_manager.get_nearest_enemy(global_position)
 	if not nearest:
+		return
+
+	if current_weapon_node and current_weapon_node.has_method("attack"):
+		# Aim melee weapon towards enemy
+		var dir = (nearest.global_position - global_position).normalized()
+		current_weapon_node.rotation = dir.angle()
+		current_weapon_node.attack()
+		last_fire_time = Time.get_ticks_msec() / 1000.0
 		return
 
 	var proj = PoolManager.get_object("res://scenes/Projectile.tscn")
@@ -258,9 +303,8 @@ func take_damage(amount: int) -> void:
 	if GameManager.selected_character == "Vampire" and current_health < max_health * 0.30 and can_trigger_bat_escape:
 		trigger_bat_escape()
 
-	var dmg_scene = load("res://scenes/DamageNumber.tscn")
-	if dmg_scene:
-		var dmg_num = dmg_scene.instantiate()
+	if DAMAGE_NUMBER_SCENE:
+		var dmg_num = DAMAGE_NUMBER_SCENE.instantiate()
 		get_parent().add_child(dmg_num)
 		dmg_num.global_position = global_position
 		dmg_num.setup(amount, true)
@@ -273,14 +317,13 @@ func trigger_bat_escape() -> void:
 	move_speed = normal_speed * 1.6
 
 	var sprite = $Visuals/Sprite2D
-	var bat_texture = load("res://assets/sprites/vampire/bat.png")
 
 	# Spawn dark mist/particles
 	_spawn_puff_particles(global_position, Color(0.18, 0.05, 0.28, 0.8))
 
 	if sprite:
 		human_texture = sprite.texture
-		sprite.texture = bat_texture
+		sprite.texture = BAT_TEXTURE
 		sprite.self_modulate = Color(0.65, 0.25, 0.85, 0.85)
 
 		# Squash animation transition
@@ -336,6 +379,14 @@ func upgrade_damage(amount: int) -> void:
 	damage += amount
 	print("Player damage upgraded to: ", damage)
 
+func apply_speed_boost(multiplier: float, duration: float) -> void:
+	speed_boost_multiplier = multiplier
+	modulate = Color(1.2, 1.2, 0.8) # Slight yellow glow
+	get_tree().create_timer(duration).timeout.connect(func():
+		speed_boost_multiplier = 1.0
+		modulate = Color.WHITE
+	)
+
 func heal(amount: int) -> void:
 	current_health = min(current_health + amount, max_health)
 	_update_health_ui()
@@ -385,6 +436,31 @@ func use_ability() -> void:
 			_ability_frankenstein_fortitude()
 		"Vampire":
 			_ability_vampire_lifesteal()
+		"Serena":
+			_ability_serena_shadow_dash()
+
+func _ability_serena_shadow_dash() -> void:
+	# Serena's Shadow Dash is faster and leaves afterimages (simulated with puff)
+	is_dashing = true
+	ability_cooldown = 3.5 # Slightly faster cooldown than werewolf
+
+	var dash_dir = last_movement_direction
+	if velocity.length() > 0:
+		dash_dir = velocity.normalized()
+
+	velocity = dash_dir * move_speed * 4.0 # Faster dash
+
+	# Visuals
+	_spawn_puff_particles(global_position, Color(0.1, 0.05, 0.2, 0.8))
+	var tween = create_tween()
+	tween.tween_property(self, "modulate", Color(0.5, 0.2, 1.0, 0.6), 0.1)
+
+	get_tree().create_timer(dash_duration).timeout.connect(func():
+		is_dashing = false
+		velocity = Vector2.ZERO
+		var tween_back = create_tween()
+		tween_back.tween_property(self, "modulate", Color.WHITE, 0.1)
+	)
 
 func _ability_werewolf_dash() -> void:
 	is_dashing = true
@@ -464,6 +540,9 @@ func _panic_knockback(radius: float, force: float) -> void:
 			if enemy.has_method("apply_knockback"):
 				enemy.apply_knockback(global_position, force)
 
+var has_double_shot: bool = false
+var is_ghost_form: bool = false
+
 func apply_powerup(powerup: PowerUpData) -> void:
 	if not powerup:
 		return
@@ -502,7 +581,67 @@ func apply_powerup(powerup: PowerUpData) -> void:
 				is_shielded = false
 				modulate = Color.WHITE
 			)
+			
+		PowerUpData.PowerUpType.VAMPIRE_KISS:
+			# Temporary lifesteal: heal 25% of current health missing
+			var missing = max_health - current_health
+			heal(int(missing * 0.25))
+			_spawn_puff_particles(global_position, Color(0.6, 0, 0.2, 0.8))
+			modulate = Color(1.5, 0.5, 0.5)
+			get_tree().create_timer(powerup.duration).timeout.connect(func():
+				modulate = Color.WHITE
+			)
 
-func shake_camera(intensity: float, duration: float) -> void:
-	shake_intensity = max(shake_intensity, intensity)
-	shake_timer = duration
+		PowerUpData.PowerUpType.HOLY_NOVA:
+			_spawn_puff_particles(global_position, Color(1, 1, 0.5, 0.8))
+			_panic_knockback(300.0, 1200.0) # Larger radius and force
+			# Deal damage to all in radius
+			for enemy in get_tree().get_nodes_in_group("enemy"):
+				if enemy.global_position.distance_to(global_position) < 300.0:
+					if enemy.has_method("take_damage"):
+						enemy.take_damage(int(powerup.value))
+			AudioManager.play_sfx("holy_blast")
+
+		PowerUpData.PowerUpType.TIME_SLOW:
+			_spawn_puff_particles(global_position, Color(0.5, 0.5, 1.0, 0.6))
+			Engine.time_scale = 0.5 # Slow down the whole game engine
+			get_tree().create_timer(powerup.duration * 0.5).timeout.connect(func():
+				Engine.time_scale = 1.0
+			)
+
+		PowerUpData.PowerUpType.DOUBLE_SHOT:
+			has_double_shot = true
+			modulate = Color(1.0, 0.5, 1.0)
+			get_tree().create_timer(powerup.duration).timeout.connect(func():
+				has_double_shot = false
+				modulate = Color.WHITE
+			)
+
+		PowerUpData.PowerUpType.BLOOD_MOON_RAGE:
+			is_shielded = true
+			damage_boost_flat = 20
+			speed_boost_multiplier = 1.5
+			modulate = Color(2.0, 0.2, 0.2)
+			_spawn_puff_particles(global_position, Color(1, 0, 0, 0.8))
+			get_tree().create_timer(powerup.duration).timeout.connect(func():
+				is_shielded = false
+				damage_boost_flat = 0
+				speed_boost_multiplier = 1.0
+				modulate = Color.WHITE
+			)
+
+		PowerUpData.PowerUpType.GHOST_FORM:
+			is_ghost_form = true
+			is_shielded = true # Ghost can't be hit
+			modulate.a = 0.4
+			speed_boost_multiplier = 1.3
+			get_tree().create_timer(powerup.duration).timeout.connect(func():
+				is_ghost_form = false
+				is_shielded = false
+				modulate.a = 1.0
+				speed_boost_multiplier = 1.0
+			)
+
+func shake_camera(intensity: float, _duration: float) -> void:
+	if camera and camera.has_method("add_shake"):
+		camera.add_shake(intensity)

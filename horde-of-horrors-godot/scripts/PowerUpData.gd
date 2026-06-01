@@ -2,7 +2,18 @@
 extends Resource
 class_name PowerUpData
 
-enum PowerUpType { HEAL, SPEED_BOOST, DAMAGE_BOOST, SHIELD }
+enum PowerUpType { 
+	HEAL, 
+	SPEED_BOOST, 
+	DAMAGE_BOOST, 
+	SHIELD, 
+	VAMPIRE_KISS,
+	HOLY_NOVA, 
+	TIME_SLOW, 
+	DOUBLE_SHOT, 
+	BLOOD_MOON_RAGE, 
+	GHOST_FORM 
+}
 
 @export var name: String = "Power Up"
 @export var type: PowerUpType = PowerUpType.HEAL

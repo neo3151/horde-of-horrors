@@ -1,0 +1,42 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="grad1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#4E342E;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3E2723;stop-opacity:1" />
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="3" stitchTiles="stitch" />
+      <feColorMatrix type="saturate" values="0.1" />
+      <feBlend mode="multiply" in2="SourceGraphic" />
+    </filter>
+  </defs>
+  <rect width="512" height="512" fill="url(#grad1)" />
+  <rect width="512" height="512" fill="white" opacity="0.05" filter="url(#noise)" />
+  
+  <!-- Cobblestones Layer 1 -->
+  <g fill="#5D4037" stroke="#212121" stroke-width="2">
+    <path d="M20 20 Q60 10 100 30 L110 90 Q70 110 30 80 Z" opacity="0.8" />
+    <path d="M140 30 Q180 20 220 40 L230 100 Q190 120 150 90 Z" opacity="0.7" />
+    <path d="M260 25 Q300 15 340 35 L350 95 Q310 115 270 85 Z" opacity="0.85" />
+    <path d="M380 40 Q420 30 460 50 L470 110 Q430 130 390 100 Z" opacity="0.6" />
+  </g>
+  
+  <!-- Rubble and Debris -->
+  <g fill="#424242" opacity="0.4">
+    <circle cx="120" cy="150" r="4" />
+    <circle cx="280" cy="180" r="6" />
+    <rect x="400" y="200" width="12" height="4" transform="rotate(30 400 200)" />
+    <path d="M50 300 L70 290 L60 320 Z" />
+  </g>
+  
+  <!-- Cracks -->
+  <g stroke="#1A1A1A" stroke-width="1.5" fill="none" opacity="0.6">
+    <path d="M0 256 L80 280 L120 240 L200 270" />
+    <path d="M512 100 L450 120 L400 80 L350 110" />
+    <path d="M256 512 L280 432 L230 380 L300 320" />
+  </g>
+  
+  <!-- Blood stains (lore tie) -->
+  <circle cx="350" cy="350" r="30" fill="#4A0000" opacity="0.2" />
+  <circle cx="360" cy="360" r="15" fill="#310000" opacity="0.3" />
+</svg>

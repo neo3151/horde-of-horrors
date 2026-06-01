@@ -13,11 +13,85 @@ var score: int = 0
 var kills: int = 0
 var player_currency: int = 0  # New: currency for upgrades
 var is_game_over: bool = false
+var purchased_upgrades: Dictionary = { "damage": 0, "fire_rate": 0, "health": 0, "speed": 0, "pact": 0 }
 
 var player: Node2D
 var wave_manager: Node
 
 var selected_character: String = "Hunter"
+
+const WEAPONS = {
+	"crossbow": {
+		"id": "crossbow",
+		"name": "Silver Crossbow",
+		"scene": "", # Empty means use default crossbow logic in Player.gd for now
+		"description": "Standard issue hunter weapon. Rapid firing silver bolts.",
+		"cost": 0
+	},
+	"daggers": {
+		"id": "daggers",
+		"name": "Dual Daggers",
+		"scene": "res://scenes/DualDaggers.tscn",
+		"description": "Fast melee strikes that apply bleed on combo finishers.",
+		"cost": 0
+	},
+	"rifle": {
+		"id": "rifle",
+		"name": "Blessed Repeating Rifle",
+		"scene": "res://scenes/BlessedRepeatingRifle.tscn",
+		"description": "High damage 3-round burst rifle.",
+		"cost": 600
+	},
+	"stake_launcher": {
+		"id": "stake_launcher",
+		"name": "Stake Launcher",
+		"scene": "res://scenes/StakeLauncher.tscn",
+		"description": "Slow but powerful piercing stakes.",
+		"cost": 750
+	},
+	"holy_water": {
+		"id": "holy_water",
+		"name": "Holy Water Grenades",
+		"scene": "res://scenes/HolyWaterGrenade.tscn",
+		"description": "Thrown vials that create sanctified ground.",
+		"cost": 550
+	},
+	"garlic_bomb": {
+		"id": "garlic_bomb",
+		"name": "Garlic Bomb",
+		"scene": "res://scenes/GarlicBomb.tscn",
+		"description": "Slows and damages monsters in a smelly cloud.",
+		"cost": 500
+	},
+	"longbow": {
+		"id": "longbow",
+		"name": "Moonlight Longbow",
+		"scene": "res://scenes/MoonlightLongbow.tscn",
+		"description": "Long range with very high critical hit chance.",
+		"cost": 800
+	},
+	"greatsword": {
+		"id": "greatsword",
+		"name": "Silver Greatsword",
+		"scene": "res://scenes/SilverGreatsword.tscn",
+		"description": "Massive melee swings that knock back enemies.",
+		"cost": 900
+	},
+	"staff": {
+		"id": "staff",
+		"name": "Blood Crystal Staff",
+		"scene": "res://scenes/BloodCrystalStaff.tscn",
+		"description": "Fires homing blood orbs that steal life.",
+		"cost": 1000
+	},
+	"lightning_rod": {
+		"id": "lightning_rod",
+		"name": "Lightning Rod",
+		"scene": "res://scenes/LightningRod.tscn",
+		"description": "Chains electric damage between nearby enemies.",
+		"cost": 850
+	}
+}
 
 const CHARACTERS = {
 	"Hunter": {
@@ -28,7 +102,8 @@ const CHARACTERS = {
 		"damage": 12,
 		"fire_rate": 0.28,
 		"bio": "A veteran hunter wielding a repeating silver crossbow. Balanced stats and high rate of fire.",
-		"ability": "Rapid Crossbow Bolts"
+		"ability": "Rapid Crossbow Bolts",
+		"starting_weapon": "crossbow"
 	},
 	"Werewolf": {
 		"name": "Werewolf",
@@ -38,7 +113,8 @@ const CHARACTERS = {
 		"damage": 22,
 		"fire_rate": 0.45,
 		"bio": "A feral beast that broke free from the horde. Unmatched movement speed and devastating melee claws.",
-		"ability": "Feral Swiftness & Shredding Claws"
+		"ability": "Feral Swiftness & Shredding Claws",
+		"starting_weapon": "daggers"
 	},
 	"Vampire": {
 		"name": "Vampire",
@@ -48,7 +124,8 @@ const CHARACTERS = {
 		"damage": 16,
 		"fire_rate": 0.35,
 		"bio": "A dark noble who rebelled against the elders. Shoots seeking bats and manipulates shadow power.",
-		"ability": "Lifestealing Blood Orbs"
+		"ability": "Lifestealing Blood Orbs",
+		"starting_weapon": "staff"
 	},
 	"Frankenstein": {
 		"name": "Frankenstein",
@@ -58,7 +135,8 @@ const CHARACTERS = {
 		"damage": 26,
 		"fire_rate": 0.60,
 		"bio": "A towering construct built from stitched remnants. Immune to minor knockback, boasts titanic health.",
-		"ability": "Superhuman Fortitude"
+		"ability": "Superhuman Fortitude",
+		"starting_weapon": "greatsword"
 	},
 	"Elias": {
 		"name": "Elias",
@@ -68,7 +146,8 @@ const CHARACTERS = {
 		"damage": 30,
 		"fire_rate": 0.45,
 		"bio": "A master of runic arts who found the 'Book of Dead Whispers'. Fragile but deals massive burst damage.",
-		"ability": "Runic Burst"
+		"ability": "Runic Burst",
+		"starting_weapon": "crossbow"
 	},
 	"Serena": {
 		"name": "Serena",
@@ -78,7 +157,8 @@ const CHARACTERS = {
 		"damage": 14,
 		"fire_rate": 0.22,
 		"bio": "The swiftest huntress of the Silent Woods. Can dash through shadows and fire at lightning speeds.",
-		"ability": "Shadow Dash"
+		"ability": "Shadow Dash",
+		"starting_weapon": "daggers"
 	},
 	"Victor": {
 		"name": "Victor",
@@ -88,7 +168,8 @@ const CHARACTERS = {
 		"damage": 20,
 		"fire_rate": 0.40,
 		"bio": "A grizzled veteran who has survived a hundred full moons. High health and reliable stopping power.",
-		"ability": "Holy Stopping Power"
+		"ability": "Holy Stopping Power",
+		"starting_weapon": "rifle"
 	}
 }
 
@@ -108,6 +189,7 @@ func start_game() -> void:
 	kills = 0
 	player_currency = 0
 	is_game_over = false
+	purchased_upgrades = { "damage": 0, "fire_rate": 0, "health": 0, "speed": 0, "pact": 0 }
 	emit_signal("wave_changed", current_wave)
 	emit_signal("player_currency_changed", player_currency)
 	emit_signal("score_changed", score)
@@ -169,8 +251,8 @@ func purchase_character(char_name: String) -> bool:
 func _unhandled_input(event: InputEvent) -> void:
 	if OS.is_debug_build() or OS.has_feature("editor"):
 		if event is InputEventKey and event.pressed and not event.echo:
-			# Press N to skip current wave
-			if event.keycode == KEY_N:
+			# Press L to skip current wave
+			if event.keycode == KEY_L:
 				if wave_manager and wave_manager.wave_in_progress:
 					wave_manager.enemies_to_spawn = 0
 					for enemy in wave_manager.active_enemies:
@@ -178,16 +260,25 @@ func _unhandled_input(event: InputEvent) -> void:
 							enemy.queue_free()
 					wave_manager.active_enemies.clear()
 					print("Debug: Skipped Wave ", current_wave)
-			# Press M to jump forward 10 waves
-			elif event.keycode == KEY_M:
-				if wave_manager and wave_manager.wave_in_progress:
-					current_wave += 9
+			# Press K to jump forward 10 waves
+			elif event.keycode == KEY_K:
+				if wave_manager:
+					current_wave += 10
+					# Force UI update directly as signal might be delayed or blocked
+					if UIManager:
+						UIManager.update_wave(current_wave)
+					
+					emit_signal("wave_changed", current_wave)
+					
 					wave_manager.enemies_to_spawn = 0
 					for enemy in wave_manager.active_enemies:
 						if is_instance_valid(enemy):
 							enemy.queue_free()
 					wave_manager.active_enemies.clear()
-					print("Debug: Jumped forward 10 Waves")
+					
+					# Manually trigger environment check and wave start
+					wave_manager.start_wave(current_wave)
+					print("Debug: Jumped forward to Wave ", current_wave)
 
 func trigger_game_over() -> void:
 	is_game_over = true

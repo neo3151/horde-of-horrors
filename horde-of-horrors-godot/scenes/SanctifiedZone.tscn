@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/SanctifiedZone.gd" id="1_zone"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
+radius = 80.0
+
+[node name="SanctifiedZone" type="Area2D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_zone")
+damage_per_tick = 8
+tick_rate = 0.4
+duration = 6.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_1")
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+amount = 40
+lifetime = 1.5
+preprocess = 0.5
+speed_scale = 0.8
+draw_order = 1
+emission_shape = 1
+emission_sphere_radius = 70.0
+gravity = Vector2(0, -20)
+initial_velocity_min = 10.0
+initial_velocity_max = 20.0
+scale_amount_min = 2.0
+scale_amount_max = 5.0
+color = Color(0.4, 0.7, 1, 0.6)
+
+[node name="Decal" type="Polygon2D" parent="."]
+color = Color(0.3, 0.6, 1, 0.2)
+polygon = PackedVector2Array(-80, 0, -56, -56, 0, -80, 56, -56, 80, 0, 56, 56, 0, 80, -56, 56)

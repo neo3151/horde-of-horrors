@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/MoonlightLongbow.gd" id="1_bow"]
+[ext_resource type="Texture2D" path="res://assets/sprites/weapons/moonlight_bow.svg" id="2_svg"]
+
+[node name="MoonlightLongbow" type="Node2D"]
+script = ExtResource("1_bow")
+
+[node name="Visuals" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Visuals"]
+position = Vector2(10, 0)
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("2_svg")
+
+[node name="FirePoint" type="Node2D" parent="."]
+position = Vector2(25, 0)

@@ -1,0 +1,8 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <rect width="128" height="128" rx="64" fill="#1A1A1A" stroke="#E91E63" stroke-width="4" />
+  <!-- Blood Heart -->
+  <path d="M64 100 Q40 80 40 50 A15 15 0 0 1 70 50 L64 100 A15 15 0 0 1 88 50 Q88 80 64 100" fill="#AD1457" />
+  <!-- Fangs -->
+  <path d="M50 45 L55 60 L60 45" fill="white" />
+  <path d="M68 45 L73 60 L78 45" fill="white" />
+</svg>

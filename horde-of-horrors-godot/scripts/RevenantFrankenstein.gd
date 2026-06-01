@@ -1,6 +1,10 @@
 # RevenantFrankenstein.gd
 extends CharacterBody2D
 
+# Preloaded scenes/resources to prevent gameplay stutters
+const DAMAGE_NUMBER_SCENE = preload("res://scenes/DamageNumber.tscn")
+const IRON_SKIN_DATA = preload("res://resources/powerups/IronSkinData.tres")
+
 @export var max_health: int = 1200
 @export var speed: float = 120.0
 @export var damage: int = 35
@@ -113,9 +117,8 @@ func take_damage(amount: int) -> void:
 	tween.tween_property(self, "modulate", Color.WHITE, 0.1)
 	
 	# Spawn damage number
-	var dmg_scene = load("res://scenes/DamageNumber.tscn")
-	if dmg_scene:
-		var dmg_num = dmg_scene.instantiate()
+	if DAMAGE_NUMBER_SCENE:
+		var dmg_num = DAMAGE_NUMBER_SCENE.instantiate()
 		get_parent().add_child(dmg_num)
 		dmg_num.global_position = global_position
 		dmg_num.setup(amount, false)
@@ -130,9 +133,8 @@ func _die() -> void:
 	drop_node.global_position = global_position
 	
 	# Revenant drops Fortitude / Health upgrade
-	var health_res = load("res://resources/powerups/FortitudeData.tres")
-	if drop_node.has_method("setup") and health_res:
-		drop_node.setup(health_res)
+	if drop_node.has_method("setup") and IRON_SKIN_DATA:
+		drop_node.setup(IRON_SKIN_DATA)
 
 	GameManager.add_score(points)
 	GameManager.add_kill()

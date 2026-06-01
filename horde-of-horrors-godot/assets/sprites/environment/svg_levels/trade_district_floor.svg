@@ -1,0 +1,10 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <rect width="256" height="256" fill="#3E2723" />
+  <!-- Cobblestones -->
+  <path d="M10 10 Q30 5 50 15 L55 45 Q35 55 15 40 Z" fill="#4E342E" stroke="#212121" stroke-width="1" />
+  <path d="M70 20 Q90 15 110 25 L115 55 Q95 65 75 50 Z" fill="#5D4037" stroke="#212121" stroke-width="1" />
+  <path d="M130 10 Q160 5 190 20 L185 50 Q155 65 125 45 Z" fill="#4E342E" stroke="#212121" stroke-width="1" />
+  <path d="M20 70 Q50 65 80 80 L75 110 Q45 125 15 105 Z" fill="#5D4037" stroke="#212121" stroke-width="1" />
+  <!-- Cracks -->
+  <path d="M0 128 L50 140 L80 120 M200 0 L180 50 L220 80" stroke="#212121" fill="none" stroke-width="2" opacity="0.5" />
+</svg>

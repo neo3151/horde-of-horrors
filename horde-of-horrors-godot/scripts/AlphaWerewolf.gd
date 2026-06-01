@@ -1,6 +1,11 @@
 # AlphaWerewolf.gd
 extends CharacterBody2D
 
+# Preloaded scenes/resources to prevent gameplay stutters
+const DAMAGE_NUMBER_SCENE = preload("res://scenes/DamageNumber.tscn")
+const BLOOD_DECAL_SCENE = preload("res://scenes/BloodDecal.tscn")
+const FURY_DATA = preload("res://resources/powerups/FuryData.tres")
+
 @export var max_health: int = 450
 @export var speed: float = 210.0
 @export var damage: int = 25
@@ -79,9 +84,8 @@ func take_damage(amount: int) -> void:
 			break
 
 	# Spawn damage number
-	var dmg_scene = load("res://scenes/DamageNumber.tscn")
-	if dmg_scene:
-		var dmg_num = dmg_scene.instantiate()
+	if DAMAGE_NUMBER_SCENE:
+		var dmg_num = DAMAGE_NUMBER_SCENE.instantiate()
 		get_parent().add_child(dmg_num)
 		dmg_num.global_position = global_position
 		dmg_num.setup(amount, false)
@@ -116,9 +120,8 @@ func activate_shield() -> void:
 
 func _die() -> void:
 	# Spawn floor blood puddle decal
-	var decal_scene = load("res://scenes/BloodDecal.tscn")
-	if decal_scene:
-		var decal = decal_scene.instantiate()
+	if BLOOD_DECAL_SCENE:
+		var decal = BLOOD_DECAL_SCENE.instantiate()
 		get_parent().add_child(decal)
 		decal.global_position = global_position
 		
@@ -129,9 +132,8 @@ func _die() -> void:
 	drop_node.global_position = global_position
 	
 	# Choose Fury upgrade resource
-	var fury_res = load("res://resources/powerups/FuryData.tres")
-	if drop_node.has_method("setup") and fury_res:
-		drop_node.setup(fury_res)
+	if drop_node.has_method("setup") and FURY_DATA:
+		drop_node.setup(FURY_DATA)
 
 	GameManager.add_score(points)
 	GameManager.add_kill()

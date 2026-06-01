@@ -1,0 +1,8 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <rect width="256" height="256" fill="#2E7D32" />
+  <!-- Mossy Stones -->
+  <circle cx="64" cy="64" r="40" fill="#388E3C" stroke="#1B5E20" stroke-width="2" />
+  <circle cx="192" cy="192" r="50" fill="#388E3C" stroke="#1B5E20" stroke-width="2" />
+  <!-- Grave Dirt -->
+  <rect x="0" y="128" width="100" height="60" rx="10" fill="#3E2723" opacity="0.4" />
+</svg>

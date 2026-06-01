@@ -1,0 +1,11 @@
+<svg width="64" height="32" viewBox="0 0 64 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Main Rod -->
+  <path d="M5 14 L45 14 L45 18 L5 18 Z" fill="#607D8B" />
+  <!-- Prongs -->
+  <path d="M45 14 L55 6 L60 8" fill="none" stroke="#90A4AE" stroke-width="2" />
+  <path d="M45 18 L55 26 L60 24" fill="none" stroke="#90A4AE" stroke-width="2" />
+  <!-- Electric Core -->
+  <rect x="40" y="15" width="6" height="2" fill="#E1F5FE" />
+  <!-- Sparks -->
+  <path d="M58 10 L62 6 M58 22 L62 26" stroke="#4FC3F7" stroke-width="1" />
+</svg>

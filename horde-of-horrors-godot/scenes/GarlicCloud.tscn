@@ -1,0 +1,37 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/GarlicCloud.gd" id="1_cloud"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
+radius = 100.0
+
+[node name="GarlicCloud" type="Area2D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_cloud")
+damage_per_tick = 4
+slow_multiplier = 0.4
+duration = 5.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_1")
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+amount = 50
+lifetime = 2.0
+preprocess = 0.5
+speed_scale = 0.5
+draw_order = 1
+emission_shape = 1
+emission_sphere_radius = 80.0
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 20.0
+initial_velocity_max = 40.0
+scale_amount_min = 5.0
+scale_amount_max = 15.0
+color = Color(0.9, 1, 0.8, 0.4)
+
+[node name="Visuals" type="Polygon2D" parent="."]
+color = Color(0.9, 1, 0.7, 0.15)
+polygon = PackedVector2Array(-100, 0, -70, -70, 0, -100, 70, -70, 100, 0, 70, 70, 0, 100, -70, 70)

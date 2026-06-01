@@ -3,6 +3,10 @@
 [ext_resource type="Script" path="res://scripts/Player.gd" id="1"]
 [ext_resource type="Texture2D" path="res://assets/sprites/player/hunter.png" id="2"]
 
+[ext_resource type="Texture2D" path="res://assets/sprites/weapons/crossbow.svg" id="3_svg"]
+
+[ext_resource type="Script" path="res://scripts/AdvancedCameraController.gd" id="4_cam"]
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_1"]
 radius = 18.0
 
@@ -167,15 +171,11 @@ color = Color(1, 1, 1, 1)
 
 [node name="CrossbowPivot" type="Node2D" parent="."]
 
-[node name="Weapon" type="Polygon2D" parent="CrossbowPivot"]
-position = Vector2(10, 0)
-color = Color(0.290196, 0.215686, 0.156863, 1)
-polygon = PackedVector2Array(0, -3, 25, -3, 25, 3, 0, 3)
-
-[node name="BowString" type="Line2D" parent="CrossbowPivot/Weapon"]
-points = PackedVector2Array(15, -15, 5, 0, 15, 15)
-width = 2.0
-default_color = Color(0.8, 0.8, 0.8, 1)
+[node name="Weapon" type="Sprite2D" parent="CrossbowPivot"]
+position = Vector2(15, 0)
+rotation = 1.5708
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("3_svg")
 
 [node name="FirePoint" type="Node2D" parent="CrossbowPivot"]
 position = Vector2(35, 0)
@@ -197,6 +197,7 @@ color_ramp = SubResource("Gradient_1")
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(2.0, 2.0)
 position_smoothing_enabled = true
+script = ExtResource("4_cam")
 
 [node name="PlayerLight" type="PointLight2D" parent="."]
 color = Color(1, 0.95, 0.85, 1)

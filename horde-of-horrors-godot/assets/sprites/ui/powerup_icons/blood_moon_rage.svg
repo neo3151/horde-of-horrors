@@ -1,0 +1,13 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <rect width="128" height="128" rx="64" fill="#310000" stroke="#FF1744" stroke-width="4" />
+  <!-- Blood Moon -->
+  <circle cx="64" cy="64" r="45" fill="#B71C1C" />
+  <circle cx="80" cy="55" r="35" fill="#310000" />
+  <!-- Eye -->
+  <circle cx="50" cy="64" r="5" fill="#FF5252">
+    <animate attributeName="opacity" values="0.4;1;0.4" dur="2s" repeatCount="indefinite" />
+  </circle>
+  <!-- Blood drips -->
+  <path d="M40 85 Q45 110 50 85" fill="#D32F2F" />
+  <path d="M64 100 Q69 125 74 100" fill="#D32F2F" />
+</svg>

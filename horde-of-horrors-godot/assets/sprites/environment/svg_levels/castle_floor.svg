@@ -1,0 +1,9 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <rect width="256" height="256" fill="#121212" />
+  <!-- Eldritch Stones -->
+  <path d="M0 0 L128 20 L256 0 L256 256 L0 256 Z" fill="#1A1A1A" stroke="#000" stroke-width="2" />
+  <!-- Glowing runes -->
+  <path d="M50 50 L70 50 L70 70 M180 180 Q200 200 220 180" stroke="#EF5350" fill="none" stroke-width="2" opacity="0.4">
+    <animate attributeName="opacity" values="0.2;0.6;0.2" dur="4s" repeatCount="indefinite" />
+  </path>
+</svg>

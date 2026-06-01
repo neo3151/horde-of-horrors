@@ -4,7 +4,7 @@ res://scenes/DamageNumber.tscn::34ad61bbe35a5a0c16158f2c5ab9b576::1779892936::re
 res://scenes/EnemyFrankenstein.tscn::53dfb13b45acdef8c437735b1852a9ee::1780271395::res://.godot/exported/133200997/export-3ebbc84bc38c256b7da285915eccf8c1-EnemyFrankenstein.scn
 res://scenes/EnemyVampire.tscn::e67e9e8810bf18404a76eff81fb9cdc3::1780271395::res://.godot/exported/133200997/export-97f78c412437bc2030f9156d1476516a-EnemyVampire.scn
 res://scenes/EnemyWerewolf.tscn::17a3c0159fb160cfe860eaa70fa19f1e::1780271395::res://.godot/exported/133200997/export-f2ba95be6b94cb6bffb7b64fad13364b-EnemyWerewolf.scn
-res://scenes/MainMenu.tscn::17d804d96686d875296bb3bde26ed3d3::1780271265::res://.godot/exported/133200997/export-23c8b2a48d59a0cd018bd8ad5ce7794c-MainMenu.scn
+res://scenes/MainMenu.tscn::17d804d96686d875296bb3bde26ed3d3::1780278400::res://.godot/exported/133200997/export-23c8b2a48d59a0cd018bd8ad5ce7794c-MainMenu.scn
 res://scenes/Projectile.tscn::9e26720877a0e97bdf67238b350accb6::1780269571::res://.godot/exported/133200997/export-a7aac28efb4a523f73f1a023aa5edacd-Projectile.scn
 res://scenes/EnemyGhost.tscn::dac40d3b5a9c1d39a2825b61ef126b86::1780271395::res://.godot/exported/133200997/export-1752af9139b690209750f283fd9fd522-EnemyGhost.scn
 res://scenes/EnemyMinimapIndicator.tscn::1ba8c2805801cddcfe977261283f06c8::1780271395::res://.godot/exported/133200997/export-410b7704f8a4bd11a98b629c4d089f0d-EnemyMinimapIndicator.scn
@@ -28,14 +28,14 @@ res://scenes/EnemyWraith.tscn::35de295ba97f5440dc5f84da147b5bad::1780271395::res
 res://scenes/Joystick.tscn::cef8c071542c4974fbd897b1d6937c58::1779969024::res://.godot/exported/133200997/export-ca96af0f9a57df7f6622b46629643c71-Joystick.scn
 res://scenes/JoystickLayer.tscn::e1ecb3c707577cc57478d87a9b0254ba::1779969019::res://.godot/exported/133200997/export-5bc88e8df606c0f280aa6d538c64e549-JoystickLayer.scn
 res://scenes/LichHighPriest.tscn::3c5234100a4a59a3ebfa94b5828e2f1e::1780269571::res://.godot/exported/133200997/export-e504fcf565224cf7095dd4c2eba16a70-LichHighPriest.scn
-res://scenes/MainGame.tscn::f5d2a415a31b5037eea979c86abfbf29::1780269571::res://.godot/exported/133200997/export-dbfc6818b022d976e0e33ac4dabecd4c-MainGame.scn
+res://scenes/MainGame.tscn::6b528414bd8075fefa304bc939797868::1780285735::res://.godot/exported/133200997/export-dbfc6818b022d976e0e33ac4dabecd4c-MainGame.scn
 res://scenes/PowerUpDrop.tscn::1d4753ae73a305dfa2c78a43762b0032::1780269571::res://.godot/exported/133200997/export-4e6fba079127e94105aad8218941ff3f-PowerUpDrop.scn
-res://scenes/UIManager.tscn::969ac580e560af9f2b8fd32a47b8ff17::1780267221::res://.godot/exported/133200997/export-89b967fd7cc1435dff98dbf298dc6dc9-UIManager.scn
+res://scenes/UIManager.tscn::174c12dcfc542a34e7bcf3f6cce5723f::1780277794::res://.godot/exported/133200997/export-89b967fd7cc1435dff98dbf298dc6dc9-UIManager.scn
 res://scenes/UpgradeShop.tscn::5299119ce698070325b626dafc261282::1780183715::res://.godot/exported/133200997/export-25e86c4be93d9542ed6362bfee08caa0-UpgradeShop.scn
 res://scenes/Victor.tscn::3b7e1ce98f0ca9aa3cc16eb841d69281::1779937174::res://.godot/exported/133200997/export-896d8c470f8ea17832a002bf0342ff30-Victor.scn
 res://scenes/RevenantFrankenstein.tscn::4fa596c6c2ce301870162511b997a1f7::1780193820::res://.godot/exported/133200997/export-794683773abb59c0d896bd065705b640-RevenantFrankenstein.scn
 res://scenes/VampireMatriarch.tscn::64c65ad055b4f9fe3253dbc7fb232afc::1780193813::res://.godot/exported/133200997/export-f6f1c970420fb90c83461a3e0d62000b-VampireMatriarch.scn
-res://scenes/PauseMenu.tscn::d7d70423a2ab7164cd702212edbaf95e::1780266687::res://.godot/exported/133200997/export-322493d365676aa8c0336579f6935b26-PauseMenu.scn
+res://scenes/PauseMenu.tscn::db6bb0ec51f262b5c60a948511a52961::1780278998::res://.godot/exported/133200997/export-322493d365676aa8c0336579f6935b26-PauseMenu.scn
 res://scenes/EnemyAbyssalHorror.tscn::0573472276d61a601e989c95550a4447::1780271395::res://.godot/exported/133200997/export-0c73ae54a73432eb6b64623e55ab3c68-EnemyAbyssalHorror.scn
 res://scenes/EnemyBloodMoonCultist.tscn::cae42c021e5f5033c43726fef8f7fc00::1780271395::res://.godot/exported/133200997/export-453af1d9f76eeb1f2e22c51fbb51059f-EnemyBloodMoonCultist.scn
 res://scenes/EnemyBoneArcher.tscn::a1d056e81f50fa5aad573f7d2cb77442::1780271395::res://.godot/exported/133200997/export-349816ab3aa5b80171d9f2b986e681d7-EnemyBoneArcher.scn
@@ -46,3 +46,5 @@ res://scenes/EnemyLich.tscn::b17bb7c9298309d11d998811204cdc40::1780271395::res:/
 res://scenes/EnemyLichPriest.tscn::0a5d84134b0f4850bf583fdd42cadc1c::1780271395::res://.godot/exported/133200997/export-8a3875103c349e63fe314112f0c498a3-EnemyLichPriest.scn
 res://scenes/EnemyNightmareStalker.tscn::4923db17532521e9c1fab12752807708::1780271395::res://.godot/exported/133200997/export-2aaa15fc40de08b0e12f7be2769b8604-EnemyNightmareStalker.scn
 res://scenes/EnemyTheFirstOne.tscn::c85673bbb94132b269fe157f417fc86a::1780271395::res://.godot/exported/133200997/export-bd9f44c3f3e71ebb12be585a2d545a47-EnemyTheFirstOne.scn
+res://scenes/EnemyButcherBoy.tscn::0df8e9bdd8e25af6e49069655cd8aca6::1780285722::res://.godot/exported/133200997/export-bd2b03a740a8010592f7874e49ae17e5-EnemyButcherBoy.scn
+res://scenes/EnemyStitcher.tscn::c6c0cd7429ea2bd08428259ff14c9d55::1780285716::res://.godot/exported/133200997/export-5396b402d118a11c4b443eae2cb691e6-EnemyStitcher.scn

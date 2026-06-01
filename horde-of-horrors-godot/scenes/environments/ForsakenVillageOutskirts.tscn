@@ -1,0 +1,55 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/environments/forsaken_village.png" id="1_floor"]
+[ext_resource type="Texture2D" path="res://assets/sprites/environment/svg_levels/prop_dark_tree.svg" id="2_svg_tree"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
+size = Vector2(40, 200)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2"]
+size = Vector2(200, 40)
+
+[node name="ForsakenVillageOutskirts" type="Node2D"]
+y_sort_enabled = true
+
+[node name="Floor" type="Sprite2D" parent="."]
+z_index = -5
+scale = Vector2(2, 2)
+texture = ExtResource("1_floor")
+
+[node name="Obstacles" type="Node2D" parent="."]
+
+[node name="Wall1" type="StaticBody2D" parent="Obstacles"]
+position = Vector2(-200, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Wall1"]
+shape = SubResource("RectangleShape2D_1")
+
+[node name="Wall2" type="StaticBody2D" parent="Obstacles"]
+position = Vector2(200, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Wall2"]
+shape = SubResource("RectangleShape2D_1")
+
+[node name="Wall3" type="StaticBody2D" parent="Obstacles"]
+position = Vector2(0, -150)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Wall3"]
+shape = SubResource("RectangleShape2D_2")
+
+[node name="Wall4" type="StaticBody2D" parent="Obstacles"]
+position = Vector2(0, 150)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Wall4"]
+shape = SubResource("RectangleShape2D_2")
+
+[node name="Props" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Prop_Tree_0" type="Sprite2D" parent="Props"]
+position = Vector2(396, -20)
+texture = ExtResource("2_svg_tree")
+
+[node name="Prop_Tree_1" type="Sprite2D" parent="Props"]
+position = Vector2(-350, 100)
+texture = ExtResource("2_svg_tree")

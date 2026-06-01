@@ -27,6 +27,8 @@
 [ext_resource type="PackedScene" uid="uid://enemy_abyssal_horror" path="res://scenes/EnemyAbyssalHorror.tscn" id="107"]
 [ext_resource type="PackedScene" uid="uid://enemy_flesh_weaver" path="res://scenes/EnemyFleshWeaver.tscn" id="108"]
 [ext_resource type="PackedScene" uid="uid://enemy_the_first_one" path="res://scenes/EnemyTheFirstOne.tscn" id="109"]
+[ext_resource type="PackedScene" uid="uid://enemy_the_stitcher" path="res://scenes/EnemyStitcher.tscn" id="110"]
+[ext_resource type="PackedScene" uid="uid://enemy_the_butcher_boy" path="res://scenes/EnemyButcherBoy.tscn" id="111"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
 size = Vector2(40, 200)
@@ -285,7 +287,7 @@ color_ramp = SubResource("Gradient_Ambient")
 [node name="WaveManager" type="Node2D" parent="."]
 y_sort_enabled = true
 script = ExtResource("2")
-enemy_scenes = [ExtResource("3"), ExtResource("5"), ExtResource("6"), ExtResource("9"), ExtResource("10"), ExtResource("12"), ExtResource("13"), ExtResource("14"), ExtResource("101"), ExtResource("102"), ExtResource("103"), ExtResource("104"), ExtResource("105"), ExtResource("106"), ExtResource("107"), ExtResource("108"), ExtResource("109")]
+enemy_scenes = [ExtResource("3"), ExtResource("5"), ExtResource("6"), ExtResource("9"), ExtResource("10"), ExtResource("12"), ExtResource("13"), ExtResource("14"), ExtResource("101"), ExtResource("102"), ExtResource("103"), ExtResource("104"), ExtResource("105"), ExtResource("106"), ExtResource("107"), ExtResource("108"), ExtResource("109"), ExtResource("110"), ExtResource("111")]
 spawn_rate = 1.1
 base_enemies_per_wave = 5
 

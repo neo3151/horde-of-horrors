@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/LightningRod.gd" id="1_rod"]
+[ext_resource type="Texture2D" path="res://assets/sprites/weapons/lightning_rod.svg" id="2_svg"]
+
+[node name="LightningRod" type="Node2D"]
+script = ExtResource("1_rod")
+
+[node name="Visuals" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Visuals"]
+position = Vector2(10, 0)
+texture = ExtResource("2_svg")
+
+[node name="FirePoint" type="Node2D" parent="."]
+position = Vector2(35, 0)

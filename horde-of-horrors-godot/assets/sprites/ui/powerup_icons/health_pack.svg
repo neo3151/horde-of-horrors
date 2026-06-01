@@ -1,0 +1,8 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <rect width="128" height="128" rx="64" fill="#1A1A1A" stroke="#4CAF50" stroke-width="4" />
+  <!-- Medical Cross -->
+  <rect x="52" y="30" width="24" height="68" rx="4" fill="#66BB6A" />
+  <rect x="30" y="52" width="68" height="24" rx="4" fill="#66BB6A" />
+  <!-- Heart overlap -->
+  <path d="M64 85 Q50 75 50 65 A8 8 0 0 1 78 65 Q78 75 64 85" fill="#43A047" opacity="0.6" />
+</svg>

@@ -1,0 +1,12 @@
+<svg width="64" height="32" viewBox="0 0 64 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Staff Wood -->
+  <path d="M2 14 L50 14 L50 18 L2 18 Z" fill="#212121" />
+  <!-- Crystal Housing -->
+  <path d="M45 10 L55 6 L62 16 L55 26 L45 22 Z" fill="#424242" />
+  <!-- Blood Crystal -->
+  <path d="M52 10 L58 10 L60 16 L58 22 L52 22 Z" fill="#D32F2F">
+    <animate attributeName="fill" values="#D32F2F;#FF5252;#D32F2F" dur="3s" repeatCount="indefinite" />
+  </path>
+  <!-- Glow -->
+  <circle cx="56" cy="16" r="6" fill="#FF1744" fill-opacity="0.2" />
+</svg>

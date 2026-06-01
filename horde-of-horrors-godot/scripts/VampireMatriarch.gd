@@ -1,6 +1,11 @@
 # VampireMatriarch.gd
 extends CharacterBody2D
 
+# Preloaded scenes/resources to prevent gameplay stutters
+const DAMAGE_NUMBER_SCENE = preload("res://scenes/DamageNumber.tscn")
+const BLOOD_DECAL_SCENE = preload("res://scenes/BloodDecal.tscn")
+const VAMP_KISS_DATA = preload("res://resources/powerups/VampiresKissData.tres")
+
 @export var max_health: int = 580
 @export var speed: float = 190.0
 @export var damage: int = 22
@@ -102,9 +107,8 @@ func take_damage(amount: int) -> void:
 	tween.tween_property(self, "modulate", Color.WHITE, 0.1)
 	
 	# Spawn damage number
-	var dmg_scene = load("res://scenes/DamageNumber.tscn")
-	if dmg_scene:
-		var dmg_num = dmg_scene.instantiate()
+	if DAMAGE_NUMBER_SCENE:
+		var dmg_num = DAMAGE_NUMBER_SCENE.instantiate()
 		get_parent().add_child(dmg_num)
 		dmg_num.global_position = global_position
 		dmg_num.setup(amount, false)
@@ -113,9 +117,8 @@ func take_damage(amount: int) -> void:
 		_die()
 
 func _die() -> void:
-	var decal_scene = load("res://scenes/BloodDecal.tscn")
-	if decal_scene:
-		var decal = decal_scene.instantiate()
+	if BLOOD_DECAL_SCENE:
+		var decal = BLOOD_DECAL_SCENE.instantiate()
 		get_parent().add_child(decal)
 		decal.global_position = global_position
 		
@@ -125,9 +128,8 @@ func _die() -> void:
 	drop_node.global_position = global_position
 	
 	# Matriarch drops Lifesteal upgrade or Blood Bag
-	var lifesteal_res = load("res://resources/powerups/LifestealData.tres")
-	if drop_node.has_method("setup") and lifesteal_res:
-		drop_node.setup(lifesteal_res)
+	if drop_node.has_method("setup") and VAMP_KISS_DATA:
+		drop_node.setup(VAMP_KISS_DATA)
 
 	GameManager.add_score(points)
 	GameManager.add_kill()

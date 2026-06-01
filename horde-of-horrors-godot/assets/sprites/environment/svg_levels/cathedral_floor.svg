@@ -1,0 +1,11 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <rect width="256" height="256" fill="#455A64" />
+  <!-- Ornate Tiles -->
+  <path d="M0 0 L128 0 L128 128 L0 128 Z" fill="#546E7A" stroke="#263238" stroke-width="2" />
+  <path d="M128 0 L256 0 L256 128 L128 128 Z" fill="#455A64" stroke="#263238" stroke-width="2" />
+  <path d="M0 128 L128 128 L128 256 L0 256 Z" fill="#455A64" stroke="#263238" stroke-width="2" />
+  <path d="M128 128 L256 128 L256 256 L128 256 Z" fill="#546E7A" stroke="#263238" stroke-width="2" />
+  <!-- Mosaic detail -->
+  <circle cx="64" cy="64" r="20" fill="none" stroke="#90A4AE" stroke-width="1" opacity="0.4" />
+  <circle cx="192" cy="192" r="20" fill="none" stroke="#90A4AE" stroke-width="1" opacity="0.4" />
+</svg>

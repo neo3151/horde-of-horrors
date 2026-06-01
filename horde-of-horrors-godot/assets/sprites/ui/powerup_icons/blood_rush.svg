@@ -1,0 +1,6 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <rect width="128" height="128" rx="64" fill="#1A1A1A" stroke="#FF5252" stroke-width="4" />
+  <!-- Winged Boot / Speed -->
+  <path d="M40 80 L90 50 L70 50 L90 30 L40 60 L60 60 Z" fill="#FF5252" />
+  <path d="M30 75 Q45 85 60 75" fill="none" stroke="#FF8A80" stroke-width="3" />
+</svg>

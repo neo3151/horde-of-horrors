@@ -1,0 +1,7 @@
+<svg width="64" height="128" viewBox="0 0 64 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Gnarly Tree -->
+  <path d="M32 128 Q20 100 32 60 Q40 40 32 10" fill="none" stroke="#212121" stroke-width="8" stroke-linecap="round" />
+  <path d="M32 80 Q10 70 5 50" fill="none" stroke="#212121" stroke-width="4" stroke-linecap="round" />
+  <path d="M32 70 Q54 60 59 40" fill="none" stroke="#212121" stroke-width="4" stroke-linecap="round" />
+  <circle cx="32" cy="30" r="2" fill="red" opacity="0.3" /> <!-- Crimson fruit? -->
+</svg>

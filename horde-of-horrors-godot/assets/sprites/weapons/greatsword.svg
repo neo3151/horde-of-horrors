@@ -1,0 +1,12 @@
+<svg width="64" height="32" viewBox="0 0 64 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Blade -->
+  <path d="M15 12 L55 8 L62 16 L55 24 L15 20 Z" fill="#E0E0E0" stroke="#BDBDBD" stroke-width="1" />
+  <!-- Blade detail (blood groove) -->
+  <path d="M18 16 L52 16" stroke="#9E9E9E" stroke-width="1" />
+  <!-- Guard -->
+  <rect x="12" y="4" width="4" height="24" fill="#FBC02D" />
+  <!-- Handle -->
+  <rect x="2" y="13" width="10" height="6" fill="#3E2723" />
+  <!-- Pommel -->
+  <circle cx="2" cy="16" r="3" fill="#FBC02D" />
+</svg>

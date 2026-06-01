@@ -1,0 +1,39 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/BlessedRepeatingRifle.gd" id="1_rifle"]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/weapons/rifle.svg" id="2_svg"]
+
+[sub_resource type="Gradient" id="Gradient_1"]
+offsets = PackedFloat32Array(0, 0.7)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 0)
+
+[node name="BlessedRepeatingRifle" type="Node2D"]
+script = ExtResource("1_rifle")
+damage = 22
+fire_rate = 0.5
+burst_count = 3
+burst_delay = 0.08
+
+[node name="Visuals" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Visuals"]
+position = Vector2(10, 0)
+texture = ExtResource("2_svg")
+
+[node name="FirePoint" type="Node2D" parent="."]
+position = Vector2(40, 0)
+
+[node name="MuzzleFlash" type="CPUParticles2D" parent="FirePoint"]
+emitting = false
+one_shot = true
+explosiveness = 1.0
+lifetime = 0.2
+speed_scale = 1.5
+direction = Vector2(1, 0)
+spread = 25.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 60.0
+initial_velocity_max = 120.0
+color = Color(1, 0.9, 0.5, 1)
+color_ramp = SubResource("Gradient_1")

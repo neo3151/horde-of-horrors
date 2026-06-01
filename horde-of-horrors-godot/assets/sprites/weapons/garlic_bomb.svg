@@ -1,0 +1,9 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Garlic Bulb -->
+  <path d="M16 4 Q24 4 26 12 Q28 20 22 26 Q16 28 10 26 Q4 20 6 12 Q8 4 16 4" fill="#F5F5F5" stroke="#EEEEEE" stroke-width="1" />
+  <!-- Cloves detail -->
+  <path d="M16 4 L16 28" stroke="#E0E0E0" stroke-width="1" />
+  <path d="M8 10 Q16 12 24 10" stroke="#E0E0E0" stroke-width="0.5" fill="none" />
+  <!-- Stem -->
+  <path d="M15 4 L17 4 L17 1 L15 1 Z" fill="#9E9D24" />
+</svg>

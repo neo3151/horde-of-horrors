@@ -1,0 +1,7 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <rect width="128" height="128" rx="64" fill="#1A1A1A" stroke="#78909C" stroke-width="4" />
+  <!-- Knight Shield -->
+  <path d="M40 30 L88 30 L88 60 Q88 90 64 110 Q40 90 40 60 Z" fill="#CFD8DC" stroke="#455A64" stroke-width="2" />
+  <path d="M64 30 L64 110" stroke="#455A64" stroke-width="1" />
+  <rect x="50" y="45" width="28" height="4" fill="#455A64" />
+</svg>

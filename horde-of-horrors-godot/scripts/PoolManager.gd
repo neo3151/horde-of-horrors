@@ -12,6 +12,8 @@ const PRE_SPAWN_COUNTS = {
 	"res://scenes/EnemyVampire.tscn": 12,
 	"res://scenes/EnemyGhost.tscn": 10,
 	"res://scenes/EnemyFrankenstein.tscn": 5,
+	"res://scenes/EnemyStitcher.tscn": 5,
+	"res://scenes/EnemyButcherBoy.tscn": 3,
 }
 
 func _ready() -> void:

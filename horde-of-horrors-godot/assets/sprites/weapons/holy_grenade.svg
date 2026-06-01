@@ -1,0 +1,12 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Glass Vial -->
+  <path d="M10 8 Q16 4 22 8 L22 24 Q16 28 10 24 Z" fill="#B3E5FC" fill-opacity="0.6" stroke="#81D4FA" stroke-width="1" />
+  <!-- Liquid (Holy Water) -->
+  <path d="M11 14 Q16 12 21 14 L21 23 Q16 26 11 23 Z" fill="#03A9F4" fill-opacity="0.8" />
+  <!-- Glow -->
+  <circle cx="16" cy="18" r="4" fill="white" fill-opacity="0.3">
+    <animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite" />
+  </circle>
+  <!-- Cap -->
+  <rect x="13" y="6" width="6" height="3" fill="#5D4037" />
+</svg>

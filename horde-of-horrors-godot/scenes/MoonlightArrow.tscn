@@ -1,0 +1,51 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/MoonlightArrow.gd" id="1_arrow"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1"]
+radius = 3.0
+height = 24.0
+
+[sub_resource type="Gradient" id="Gradient_1"]
+colors = PackedColorArray(0.5, 0.8, 1, 1, 0.5, 0.8, 1, 0)
+
+[node name="MoonlightArrow" type="Area2D"]
+collision_layer = 8
+collision_mask = 2
+script = ExtResource("1_arrow")
+speed = 1400.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_1")
+
+[node name="Visuals" type="Node2D" parent="."]
+
+[node name="Shaft" type="Polygon2D" parent="Visuals"]
+color = Color(0.7, 0.9, 1, 1)
+polygon = PackedVector2Array(-12, -1, 8, -1, 8, 1, -12, 1)
+
+[node name="Tip" type="Polygon2D" parent="Visuals"]
+color = Color(1, 1, 1, 1)
+polygon = PackedVector2Array(8, -3, 14, 0, 8, 3)
+
+[node name="Fletching" type="Polygon2D" parent="Visuals"]
+position = Vector2(-10, 0)
+color = Color(0.4, 0.6, 1, 1)
+polygon = PackedVector2Array(-4, -4, 2, 0, -4, 4)
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+amount = 15
+lifetime = 0.4
+speed_scale = 1.5
+direction = Vector2(-1, 0)
+spread = 10.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 30.0
+initial_velocity_max = 60.0
+scale_amount_min = 1.5
+scale_amount_max = 3.0
+color = Color(0.6, 0.9, 1, 0.8)
+color_ramp = SubResource("Gradient_1")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

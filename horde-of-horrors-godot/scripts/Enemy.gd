@@ -1,6 +1,30 @@
 extends CharacterBody2D
 
-enum EnemyType { WEREWOLF, VAMPIRE, FRANKENSTEIN, GHOST, LICH, WRAITH, PLAGUE_DOCTOR, BLOOD_GOLEM, CRIMSON_HARPY, LICH_PRIEST, BONE_ARCHER, GRAVEYARD_BRUTE, NIGHTMARE_STALKER, BLOOD_MOON_CULTIST, ABYSSAL_HORROR, FLESH_WEAVER, THE_FIRST_ONE }
+enum EnemyType { WEREWOLF, VAMPIRE, FRANKENSTEIN, GHOST, LICH, WRAITH, PLAGUE_DOCTOR, BLOOD_GOLEM, CRIMSON_HARPY, LICH_PRIEST, BONE_ARCHER, GRAVEYARD_BRUTE, NIGHTMARE_STALKER, BLOOD_MOON_CULTIST, ABYSSAL_HORROR, FLESH_WEAVER, THE_FIRST_ONE, THE_STITCHER, THE_BUTCHER_BOY }
+
+# Preloaded scenes and resources to prevent disk read stutters during gameplay
+const BLOOD_SPLATTER_SCENE = preload("res://scenes/BloodSplatter.tscn")
+const DAMAGE_NUMBER_SCENE = preload("res://scenes/DamageNumber.tscn")
+const BLOOD_DECAL_SCENE = preload("res://scenes/BloodDecal.tscn")
+const BAT_TEXTURE = preload("res://assets/sprites/vampire/bat.png")
+
+const VAMPIRES_KISS_DATA = preload("res://resources/powerups/VampiresKissData.tres")
+const BLOOD_RUSH_DATA = preload("res://resources/powerups/BloodRushData.tres")
+const IRON_SKIN_DATA = preload("res://resources/powerups/IronSkinData.tres")
+const FURY_DATA = preload("res://resources/powerups/FuryData.tres")
+const HOLY_NOVA_DATA = preload("res://resources/powerups/HolyNovaData.tres")
+const TIME_SLOW_DATA = preload("res://resources/powerups/TimeSlowData.tres")
+const DOUBLE_SHOT_DATA = preload("res://resources/powerups/DoubleShotData.tres")
+const BLOOD_MOON_RAGE_DATA = preload("res://resources/powerups/BloodMoonRageData.tres")
+const GHOST_FORM_DATA = preload("res://resources/powerups/GhostFormData.tres")
+
+# Throttling and caching variables for physics process optimization
+var path_update_timer: float = 0.0
+var path_update_interval: float = 0.25 # Update path finding 4 times a second
+
+var cached_separation: Vector2 = Vector2.ZERO
+var separation_update_frames: int = 6 # Update separation vector 10 times a second
+var separation_frame_counter: int = 0
 
 @export var type: EnemyType = EnemyType.WEREWOLF
 @export var speed: float = 180.0
@@ -21,6 +45,8 @@ var charge_cooldown: float = 3.0 # Cooldown for charge attack (Frankenstein)
 var last_charge_time: float = 0.0
 var is_charging: bool = false
 var charge_speed_multiplier: float = 2.5 # Speed multiplier during charge
+
+var status_effects: Dictionary = {} # { "bleed": { "damage": 2, "time": 3.0, "timer": 0.0 } }
 
 var knockback_velocity: Vector2 = Vector2.ZERO
 var knockback_decay: float = 12.0
@@ -60,10 +86,22 @@ func _ready() -> void:
             speed = 90.0
         EnemyType.THE_FIRST_ONE:
             speed = 160.0
+        EnemyType.THE_STITCHER:
+            speed = 260.0
+            max_health = 35
+            damage = 12
+        EnemyType.THE_BUTCHER_BOY:
+            speed = 95.0
+            max_health = 60
+            damage = 15
     current_health = max_health
     player = GameManager.player
     _configure_visuals()
     _create_health_bar()
+
+    # Stagger pathfinding and separation update frames across enemies
+    path_update_timer = randf_range(0.0, path_update_interval)
+    separation_frame_counter = randi() % separation_update_frames
 
     # Initialize dynamic NavigationAgent2D for obstacle avoidance pathfinding
     nav_agent = NavigationAgent2D.new()
@@ -166,31 +204,40 @@ func _physics_process(delta: float) -> void:
             _exit_bat_form()
         return
 
+    # Throttled Pathfinding target updates (4 times a second instead of 60)
+    path_update_timer += delta
+    if path_update_timer >= path_update_interval:
+        path_update_timer = 0.0
+        if is_instance_valid(nav_agent):
+            nav_agent.target_position = player.global_position
+
     var dir = (player.global_position - global_position).normalized()
 
     # Use NavigationAgent2D pathfinding if available to bypass walls/obstacles
     if is_instance_valid(nav_agent):
-        nav_agent.target_position = player.global_position
         var next_pos = nav_agent.get_next_path_position()
         if next_pos != global_position:
             dir = (next_pos - global_position).normalized()
 
-    # Apply separation force from other enemies
-    var separation = _get_separation_vector()
+    # Throttled separation update (every 6 frames instead of every frame)
+    separation_frame_counter += 1
+    if separation_frame_counter >= separation_update_frames:
+        separation_frame_counter = 0
+        cached_separation = _get_separation_vector()
 
     if not is_charging:
-        velocity = (dir * speed) + (separation * separation_force * delta)
+        velocity = (dir * speed) + (cached_separation * separation_force * delta)
         # Flip visuals to face movement direction
         var visuals = $Visuals
         if visuals and dir.x != 0:
             visuals.scale.x = 1.0 if dir.x >= 0 else -1.0
         move_and_slide()
 
-    if type == EnemyType.VAMPIRE and player and not is_bat_form:
+    if (type == EnemyType.VAMPIRE or type == EnemyType.THE_STITCHER) and player and not is_bat_form:
         if Time.get_ticks_msec() / 1000.0 - last_ranged_attack_time >= ranged_attack_cooldown:
             _perform_ranged_attack()
             last_ranged_attack_time = Time.get_ticks_msec() / 1000.0
-    elif type == EnemyType.FRANKENSTEIN and player and not is_charging:
+    elif (type == EnemyType.FRANKENSTEIN or type == EnemyType.THE_BUTCHER_BOY) and player and not is_charging:
         if Time.get_ticks_msec() / 1000.0 - last_charge_time >= charge_cooldown:
             _perform_charge_attack(dir)
             last_charge_time = Time.get_ticks_msec() / 1000.0
@@ -198,6 +245,31 @@ func _physics_process(delta: float) -> void:
         move_and_slide()
 
     _update_animation()
+    _process_status_effects(delta)
+
+func _process_status_effects(delta: float) -> void:
+    var to_remove = []
+    for effect_name in status_effects:
+        var effect = status_effects[effect_name]
+        effect.timer += delta
+        
+        if effect_name == "bleed":
+            # Apply damage once per second
+            if int(effect.timer) > int(effect.timer - delta):
+                take_damage(effect.damage)
+        
+        if effect.timer >= effect.time:
+            to_remove.append(effect_name)
+            
+    for effect_name in to_remove:
+        status_effects.erase(effect_name)
+
+func apply_status_effect(effect_name: String, amount: int, duration: float) -> void:
+    status_effects[effect_name] = {
+        "damage": amount,
+        "time": duration,
+        "timer": 0.0
+    }
 
 func _update_animation() -> void:
     if not animation_player:
@@ -239,10 +311,9 @@ func take_damage(amount: int) -> void:
     if player:
         apply_knockback(player.global_position, 400.0)
     
-    # Spawn blood splatter on hit
-    var splatter_scene = load("res://scenes/BloodSplatter.tscn")
-    if splatter_scene:
-        var splatter = splatter_scene.instantiate()
+    # Spawn blood splatter on hit (using preloaded scene)
+    if BLOOD_SPLATTER_SCENE:
+        var splatter = BLOOD_SPLATTER_SCENE.instantiate()
         get_parent().add_child(splatter)
         splatter.global_position = global_position
         splatter.rotation = randf_range(0, 2 * PI)
@@ -252,7 +323,7 @@ func take_damage(amount: int) -> void:
     if GameManager.player and GameManager.player.has_method("shake_camera"):
         GameManager.player.shake_camera(3.0, 0.1)
 
-    if type == EnemyType.VAMPIRE and current_health < max_health * 0.35 and not has_escaped:
+    if (type == EnemyType.VAMPIRE or type == EnemyType.THE_STITCHER) and current_health < max_health * 0.35 and not has_escaped:
         _enter_bat_form()
         return
 
@@ -260,11 +331,10 @@ func take_damage(amount: int) -> void:
     if health_bar:
         health_bar.visible = true
         health_bar.value = current_health
-
-    # Spawn floating damage number
-    var dmg_scene = load("res://scenes/DamageNumber.tscn")
-    if dmg_scene:
-        var dmg_num = dmg_scene.instantiate()
+ 
+    # Spawn floating damage number (using preloaded scene)
+    if DAMAGE_NUMBER_SCENE:
+        var dmg_num = DAMAGE_NUMBER_SCENE.instantiate()
         get_parent().add_child(dmg_num)
         dmg_num.global_position = global_position
         # Random crit (20% chance)
@@ -272,10 +342,9 @@ func take_damage(amount: int) -> void:
         var final_dmg = int(amount * 1.5) if is_crit else amount
         dmg_num.setup(final_dmg, is_crit)
 
-    # Spawn blood spray particle effect
-    var blood_scene = load("res://scenes/BloodSplatter.tscn")
-    if blood_scene:
-        var blood = blood_scene.instantiate()
+    # Spawn blood spray particle effect (using preloaded scene)
+    if BLOOD_SPLATTER_SCENE:
+        var blood = BLOOD_SPLATTER_SCENE.instantiate()
         get_parent().add_child(blood)
         blood.global_position = global_position
         # Spray particles away from the player
@@ -299,40 +368,47 @@ func _die() -> void:
     if GameManager.player and GameManager.player.has_method("shake_camera"):
         GameManager.player.shake_camera(6.0, 0.2)
         
-    # Extra blood splatter on death
-    var splatter_scene = load("res://scenes/BloodSplatter.tscn")
-    if splatter_scene:
+    # Extra blood splatter on death (using preloaded scene)
+    if BLOOD_SPLATTER_SCENE:
         for i in range(2):
-            var splatter = splatter_scene.instantiate()
+            var splatter = BLOOD_SPLATTER_SCENE.instantiate()
             get_parent().add_child(splatter)
             splatter.global_position = global_position
             splatter.rotation = randf_range(0, 2 * PI)
             splatter.scale = Vector2(1.5, 1.5)
             splatter.emitting = true
 
-    # Spawn floor blood puddle decal
-    var decal_scene = load("res://scenes/BloodDecal.tscn")
-    if decal_scene:
-        var decal = decal_scene.instantiate()
+    # Spawn floor blood puddle decal (using preloaded scene)
+    if BLOOD_DECAL_SCENE:
+        var decal = BLOOD_DECAL_SCENE.instantiate()
         get_parent().add_child(decal)
         decal.global_position = global_position
 
     # Chance to drop a power-up (25% chance)
     if randf() < 0.25:
         var rolls = randf()
-        var drop_path = ""
+        var res: Resource = null
 
-        # 50% health drop, 20% speed drop, 15% shield drop, 15% damage drop
-        if rolls < 0.50:
-            drop_path = "res://resources/powerups/VampiresKissData.tres"
-        elif rolls < 0.70:
-            drop_path = "res://resources/powerups/BloodRushData.tres"
-        elif rolls < 0.85:
-            drop_path = "res://resources/powerups/IronSkinData.tres"
+        # New weighted drop table for all 10 power-ups
+        if rolls < 0.30:
+            res = VAMPIRES_KISS_DATA # 30% Health (Common)
+        elif rolls < 0.45:
+            res = BLOOD_RUSH_DATA # 15% Speed
+        elif rolls < 0.60:
+            res = IRON_SKIN_DATA # 15% Shield
+        elif rolls < 0.75:
+            res = FURY_DATA # 15% Damage
+        elif rolls < 0.82:
+            res = HOLY_NOVA_DATA # 7% Holy Nova
+        elif rolls < 0.88:
+            res = TIME_SLOW_DATA # 6% Time Slow
+        elif rolls < 0.93:
+            res = DOUBLE_SHOT_DATA # 5% Double Shot
+        elif rolls < 0.97:
+            res = GHOST_FORM_DATA # 4% Ghost Form
         else:
-            drop_path = "res://resources/powerups/FuryData.tres"
+            res = BLOOD_MOON_RAGE_DATA # 3% Rage (Very Rare)
 
-        var res = load(drop_path)
         if res:
             var drop_scene = preload("res://scenes/PowerUpDrop.tscn")
             var drop_node = drop_scene.instantiate()
@@ -390,10 +466,9 @@ func _enter_bat_form() -> void:
     _spawn_puff_particles(global_position, Color(0.18, 0.05, 0.28, 0.8))
 
     var sprite = $Visuals/Sprite2D
-    var bat_texture = load("res://assets/sprites/vampire/bat.png")
     if sprite and sprite.texture:
         human_texture = sprite.texture
-        sprite.texture = bat_texture
+        sprite.texture = BAT_TEXTURE
         sprite.self_modulate = Color(0.65, 0.25, 0.85, 0.85)
 
         # Squash animation transition

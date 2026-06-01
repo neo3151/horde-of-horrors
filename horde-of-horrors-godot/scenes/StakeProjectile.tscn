@@ -1,0 +1,47 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/StakeProjectile.gd" id="1_stake"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1"]
+radius = 4.0
+height = 32.0
+
+[sub_resource type="Gradient" id="Gradient_1"]
+colors = PackedColorArray(0.6, 0.4, 0.2, 1, 0.6, 0.4, 0.2, 0)
+
+[node name="StakeProjectile" type="Area2D"]
+collision_layer = 8
+collision_mask = 2
+script = ExtResource("1_stake")
+speed = 1000.0
+piercing_count = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_1")
+
+[node name="Visuals" type="Node2D" parent="."]
+
+[node name="Wood" type="Polygon2D" parent="Visuals"]
+color = Color(0.5, 0.35, 0.15, 1)
+polygon = PackedVector2Array(-15, -3, 10, -3, 16, 0, 10, 3, -15, 3)
+
+[node name="Tip" type="Polygon2D" parent="Visuals"]
+color = Color(0.7, 0.7, 0.7, 1)
+polygon = PackedVector2Array(10, -3, 16, 0, 10, 3)
+
+[node name="TrailParticles" type="CPUParticles2D" parent="."]
+amount = 12
+lifetime = 0.3
+speed_scale = 1.2
+local_coords = true
+spread = 15.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 20.0
+initial_velocity_max = 40.0
+scale_amount_min = 2.0
+scale_amount_max = 4.0
+color = Color(0.588235, 0.431373, 0.235294, 0.6)
+color_ramp = SubResource("Gradient_1")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
