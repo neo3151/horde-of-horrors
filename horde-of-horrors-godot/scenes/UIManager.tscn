@@ -2,6 +2,8 @@
 
 [ext_resource type="Script" path="res://scripts/UIManager.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://djq128y36lrb1_upgrademanager" path="res://scenes/UpgradeShop.tscn" id="2_upgrade_shop"]
+[ext_resource type="PackedScene" path="res://scenes/PauseMenu.tscn" id="15_pause"]
+[ext_resource type="PackedScene" uid="uid://minimap001" path="res://scenes/Minimap.tscn" id="8_minimap"]
 
 [sub_resource type="StyleBoxFlat" id="GameOverBG"]
 bg_color = Color(0.05, 0.02, 0.05, 0.88)
@@ -22,6 +24,9 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 visible = false
+
+[node name="Minimap" parent="HUD" instance=ExtResource("8_minimap")]
+layout_mode = 1
 
 [node name="WaveLabel" type="Label" parent="HUD"]
 layout_mode = 1
@@ -99,6 +104,19 @@ theme_override_font_sizes/font_size = 13
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 3
 
+
+[node name="PauseButton" type="Button" parent="HUD"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -140.0
+offset_top = 220.0
+offset_right = -20.0
+offset_bottom = 268.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 18
+text = "PAUSE ⏸️"
 
 [node name="AbilityCooldown" type="Label" parent="HUD"]
 layout_mode = 0
@@ -180,4 +198,7 @@ layout_mode = 2
 text = "Skip & Exit"
 
 [node name="UpgradeShop" parent="." instance=ExtResource("2_upgrade_shop")]
+visible = false
+
+[node name="PauseMenu" parent="." instance=ExtResource("15_pause")]
 visible = false

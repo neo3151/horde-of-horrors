@@ -15,9 +15,6 @@
 [ext_resource type="PackedScene" uid="uid://enemy_wraith" path="res://scenes/EnemyWraith.tscn" id="12"]
 [ext_resource type="PackedScene" uid="uid://enemy_plague_doctor" path="res://scenes/EnemyPlagueDoctor.tscn" id="13"]
 [ext_resource type="PackedScene" uid="uid://enemy_blood_golem" path="res://scenes/EnemyBloodGolem.tscn" id="14"]
-[ext_resource type="PackedScene" path="res://scenes/PauseMenu.tscn" id="15_pause"]
-
-[ext_resource type="PackedScene" uid="uid://ability_icon" path="res://scenes/AbilityIcon.tscn" id="11"]
 [ext_resource type="PackedScene" uid="uid://enemy_crimson_harpy" path="res://scenes/EnemyCrimsonHarpy.tscn" id="101"]
 [ext_resource type="PackedScene" uid="uid://enemy_lich_priest" path="res://scenes/EnemyLichPriest.tscn" id="102"]
 [ext_resource type="PackedScene" uid="uid://enemy_bone_archer" path="res://scenes/EnemyBoneArcher.tscn" id="103"]
@@ -290,20 +287,3 @@ script = ExtResource("2")
 enemy_scenes = [ExtResource("3"), ExtResource("5"), ExtResource("6"), ExtResource("9"), ExtResource("10"), ExtResource("12"), ExtResource("13"), ExtResource("14"), ExtResource("101"), ExtResource("102"), ExtResource("103"), ExtResource("104"), ExtResource("105"), ExtResource("106"), ExtResource("107"), ExtResource("108"), ExtResource("109"), ExtResource("110"), ExtResource("111")]
 spawn_rate = 1.1
 base_enemies_per_wave = 5
-
-[node name="UILayer" type="CanvasLayer" parent="."]
-layer = 10
-
-[node name="Minimap" parent="UILayer" instance=ExtResource("8")]
-
-[node name="MobilePauseButton" type="Button" parent="UILayer"]
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -128.0
-offset_top = 220.0
-offset_right = -16.0
-offset_bottom = 268.0
-text = "PAUSE ⏸️"
-
-[node name="PauseMenu" parent="UILayer" instance=ExtResource("15_pause")]

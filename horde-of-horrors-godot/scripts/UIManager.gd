@@ -28,6 +28,10 @@ func _ready() -> void:
 	if skip_btn:
 		skip_btn.pressed.connect(_on_skip_pressed)
 	
+	var pause_btn = get_node_or_null("HUD/PauseButton")
+	if pause_btn:
+		pause_btn.pressed.connect(_on_pause_button_pressed)
+	
 	# Explicit methods to show/hide HUD called from game scenes
 	hide_hud()
 
@@ -91,6 +95,11 @@ func show_upgrade_shop() -> void:
 	if shop:
 		shop.show_shop()
 
+
+func _on_pause_button_pressed() -> void:
+	var pause_menu = get_node_or_null("PauseMenu")
+	if pause_menu and pause_menu.has_method("toggle_pause"):
+		pause_menu.toggle_pause()
 
 func _on_ability_button_pressed() -> void:
 	if GameManager.player and GameManager.player.has_method("use_ability"):

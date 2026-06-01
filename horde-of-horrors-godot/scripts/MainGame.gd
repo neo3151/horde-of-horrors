@@ -43,11 +43,6 @@ func _ready() -> void:
 	GameManager.start_game()
 	AudioManager.play_music("battle_theme")
 
-	var mobile_pause_btn = get_node_or_null("UILayer/MobilePauseButton")
-	var pause_menu = get_node_or_null("UILayer/PauseMenu")
-	if mobile_pause_btn and pause_menu:
-		mobile_pause_btn.pressed.connect(pause_menu.toggle_pause)
-		
 	# Ensure the first map loads AFTER everything else is fully ready
 	_safe_initial_map_load()
 

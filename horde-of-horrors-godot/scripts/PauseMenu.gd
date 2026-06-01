@@ -131,8 +131,8 @@ func _on_back_pressed() -> void:
     show_main_menu()
 
 func _on_minimap_toggled(button_pressed: bool) -> void:
-    # Set minimap visibility via GameManager or directly if available
-    var minimap = get_tree().root.get_node_or_null("MainGame/UILayer/Minimap")
+    # Find minimap in UIManager HUD
+    var minimap = get_node_or_null("../HUD/Minimap")
     if minimap:
         if minimap.has_method("set_minimap_visible"):
             minimap.set_minimap_visible(button_pressed)
