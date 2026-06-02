@@ -9,6 +9,9 @@ var lifetime: float = 3.0
 
 @onready var trail_particles: CPUParticles2D = $TrailParticles
 
+func _ready() -> void:
+	collision_mask |= 8
+
 func initialize(dir: Vector2, dmg: int) -> void:
 	direction = dir.normalized()
 	damage = dmg
@@ -35,6 +38,11 @@ func _on_body_entered(body: Node) -> void:
 		current_pierce += 1
 		if current_pierce >= piercing_count:
 			PoolManager.return_object("res://scenes/StakeProjectile.tscn", self)
+	elif body.is_in_group("obstacle"):
+		if body.has_method("take_damage"):
+			body.take_damage(damage)
+		_spawn_hit_effect()
+		PoolManager.return_object("res://scenes/StakeProjectile.tscn", self)
 
 func _spawn_hit_effect() -> void:
 	var hit_effect = PoolManager.get_object("res://scenes/ProjectileHitEffect.tscn")

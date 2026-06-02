@@ -59,6 +59,7 @@ var health_bar: ProgressBar
 var nav_agent: NavigationAgent2D
 
 func _ready() -> void:
+	collision_mask |= 8
 	match type:
 		EnemyType.FRANKENSTEIN:
 			speed = 100.0

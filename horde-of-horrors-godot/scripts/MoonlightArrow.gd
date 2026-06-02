@@ -10,6 +10,9 @@ var lifetime: float = 3.0
 
 @onready var trail = $CPUParticles2D
 
+func _ready() -> void:
+	collision_mask |= 8
+
 func initialize(dir: Vector2, dmg: int):
 	direction = dir.normalized()
 	damage = dmg
@@ -34,6 +37,11 @@ func _on_body_entered(body):
 			body.take_damage(final_damage)
 		
 		_spawn_hit_effect(is_crit)
+		PoolManager.return_object("res://scenes/MoonlightArrow.tscn", self)
+	elif body.is_in_group("obstacle"):
+		if body.has_method("take_damage"):
+			body.take_damage(damage)
+		_spawn_hit_effect(false)
 		PoolManager.return_object("res://scenes/MoonlightArrow.tscn", self)
 
 func _spawn_hit_effect(is_crit: bool):

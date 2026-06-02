@@ -16,6 +16,9 @@ class_name DirectionalSprite3D
 ## How much to scale the width of the sprite
 @export var width_scale: float = 1.0
 
+## The folder containing the 8 directional split frame textures
+@export var split_frames_dir: String = "res://assets/sprites/player/hunter_8way_split"
+
 var parent: CharacterBody3D
 var stacked_sprite_layers: Array[Sprite3D] = []
 
@@ -38,9 +41,16 @@ const MIRRORED_FRAME_MAP = [0, 4, 5, 6, 7, 3, 2, 1]
 func _ready() -> void:
 	# 1. Load the 8 individual full-body frame textures for flat 8-directional mode
 	if layer_count == 1:
+		print("DirectionalSprite3D: Loading split frames from: " + split_frames_dir)
 		for i in range(8):
-			var path = "res://assets/sprites/player/hunter_8way_split/frame_" + str(i) + ".png"
-			billboard_textures.append(load(path))
+			var path = split_frames_dir.rstrip("/") + "/frame_" + str(i) + ".png"
+			var tex = load(path)
+			if tex:
+				print("DirectionalSprite3D: Loaded frame " + str(i) + " from " + path)
+				billboard_textures.append(tex)
+			else:
+				print("DirectionalSprite3D: FAILED to load frame " + str(i) + " from " + path)
+		print("DirectionalSprite3D: Total textures loaded: " + str(billboard_textures.size()))
 			
 	var p = get_parent()
 	while p and not p is CharacterBody3D:
@@ -77,11 +87,12 @@ func _update_layers() -> void:
 			s.shaded = shaded
 			s.texture_filter = texture_filter
 			s.alpha_cut = alpha_cut
-			s.pixel_size = pixel_size
-			s.no_depth_test = no_depth_test
+			s.texture_filter = texture_filter
 			s.render_priority = render_priority + i
 			s.position = Vector3(0, i * layer_height * expand_stack, 0)
 			s.scale.x = 1.0
+			s.modulate = modulate
+			s.self_modulate = self_modulate
 			add_child(s)
 			stacked_sprite_layers.append(s)
 
@@ -94,6 +105,10 @@ func _process(_delta: float) -> void:
 				l.texture = texture
 			l.hframes = hframes
 			l.vframes = vframes
+			l.shaded = shaded
+			l.alpha_cut = alpha_cut
+			l.modulate = modulate
+			l.self_modulate = self_modulate
 	else:
 		hframes = 1
 		vframes = 1
@@ -152,9 +167,16 @@ func _update_direction(facing: Vector3, cam: Camera3D) -> void:
 			texture = billboard_textures[mapped_frame]
 		
 		# Dynamic offset compensation to keep feet perfectly planted on the ground
-		# Row 0 frames (0, 1, 2, 3) have feet at the bottom (bottom_margin ≈ 11px)
-		# Row 1 frames (4, 5, 6, 7) have feet near the middle (bottom_margin ≈ 217px)
-		if mapped_frame >= 4:
-			position.y = 0.117
+		# Custom offsets per character folder since their spritesheet layouts vary
+		if split_frames_dir.contains("hunter"):
+			# Row 0 frames (0, 1, 2, 3) have feet at the bottom (bottom_margin ≈ 11px)
+			# Row 1 frames (4, 5, 6, 7) have feet near the middle (bottom_margin ≈ 217px)
+			if mapped_frame >= 4:
+				position.y = 0.117
+			else:
+				position.y = 0.735
+		elif split_frames_dir.contains("elias"):
+			# Elias split frames have consistent bottom margins (avg 162px inside 1024px high cell)
+			position.y = 1.05
 		else:
-			position.y = 0.735
+			position.y = 0.77 # Default fallback

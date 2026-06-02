@@ -60,17 +60,18 @@ shape = SubResource("CylinderShape3D_1")
 [node name="Visuals" type="Node3D" parent="."]
 
 [node name="Sprite3D" type="Sprite3D" parent="Visuals"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.77, 0)
-pixel_size = 0.003
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+pixel_size = 0.008
 billboard = 2
 alpha_cut = 1
 texture_filter = 2
+shaded = true
 texture = ExtResource("2")
 script = ExtResource("3")
 directions = 8
 layer_count = 1
-layer_height = 0.0
-width_scale = 1.0
+layer_height = 0.008
+width_scale = 0.8
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

@@ -55,105 +55,179 @@ theme_override_constants/separation = 20
 alignment = 1
 
 [node name="LeftPanel" type="Panel" parent="VBoxMain"]
-custom_minimum_size = Vector2(0, 360)
+custom_minimum_size = Vector2(0, 750)
 layout_mode = 2
 self_modulate = Color(1, 1, 1, 0)
 
-[node name="CharacterList" type="GridContainer" parent="VBoxMain/LeftPanel"]
+[node name="Scroll" type="ScrollContainer" parent="VBoxMain/LeftPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+follow_focus = true
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="CharacterList" type="GridContainer" parent="VBoxMain/LeftPanel/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_constants/h_separation = 20
 theme_override_constants/v_separation = 20
 columns = 2
 
-[node name="HunterCard" type="PanelContainer" parent="VBoxMain/LeftPanel/CharacterList"]
+[node name="HunterCard" type="PanelContainer" parent="VBoxMain/LeftPanel/Scroll/CharacterList"]
 custom_minimum_size = Vector2(300, 160)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="VBox" type="VBoxContainer" parent="VBoxMain/LeftPanel/CharacterList/HunterCard"]
+[node name="VBox" type="VBoxContainer" parent="VBoxMain/LeftPanel/Scroll/CharacterList/HunterCard"]
 layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="Name" type="Label" parent="VBoxMain/LeftPanel/CharacterList/HunterCard/VBox"]
+[node name="Name" type="Label" parent="VBoxMain/LeftPanel/Scroll/CharacterList/HunterCard/VBox"]
 layout_mode = 2
 text = "HUNTER"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 20
 theme_override_colors/font_color = Color(0.85, 0.75, 0.65, 1)
 
-[node name="SelectButton" type="Button" parent="VBoxMain/LeftPanel/CharacterList/HunterCard"]
+[node name="SelectButton" type="Button" parent="VBoxMain/LeftPanel/Scroll/CharacterList/HunterCard"]
 layout_mode = 2
 size_flags_vertical = 8
 text = "SELECT"
 
-[node name="WerewolfCard" type="PanelContainer" parent="VBoxMain/LeftPanel/CharacterList"]
+[node name="WerewolfCard" type="PanelContainer" parent="VBoxMain/LeftPanel/Scroll/CharacterList"]
 custom_minimum_size = Vector2(300, 160)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="VBox" type="VBoxContainer" parent="VBoxMain/LeftPanel/CharacterList/WerewolfCard"]
+[node name="VBox" type="VBoxContainer" parent="VBoxMain/LeftPanel/Scroll/CharacterList/WerewolfCard"]
 layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="Name" type="Label" parent="VBoxMain/LeftPanel/CharacterList/WerewolfCard/VBox"]
+[node name="Name" type="Label" parent="VBoxMain/LeftPanel/Scroll/CharacterList/WerewolfCard/VBox"]
 layout_mode = 2
 text = "WEREWOLF"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 20
 theme_override_colors/font_color = Color(0.85, 0.75, 0.65, 1)
 
-[node name="SelectButton" type="Button" parent="VBoxMain/LeftPanel/CharacterList/WerewolfCard"]
+[node name="SelectButton" type="Button" parent="VBoxMain/LeftPanel/Scroll/CharacterList/WerewolfCard"]
 layout_mode = 2
 size_flags_vertical = 8
 text = "SELECT"
 
-[node name="VampireCard" type="PanelContainer" parent="VBoxMain/LeftPanel/CharacterList"]
+[node name="VampireCard" type="PanelContainer" parent="VBoxMain/LeftPanel/Scroll/CharacterList"]
 custom_minimum_size = Vector2(300, 160)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="VBox" type="VBoxContainer" parent="VBoxMain/LeftPanel/CharacterList/VampireCard"]
+[node name="VBox" type="VBoxContainer" parent="VBoxMain/LeftPanel/Scroll/CharacterList/VampireCard"]
 layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="Name" type="Label" parent="VBoxMain/LeftPanel/CharacterList/VampireCard/VBox"]
+[node name="Name" type="Label" parent="VBoxMain/LeftPanel/Scroll/CharacterList/VampireCard/VBox"]
 layout_mode = 2
 text = "VAMPIRE"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 20
 theme_override_colors/font_color = Color(0.85, 0.75, 0.65, 1)
 
-[node name="SelectButton" type="Button" parent="VBoxMain/LeftPanel/CharacterList/VampireCard"]
+[node name="SelectButton" type="Button" parent="VBoxMain/LeftPanel/Scroll/CharacterList/VampireCard"]
 layout_mode = 2
 size_flags_vertical = 8
 text = "SELECT"
 
-[node name="FrankensteinCard" type="PanelContainer" parent="VBoxMain/LeftPanel/CharacterList"]
+[node name="FrankensteinCard" type="PanelContainer" parent="VBoxMain/LeftPanel/Scroll/CharacterList"]
 custom_minimum_size = Vector2(300, 160)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="VBox" type="VBoxContainer" parent="VBoxMain/LeftPanel/CharacterList/FrankensteinCard"]
+[node name="VBox" type="VBoxContainer" parent="VBoxMain/LeftPanel/Scroll/CharacterList/FrankensteinCard"]
 layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="Name" type="Label" parent="VBoxMain/LeftPanel/CharacterList/FrankensteinCard/VBox"]
+[node name="Name" type="Label" parent="VBoxMain/LeftPanel/Scroll/CharacterList/FrankensteinCard/VBox"]
 layout_mode = 2
 text = "FRANKENSTEIN"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 20
 theme_override_colors/font_color = Color(0.85, 0.75, 0.65, 1)
 
-[node name="SelectButton" type="Button" parent="VBoxMain/LeftPanel/CharacterList/FrankensteinCard"]
+[node name="SelectButton" type="Button" parent="VBoxMain/LeftPanel/Scroll/CharacterList/FrankensteinCard"]
+layout_mode = 2
+size_flags_vertical = 8
+text = "SELECT"
+
+[node name="EliasCard" type="PanelContainer" parent="VBoxMain/LeftPanel/Scroll/CharacterList"]
+custom_minimum_size = Vector2(300, 160)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="VBoxMain/LeftPanel/Scroll/CharacterList/EliasCard"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="Name" type="Label" parent="VBoxMain/LeftPanel/Scroll/CharacterList/EliasCard/VBox"]
+layout_mode = 2
+text = "ELIAS"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.85, 0.75, 0.65, 1)
+
+[node name="SelectButton" type="Button" parent="VBoxMain/LeftPanel/Scroll/CharacterList/EliasCard"]
+layout_mode = 2
+size_flags_vertical = 8
+text = "SELECT"
+
+[node name="SerenaCard" type="PanelContainer" parent="VBoxMain/LeftPanel/Scroll/CharacterList"]
+custom_minimum_size = Vector2(300, 160)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="VBoxMain/LeftPanel/Scroll/CharacterList/SerenaCard"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="Name" type="Label" parent="VBoxMain/LeftPanel/Scroll/CharacterList/SerenaCard/VBox"]
+layout_mode = 2
+text = "SERENA"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.85, 0.75, 0.65, 1)
+
+[node name="SelectButton" type="Button" parent="VBoxMain/LeftPanel/Scroll/CharacterList/SerenaCard"]
+layout_mode = 2
+size_flags_vertical = 8
+text = "SELECT"
+
+[node name="VictorCard" type="PanelContainer" parent="VBoxMain/LeftPanel/Scroll/CharacterList"]
+custom_minimum_size = Vector2(300, 160)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="VBoxMain/LeftPanel/Scroll/CharacterList/VictorCard"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="Name" type="Label" parent="VBoxMain/LeftPanel/Scroll/CharacterList/VictorCard/VBox"]
+layout_mode = 2
+text = "VICTOR"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.85, 0.75, 0.65, 1)
+
+[node name="SelectButton" type="Button" parent="VBoxMain/LeftPanel/Scroll/CharacterList/VictorCard"]
 layout_mode = 2
 size_flags_vertical = 8
 text = "SELECT"

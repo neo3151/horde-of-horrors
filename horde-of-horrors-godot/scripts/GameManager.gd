@@ -140,7 +140,7 @@ const CHARACTERS = {
 	},
 	"Elias": {
 		"name": "Elias",
-		"texture": "res://assets/sprites/player/elias/elias.png",
+		"texture": "res://assets/sprites/player/elias_preview.png",
 		"health": 80,
 		"speed": 340.0,
 		"damage": 30,

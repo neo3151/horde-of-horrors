@@ -8,6 +8,9 @@ var lifetime_timer: SceneTreeTimer = null
 
 @onready var trail_particles: CPUParticles2D = $TrailParticles
 
+func _ready() -> void:
+	collision_mask |= 8
+
 func initialize(dir: Vector2, dmg: int) -> void:
 	direction = dir.normalized()
 	damage = dmg
@@ -28,6 +31,11 @@ func _physics_process(delta: float) -> void:
 
 func _on_body_entered(body: Node) -> void:
 	if body.is_in_group("enemy"):
+		if body.has_method("take_damage"):
+			body.take_damage(damage)
+		_spawn_hit_effect()
+		PoolManager.return_object("res://scenes/Projectile.tscn", self)
+	elif body.is_in_group("obstacle"):
 		if body.has_method("take_damage"):
 			body.take_damage(damage)
 		_spawn_hit_effect()

@@ -1,7 +1,7 @@
 extends Node3D
 
 @export var target_path: NodePath
-@export var offset: Vector3 = Vector3(0, 8, 8)
+@export var offset: Vector3 = Vector3(0, 4, 6)
 @export var follow_speed: float = 5.0
 
 var target: Node3D

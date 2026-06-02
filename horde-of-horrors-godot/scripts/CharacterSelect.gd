@@ -17,10 +17,14 @@ func _ready() -> void:
 	select_character("Hunter")
 	
 	# Connect buttons for items
+	print("CharacterSelect: Connecting buttons...")
 	for char_name in GameManager.CHARACTERS.keys():
-		var btn = get_node_or_null("VBoxMain/LeftPanel/CharacterList/" + char_name + "Card/SelectButton")
+		var card = get_node_or_null("VBoxMain/LeftPanel/Scroll/CharacterList/" + char_name + "Card")
+		var btn = get_node_or_null("VBoxMain/LeftPanel/Scroll/CharacterList/" + char_name + "Card/SelectButton")
+		print("CharacterSelect: " + char_name + " - card found: " + str(card != null) + ", button found: " + str(btn != null))
 		if btn:
 			btn.pressed.connect(func(): select_character(char_name))
+			print("CharacterSelect: Connected button for " + char_name)
 
 	if has_node("/root/UIManager"):
 		get_node("/root/UIManager").hide_hud()
@@ -48,10 +52,13 @@ func select_character(char_name: String) -> void:
 	var tex = load(data["texture"])
 	if tex:
 		preview_texture.texture = tex
+		print("CharacterSelect: Loaded texture for " + char_name + ": " + data["texture"])
+	else:
+		print("CharacterSelect: FAILED to load texture for " + char_name + ": " + data["texture"])
 		
 	# Update active highlights (modulate unselected cards)
 	for other_name in GameManager.CHARACTERS.keys():
-		var card = get_node_or_null("VBoxMain/LeftPanel/CharacterList/" + other_name + "Card")
+		var card = get_node_or_null("VBoxMain/LeftPanel/Scroll/CharacterList/" + other_name + "Card")
 		if card:
 			if other_name == char_name:
 				card.self_modulate = Color(1.2, 1.2, 1.2, 1.0) # Bright/Highlighted

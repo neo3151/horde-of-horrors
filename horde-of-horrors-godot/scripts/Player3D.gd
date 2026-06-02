@@ -19,6 +19,49 @@ func _ready() -> void:
 	
 	# Reference current player in GameManager (logic ported from 2D)
 	GameManager.player = self
+	
+	# Dynamically load the selected character in 3D
+	var char_name = GameManager.selected_character
+	print("Player3D: Loading character: " + char_name)
+	if GameManager.CHARACTERS.has(char_name) and is_instance_valid(sprite):
+		var data = GameManager.CHARACTERS[char_name]
+		if char_name == "Elias":
+			print("Player3D: Setting up Elias with 8-way split frames")
+			sprite.split_frames_dir = "res://assets/sprites/player/elias_8way_split"
+			sprite.directions = 8
+			sprite.layer_count = 1
+			sprite.pixel_size = 0.0195
+			sprite.billboard_textures.clear()
+			sprite._ready()
+			print("Player3D: Elias frames loaded: " + str(sprite.billboard_textures.size()))
+		elif char_name == "Victor" or char_name == "Serena":
+			print("Player3D: Setting up " + char_name + " as original stacked sprite")
+			sprite.texture = load(data["texture"])
+			sprite.directions = 1
+			sprite.layer_count = 8
+			sprite.layer_height = 0.008
+			sprite.pixel_size = 0.008
+			sprite.width_scale = 1.0
+			sprite.modulate = Color(0.8, 0.8, 0.8, 1.0) # Dim slightly
+			sprite.split_frames_dir = ""
+			sprite._update_layers()
+		elif char_name == "Hunter" or char_name == "Elias Voss" or char_name.contains("Hunter"):
+			print("Player3D: Setting up Hunter")
+			sprite.split_frames_dir = "res://assets/sprites/player/hunter_8way_split"
+			sprite.directions = 8
+			sprite.layer_count = 1
+			sprite.billboard_textures.clear()
+			sprite._ready()
+		else:
+			# Fallback for other characters (Werewolf, Vampire, Frankenstein) as flat billboards
+			print("Player3D: Fallback for " + char_name)
+			sprite.texture = load(data["texture"])
+			sprite.directions = 1
+			sprite.layer_count = 1
+			sprite.split_frames_dir = ""
+			sprite._update_layers()
+	else:
+		print("Player3D: Character not found or sprite invalid")
 
 func _physics_process(delta: float) -> void:
 	if GameManager.is_game_over:

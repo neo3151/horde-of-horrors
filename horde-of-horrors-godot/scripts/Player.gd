@@ -51,6 +51,7 @@ var double_jump_available: bool = true
 var was_on_floor: bool = true
 
 func _ready() -> void:
+	collision_mask |= 8
 	# Load selected character data dynamically
 	var char_name = GameManager.selected_character
 	if GameManager.CHARACTERS.has(char_name):
@@ -64,6 +65,26 @@ func _ready() -> void:
 		var sprite = $Visuals/Sprite2D
 		if tex and sprite:
 			sprite.texture = tex
+			
+			# If texture is 512px tall, it's an 8-layer stacked sprite
+			# We show the whole stack (squashed in 2D) which creates the look you liked.
+			# Brightness is fixed by disabling the PlayerLight in Player.tscn.
+			if tex.get_height() == 512:
+				sprite.vframes = 1
+				sprite.frame = 0
+				sprite.modulate = Color.WHITE
+				# Normalize scaling based on the 'squashed' height
+				var target_height = 154.0
+				var scale_factor = target_height / 128.0 # Victor is roughly 128px tall in the stack
+				sprite.scale = Vector2(scale_factor, scale_factor)
+			else:
+				sprite.vframes = 1
+				sprite.frame = 0
+				sprite.modulate = Color.WHITE
+				# Dynamically normalize character sprite scaling
+				var target_height = 154.0
+				var scale_factor = target_height / tex.get_height()
+				sprite.scale = Vector2(scale_factor, scale_factor)
 
 	current_health = max_health
 	GameManager.player = self
@@ -112,6 +133,13 @@ func change_weapon(weapon_id: String) -> void:
 			add_child(current_weapon_node)
 			# Standard position for handheld weapons
 			current_weapon_node.position = Vector2(10, 0)
+			
+			# Hide weapon visuals if character already has a baked weapon (Victor/Serena)
+			var char_name = GameManager.selected_character
+			if char_name == "Victor" or char_name == "Serena":
+				var weapon_visuals = current_weapon_node.get_node_or_null("Visuals")
+				if weapon_visuals:
+					weapon_visuals.visible = false
 			
 		if crossbow_pivot:
 			crossbow_pivot.visible = false
@@ -438,6 +466,8 @@ func use_ability() -> void:
 			_ability_vampire_lifesteal()
 		"Serena":
 			_ability_serena_shadow_dash()
+		"Victor":
+			_ability_victor_stopping_power()
 
 func _ability_serena_shadow_dash() -> void:
 	# Serena's Shadow Dash is faster and leaves afterimages (simulated with puff)
@@ -460,6 +490,24 @@ func _ability_serena_shadow_dash() -> void:
 		velocity = Vector2.ZERO
 		var tween_back = create_tween()
 		tween_back.tween_property(self, "modulate", Color.WHITE, 0.1)
+	)
+
+func _ability_victor_stopping_power() -> void:
+	ability_cooldown = 10.0
+	_panic_knockback(220.0, 950.0) # Clear area with a holy shockwave
+	
+	var original_damage_boost = damage_boost_flat
+	damage_boost_flat += 20 # Add +20 damage stopping power
+	
+	# Visual feedback: golden/yellow glow modulation
+	modulate = Color(1.8, 1.5, 0.3)
+	
+	# Spawn golden shockwave particles
+	_spawn_puff_particles(global_position, Color(1.0, 0.85, 0.2, 0.8))
+	
+	get_tree().create_timer(4.0).timeout.connect(func():
+		damage_boost_flat = original_damage_boost
+		modulate = Color.WHITE
 	)
 
 func _ability_werewolf_dash() -> void:
