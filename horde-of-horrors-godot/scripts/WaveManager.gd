@@ -56,9 +56,9 @@ func start_wave(wave_number: int) -> void:
 			active_enemies.append(boss)
 			GameManager.emit_signal("enemy_spawned", boss)
 
-			# Teleport player near the center to ensure they are inside the arena
+			# Teleport player much further away from the boss center to ensure safe reaction space
 			if is_instance_valid(GameManager.player):
-				GameManager.player.global_position = Vector2(0, 80)
+				GameManager.player.global_position = Vector2(0, 280)
 
 			var arena_script = load("res://scripts/ForceFieldArena.gd")
 			if arena_script:

@@ -1,7 +1,7 @@
 [gd_scene load_steps=12 format=3 uid="uid://dptt40axnfabo"]
 
 [ext_resource type="Script" path="res://scripts/Player.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://dqgvegsb7puks" path="res://assets/sprites/player/hunter.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://dar65x5bk6vwa" path="res://assets/sprites/player/hunter.png" id="2"]
 [ext_resource type="Texture2D" uid="uid://dtc3y0hd3y7t6" path="res://assets/sprites/weapons/crossbow.svg" id="3_svg"]
 [ext_resource type="Script" path="res://scripts/AdvancedCameraController.gd" id="4_cam"]
 
@@ -158,8 +158,6 @@ offset_right = 5.0
 unique_name_in_owner = true
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("2")
-hframes = 1
-vframes = 1
 
 [node name="CrossbowPivot" type="Node2D" parent="."]
 

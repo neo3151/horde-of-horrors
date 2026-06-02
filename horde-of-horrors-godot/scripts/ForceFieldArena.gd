@@ -2,7 +2,7 @@
 extends Node2D
 class_name ForceFieldArena
 
-@export var radius: float = 240.0
+@export var radius: float = 360.0
 @export var color: Color = Color(0.85, 0.1, 0.1, 0.3)
 
 var active: bool = false
