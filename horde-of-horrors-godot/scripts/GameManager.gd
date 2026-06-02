@@ -15,7 +15,7 @@ var player_currency: int = 0  # New: currency for upgrades
 var is_game_over: bool = false
 var purchased_upgrades: Dictionary = { "damage": 0, "fire_rate": 0, "health": 0, "speed": 0, "pact": 0 }
 
-var player: Node2D
+var player: Node # Changed from Node2D to support Node3D
 var wave_manager: Node
 
 var selected_character: String = "Hunter"

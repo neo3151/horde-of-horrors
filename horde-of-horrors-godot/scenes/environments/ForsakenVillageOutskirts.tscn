@@ -1,5 +1,6 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
+[ext_resource type="Script" path="res://scripts/EnvironmentBase.gd" id="1_base"]
 [ext_resource type="Texture2D" path="res://assets/sprites/environments/forsaken_village.png" id="1_floor"]
 [ext_resource type="Texture2D" path="res://assets/sprites/environment/svg_levels/prop_dark_tree.svg" id="2_svg_tree"]
 
@@ -10,6 +11,9 @@ size = Vector2(40, 200)
 size = Vector2(200, 40)
 
 [node name="ForsakenVillageOutskirts" type="Node2D"]
+script = ExtResource("1_base")
+environment_name = "Forsaken Village"
+ambient_color = Color(0.28, 0.28, 0.4, 1)
 y_sort_enabled = true
 
 [node name="Floor" type="Sprite2D" parent="."]

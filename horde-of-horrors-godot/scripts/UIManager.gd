@@ -97,15 +97,18 @@ func show_upgrade_shop() -> void:
 
 
 func _on_pause_button_pressed() -> void:
+	AudioManager.play_sfx("hit")
 	var pause_menu = get_node_or_null("PauseMenu")
 	if pause_menu and pause_menu.has_method("toggle_pause"):
 		pause_menu.toggle_pause()
 
 func _on_ability_button_pressed() -> void:
+	AudioManager.play_sfx("hit")
 	if GameManager.player and GameManager.player.has_method("use_ability"):
 		GameManager.player.use_ability()
 
 func _on_game_over(final_score: int, waves: int) -> void:
+	AudioManager.stop_music()
 	var panel = get_node_or_null("GameOverPanel")
 	if panel:
 		panel.visible = true
@@ -119,6 +122,7 @@ func _on_game_over(final_score: int, waves: int) -> void:
 			hud.visible = false
 
 func _on_save_score_pressed() -> void:
+	AudioManager.play_sfx("hit")
 	print("Save score pressed!")
 	var input = get_node_or_null("GameOverPanel/VBox/NameInput")
 	var player_name = "Unknown Hunter"
@@ -129,5 +133,6 @@ func _on_save_score_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
 
 func _on_skip_pressed() -> void:
+	AudioManager.play_sfx("hit")
 	print("Skip pressed!")
 	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")

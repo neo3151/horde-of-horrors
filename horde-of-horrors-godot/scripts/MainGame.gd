@@ -41,7 +41,8 @@ func _ready() -> void:
 		get_node("/root/UIManager").show_hud()
 	
 	GameManager.start_game()
-	AudioManager.play_music("battle_theme")
+	# Force restart music for game start impact
+	AudioManager.play_music("battle_theme", 1.0, true)
 
 	# Ensure the first map loads AFTER everything else is fully ready
 	_safe_initial_map_load()
@@ -56,13 +57,15 @@ var current_env_scene_path: String = ""
 
 func change_environment(env_path: String) -> void:
 	if env_path == "":
+		print("[MainGame] change_environment called with empty path, ignoring")
 		return
 		
 	# Special bypass for the first load to ensure it's forced
 	if env_path == current_env_scene_path and current_env_scene_path != "":
+		print("[MainGame] Skipping duplicate environment load: ", env_path)
 		return
 		
-	print("MainGame: Swapping from [", current_env_scene_path, "] to [", env_path, "]")
+	print("[MainGame] Swapping from [", current_env_scene_path, "] to [", env_path, "]")
 	
 	var env_scene = load(env_path)
 	if not env_scene:

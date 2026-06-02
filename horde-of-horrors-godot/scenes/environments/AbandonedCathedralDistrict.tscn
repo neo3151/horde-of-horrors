@@ -1,6 +1,11 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/EnvironmentBase.gd" id="1_base"]
 [ext_resource type="Texture2D" path="res://assets/sprites/environments/abandoned_cathedral.png" id="1_floor"]
 [node name="AbandonedCathedralDistrict" type="Node2D"]
+script = ExtResource("1_base")
+environment_name = "Abandoned Cathedral"
+ambient_color = Color(0.2, 0.15, 0.3, 1)
 y_sort_enabled = true
 [node name="Floor" type="Sprite2D" parent="."]
 z_index = -5

@@ -2,7 +2,7 @@ extends SubViewportContainer
 
 @onready var minimap_camera: Camera2D = $SubViewport/MinimapCamera
 
-var player: Node2D
+var player: Node
 
 func _ready() -> void:
     # Defer until the viewport is ready, then share the main 2D world
@@ -12,7 +12,10 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
     if is_instance_valid(player) and minimap_camera:
-        minimap_camera.global_position = player.global_position
+        if player is Node2D:
+            minimap_camera.global_position = player.global_position
+        elif player is Node3D:
+            minimap_camera.global_position = Vector2(player.global_position.x, player.global_position.z)
 
 func _unhandled_input(event: InputEvent) -> void:
     if event is InputEventKey and event.pressed and not event.echo:

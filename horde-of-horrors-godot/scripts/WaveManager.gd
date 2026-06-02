@@ -27,6 +27,7 @@ func _ready() -> void:
 	# Removed initial map load from here to prevent race conditions with MainGame
 
 func start_wave(wave_number: int) -> void:
+	print("[WaveManager] start_wave called for wave ", wave_number)
 	active_enemies.clear()
 	wave_in_progress = true
 	_check_environment_change(wave_number)
@@ -39,6 +40,12 @@ func start_wave(wave_number: int) -> void:
 			20: boss_path = "res://scenes/VampireMatriarch.tscn"
 			30: boss_path = "res://scenes/RevenantFrankenstein.tscn"
 			40: boss_path = "res://scenes/LichHighPriest.tscn"
+			50: boss_path = "res://scenes/EnemyStitcher.tscn"
+			60: boss_path = "res://scenes/EnemyTheFirstOne.tscn"
+			70: boss_path = "res://scenes/AlphaWerewolf.tscn" # TODO: Unique bosses for high levels
+			80: boss_path = "res://scenes/VampireMatriarch.tscn"
+			90: boss_path = "res://scenes/RevenantFrankenstein.tscn"
+			100: boss_path = "res://scenes/EnemyStitcher.tscn"
 			_: boss_path = "res://scenes/AlphaWerewolf.tscn" # Fallback
 
 		var boss_scene = load(boss_path)
@@ -61,16 +68,19 @@ func start_wave(wave_number: int) -> void:
 	else:
 		enemies_to_spawn = base_enemies_per_wave + (wave_number - 1) * 4
 		next_spawn_time = Time.get_ticks_msec() / 1000.0 + 1.0
+		print("[WaveManager] Normal wave ", wave_number, " - spawning ", enemies_to_spawn, " enemies")
 
 func _process(delta: float) -> void:
 	if not wave_in_progress:
 		return
 
 	if enemies_to_spawn <= 0 and active_enemies.size() == 0:
+		print("[WaveManager] Wave ", GameManager.current_wave, " complete - showing upgrade shop")
 		wave_in_progress = false
 		if has_node("/root/UIManager"):
 			get_node("/root/UIManager").show_upgrade_shop()
 		else:
+			print("[WaveManager] ERROR: UIManager not found, calling next_wave directly")
 			GameManager.next_wave()
 		return
 
@@ -83,6 +93,7 @@ func _process(delta: float) -> void:
 
 func _spawn_enemy() -> void:
 	if enemy_scenes.is_empty():
+		print("[WaveManager] ERROR: enemy_scenes array is empty!")
 		return
 
 	var wave = GameManager.current_wave

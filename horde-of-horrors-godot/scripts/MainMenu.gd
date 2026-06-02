@@ -30,11 +30,20 @@ func _ready() -> void:
 
 	if has_node("/root/UIManager"):
 		get_node("/root/UIManager").hide_hud()
+		
+	# Play menu music with a small delay for Android stabilization
+	get_tree().create_timer(0.5).timeout.connect(func():
+		# Play at a lower volume for menu atmosphere
+		AudioManager.play_music("battle_theme", 2.0)
+	)
 
 func _on_play_pressed() -> void:
+	AudioManager.play_sfx("hit")
+	# Keep music playing through character select for continuity
 	get_tree().change_scene_to_file("res://scenes/CharacterSelect.tscn")
 
 func _on_scoreboard_pressed() -> void:
+	AudioManager.play_sfx("hit")
 	# Clean list
 	for child in score_list.get_children():
 		child.queue_free()
@@ -51,10 +60,12 @@ func _on_scoreboard_pressed() -> void:
 	scoreboard_panel.visible = true
 
 func _on_settings_pressed() -> void:
+	AudioManager.play_sfx("hit")
 	main_panel.visible = false
 	settings_panel.visible = true
 
 func _on_back_pressed() -> void:
+	AudioManager.play_sfx("hit")
 	scoreboard_panel.visible = false
 	settings_panel.visible = false
 	main_panel.visible = true
@@ -65,4 +76,5 @@ func _on_brightness_changed(value: float) -> void:
 	GameManager.save_settings()
 
 func _on_quit_pressed() -> void:
+	AudioManager.play_sfx("hit")
 	get_tree().quit()

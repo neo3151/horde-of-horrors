@@ -213,10 +213,10 @@ func _populate_upgrades() -> void:
 		
 		# Connect button pressed
 		btn.pressed.connect(func():
+			AudioManager.play_sfx("hit")
 			if is_instance_valid(GameManager.player):
 				item["action"].call(GameManager.player)
 				if GameManager.purchased_upgrades.has(item["id"]):
 					GameManager.purchased_upgrades[item["id"]] += 1
 			hide_shop()
 		)
-
