@@ -29,11 +29,47 @@ position = Vector2(-200, 0)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Wall1"]
 shape = SubResource("RectangleShape2D_1")
 
+[node name="ColorRect" type="ColorRect" parent="Obstacles/Wall1"]
+offset_left = -20.0
+offset_top = -100.0
+offset_right = 20.0
+offset_bottom = 100.0
+color = Color(0.18, 0.14, 0.22, 0.9)
+
+[node name="Border" type="ReferenceRect" parent="Obstacles/Wall1/ColorRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+border_color = Color(0.55, 0.42, 0.65, 0.88)
+border_width = 3.0
+editor_only = false
+
 [node name="Wall2" type="StaticBody2D" parent="Obstacles"]
 position = Vector2(200, 0)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Wall2"]
 shape = SubResource("RectangleShape2D_1")
+
+[node name="ColorRect" type="ColorRect" parent="Obstacles/Wall2"]
+offset_left = -20.0
+offset_top = -100.0
+offset_right = 20.0
+offset_bottom = 100.0
+color = Color(0.18, 0.14, 0.22, 0.9)
+
+[node name="Border" type="ReferenceRect" parent="Obstacles/Wall2/ColorRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+border_color = Color(0.55, 0.42, 0.65, 0.88)
+border_width = 3.0
+editor_only = false
 
 [node name="Wall3" type="StaticBody2D" parent="Obstacles"]
 position = Vector2(0, -150)
@@ -41,11 +77,47 @@ position = Vector2(0, -150)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Wall3"]
 shape = SubResource("RectangleShape2D_2")
 
+[node name="ColorRect" type="ColorRect" parent="Obstacles/Wall3"]
+offset_left = -100.0
+offset_top = -20.0
+offset_right = 100.0
+offset_bottom = 20.0
+color = Color(0.18, 0.14, 0.22, 0.9)
+
+[node name="Border" type="ReferenceRect" parent="Obstacles/Wall3/ColorRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+border_color = Color(0.55, 0.42, 0.65, 0.88)
+border_width = 3.0
+editor_only = false
+
 [node name="Wall4" type="StaticBody2D" parent="Obstacles"]
 position = Vector2(0, 150)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Wall4"]
 shape = SubResource("RectangleShape2D_2")
+
+[node name="ColorRect" type="ColorRect" parent="Obstacles/Wall4"]
+offset_left = -100.0
+offset_top = -20.0
+offset_right = 100.0
+offset_bottom = 20.0
+color = Color(0.18, 0.14, 0.22, 0.9)
+
+[node name="Border" type="ReferenceRect" parent="Obstacles/Wall4/ColorRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+border_color = Color(0.55, 0.42, 0.65, 0.88)
+border_width = 3.0
+editor_only = false
 
 [node name="Props" type="Node2D" parent="."]
 y_sort_enabled = true

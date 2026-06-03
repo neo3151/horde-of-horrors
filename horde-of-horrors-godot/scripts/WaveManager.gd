@@ -39,6 +39,11 @@ func start_wave(wave_number: int) -> void:
 	# Load and check environment change
 	_check_environment_change(wave_number)
 
+	# Rebuild the navigation mesh now that all obstacles and environment are loaded
+	var main_game = get_parent()
+	if main_game and main_game.has_method("rebuild_navigation_mesh"):
+		main_game.rebuild_navigation_mesh()
+
 	var is_boss_wave = wave_number > 0 and wave_number % 10 == 0
 	if is_boss_wave:
 		wave_time_left = -1.0
@@ -100,7 +105,7 @@ func _spawn_obstacles() -> void:
 	for node in get_tree().get_nodes_in_group("obstacle"):
 		node.queue_free()
 		
-	var count = randi_range(5, 8)
+	var count = randi_range(15, 24)
 	var obstacle_scene = load("res://scenes/CoverObstacle.tscn")
 	if not obstacle_scene:
 		return
@@ -113,8 +118,8 @@ func _spawn_obstacles() -> void:
 		# Set random position inside screen boundaries, away from player spawn center
 		var pos = Vector2.ZERO
 		while true:
-			pos = Vector2(randf_range(-320, 320), randf_range(-220, 220))
-			if pos.length() > 100:
+			pos = Vector2(randf_range(-1100, 1100), randf_range(-800, 800))
+			if pos.length() > 120:
 				break
 		obstacle.global_position = pos
 		get_parent().add_child(obstacle)
@@ -223,12 +228,17 @@ func _spawn_enemy() -> void:
 	GameManager.emit_signal("enemy_spawned", enemy)
 
 func _get_random_spawn_position() -> Vector2:
-	var x = randf_range(-420, 420)
-	var y = 320 if randf() > 0.5 else -320
-	if randf() > 0.5:
-		x = 420 if randf() > 0.5 else -420
-		y = randf_range(-280, 280)
-	return Vector2(x, y)
+	var player = GameManager.player
+	var center = player.global_position if is_instance_valid(player) else Vector2.ZERO
+	# Spawn in a ring around the player (just off-screen, between 450 and 600 pixels)
+	var angle = randf() * TAU
+	var distance = randf_range(450.0, 600.0)
+	var spawn_pos = center + Vector2(cos(angle), sin(angle)) * distance
+	
+	# Clamp to map boundaries so they spawn inside the navigation mesh
+	spawn_pos.x = clamp(spawn_pos.x, -1180, 1180)
+	spawn_pos.y = clamp(spawn_pos.y, -880, 880)
+	return spawn_pos
 
 func get_nearest_enemy(from_pos: Vector2) -> Node2D:
 	var nearest = null

@@ -9,6 +9,10 @@ const BAT_TEXTURE = preload("res://assets/sprites/vampire/bat.png")
 @export var fire_rate: float = 0.28
 @export var damage: int = 12
 
+@export_group("Editor Testing")
+@export var test_starting_secondary_weapon: String = ""
+@export var test_starting_secondary_level: int = 1
+
 var current_health: int
 var last_fire_time: float = 0.0
 var is_aiming_with_mouse: bool = true
@@ -37,6 +41,9 @@ var human_texture: Texture2D
 @onready var muzzle_flash: CPUParticles2D = $CrossbowPivot/FirePoint/MuzzleFlash
 
 var current_weapon_node: Node2D = null
+var primary_weapon_id: String = "crossbow"
+var secondary_weapons: Array[Node2D] = []
+var weapon_levels: Dictionary = {}
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var ability_icon: Control = get_node_or_null("../UI/AbilityIcon")
@@ -93,12 +100,13 @@ func _ready() -> void:
 	_update_health_ui()
 	_setup_ability_icon()
 
-	# Adjust Camera limits for top-down arena level
+	# Adjust Camera limits and zoom for top-down arena level
 	if camera:
-		camera.limit_left = -600
-		camera.limit_right = 600
-		camera.limit_top = -500
-		camera.limit_bottom = 500
+		camera.limit_left = -1250
+		camera.limit_right = 1250
+		camera.limit_top = -950
+		camera.limit_bottom = 950
+		camera.zoom = Vector2(1.5, 1.5)
 
 func _setup_visuals() -> void:
 	var sprite = $Visuals/Sprite2D
@@ -113,42 +121,91 @@ func _setup_visuals() -> void:
 func _setup_weapon() -> void:
 	var char_name = GameManager.selected_character
 	if GameManager.CHARACTERS.has(char_name):
-		var weapon_id = GameManager.CHARACTERS[char_name].get("starting_weapon", "crossbow")
-		change_weapon(weapon_id)
+		primary_weapon_id = GameManager.CHARACTERS[char_name].get("starting_weapon", "crossbow")
+		change_weapon(primary_weapon_id)
+
+	# Editor testing helper for starting secondary weapons
+	if test_starting_secondary_weapon != "":
+		var lvl = clamp(test_starting_secondary_level, 1, 5)
+		for i in range(lvl):
+			change_weapon(test_starting_secondary_weapon)
 
 func change_weapon(weapon_id: String) -> void:
 	if not GameManager.WEAPONS.has(weapon_id):
 		return
 	
-	# Clear existing weapon
-	if current_weapon_node:
-		current_weapon_node.queue_free()
-		current_weapon_node = null
-	
 	var weapon_data = GameManager.WEAPONS[weapon_id]
-	if weapon_data["scene"] != "":
-		var scene = load(weapon_data["scene"])
-		if scene:
-			current_weapon_node = scene.instantiate()
-			add_child(current_weapon_node)
-			# Standard position for handheld weapons
-			current_weapon_node.position = Vector2(10, 0)
-			
-			# Hide weapon visuals if character already has a baked weapon (Victor/Serena)
-			var char_name = GameManager.selected_character
-			if char_name == "Victor" or char_name == "Serena":
-				var weapon_visuals = current_weapon_node.get_node_or_null("Visuals")
-				if weapon_visuals:
-					weapon_visuals.visible = false
-			
-		if crossbow_pivot:
-			crossbow_pivot.visible = false
-	else:
-		# Use default crossbow
-		if crossbow_pivot:
-			crossbow_pivot.visible = true
 	
-	print("Player changed weapon to: ", weapon_data["name"])
+	# If this is the primary weapon, set it up
+	if weapon_id == primary_weapon_id:
+		# Clear existing primary weapon
+		if current_weapon_node:
+			current_weapon_node.queue_free()
+			current_weapon_node = null
+			
+		if weapon_data["scene"] != "":
+			var scene = load(weapon_data["scene"])
+			if scene:
+				current_weapon_node = scene.instantiate()
+				add_child(current_weapon_node)
+				current_weapon_node.position = Vector2(10, 0)
+				
+				# Hide weapon visuals if character already has a baked weapon (Victor/Serena)
+				var char_name = GameManager.selected_character
+				if char_name == "Victor" or char_name == "Serena":
+					var weapon_visuals = current_weapon_node.get_node_or_null("Visuals")
+					if weapon_visuals:
+						weapon_visuals.visible = false
+				
+			if crossbow_pivot:
+				crossbow_pivot.visible = false
+		else:
+			# Use default crossbow
+			if crossbow_pivot:
+				crossbow_pivot.visible = true
+		print("Player initialized primary weapon: ", weapon_data["name"])
+	else:
+		# Add as a secondary weapon instead of replacing the primary
+		# If we already have this secondary weapon, we upgrade it!
+		var existing_weapon: Node2D = null
+		for w in secondary_weapons:
+			if w.has_meta("weapon_id") and w.get_meta("weapon_id") == weapon_id:
+				existing_weapon = w
+				break
+				
+		if existing_weapon:
+			var current_lvl = weapon_levels.get(weapon_id, 1)
+			if current_lvl < 5:
+				current_lvl += 1
+				weapon_levels[weapon_id] = current_lvl
+				if existing_weapon.has_method("set_level"):
+					existing_weapon.set_level(current_lvl)
+				print("Secondary weapon ", weapon_id, " upgraded to level ", current_lvl)
+			else:
+				print("Secondary weapon ", weapon_id, " is already at max level 5!")
+			return
+				
+		# If not existing, unlock it (Level 1)
+		if weapon_data["scene"] != "":
+			var scene = load(weapon_data["scene"])
+			if scene:
+				var w_node = scene.instantiate()
+				w_node.set_meta("weapon_id", weapon_id)
+				add_child(w_node)
+				w_node.position = Vector2(10, 0)
+				
+				# Hide weapon visuals if character already has a baked weapon (Victor/Serena)
+				var char_name = GameManager.selected_character
+				if char_name == "Victor" or char_name == "Serena":
+					var weapon_visuals = w_node.get_node_or_null("Visuals")
+					if weapon_visuals:
+						weapon_visuals.visible = false
+				
+				secondary_weapons.append(w_node)
+				weapon_levels[weapon_id] = 1
+				if w_node.has_method("set_level"):
+					w_node.set_level(1)
+				print("Player unlocked secondary weapon: ", weapon_data["name"], " at Level 1")
 
 func _update_health_ui() -> void:
 	if has_node("/root/UIManager"):
@@ -229,18 +286,24 @@ func _physics_process(delta: float) -> void:
 	_update_animation()
 	_update_ability_cooldown(delta)
 
-	# Clamp to screen boundaries
-	position.x = clamp(position.x, -380, 380)
-	position.y = clamp(position.y, -280, 280)
+	# Clamp to screen boundaries (expanded for larger map play area)
+	position.x = clamp(position.x, -1200, 1200)
+	position.y = clamp(position.y, -900, 900)
 
 	# Aiming (Aim at mouse or follow last movement direction)
-	if crossbow_pivot:
-		if is_aiming_with_mouse:
-			var world_aim = get_global_mouse_position()
-			var dir = (world_aim - crossbow_pivot.global_position).normalized()
-			crossbow_pivot.rotation = dir.angle()
-		else:
-			crossbow_pivot.rotation = last_movement_direction.angle()
+	var aim_dir = last_movement_direction
+	if is_aiming_with_mouse:
+		var world_aim = get_global_mouse_position()
+		aim_dir = (world_aim - global_position).normalized()
+	
+	if primary_weapon_id == "crossbow":
+		if crossbow_pivot:
+			crossbow_pivot.rotation = aim_dir.angle()
+	elif current_weapon_node and is_instance_valid(current_weapon_node):
+		current_weapon_node.rotation = aim_dir.angle()
+
+	# Process secondary weapons automatic aiming and firing
+	_process_secondary_weapons(delta)
 
 	# Mobile auto-fire, PC manual fire
 	if not is_bat_form:
@@ -254,23 +317,24 @@ func _try_manual_fire() -> void:
 	if Time.get_ticks_msec() / 1000.0 - last_fire_time < fire_rate:
 		return
 
-	if current_weapon_node and current_weapon_node.has_method("attack"):
-		current_weapon_node.attack()
+	if primary_weapon_id != "crossbow":
+		if current_weapon_node and is_instance_valid(current_weapon_node) and current_weapon_node.has_method("attack"):
+			current_weapon_node.attack()
+			last_fire_time = Time.get_ticks_msec() / 1000.0
+			return
+	else:
+		var proj = PoolManager.get_object("res://scenes/Projectile.tscn")
+		if proj:
+			if proj.get_parent() != get_tree().current_scene:
+				proj.get_parent().remove_child(proj)
+				get_tree().current_scene.add_child(proj)
+			proj.global_position = fire_point.global_position
+			var dir = (fire_point.global_position - crossbow_pivot.global_position).normalized()
+			proj.initialize(dir, damage + damage_boost_flat)
+
 		last_fire_time = Time.get_ticks_msec() / 1000.0
-		return
-
-	var proj = PoolManager.get_object("res://scenes/Projectile.tscn")
-	if proj:
-		if proj.get_parent() != get_tree().current_scene:
-			proj.get_parent().remove_child(proj)
-			get_tree().current_scene.add_child(proj)
-		proj.global_position = fire_point.global_position
-		var dir = (fire_point.global_position - crossbow_pivot.global_position).normalized()
-		proj.initialize(dir, damage + damage_boost_flat)
-
-	last_fire_time = Time.get_ticks_msec() / 1000.0
-	muzzle_flash.restart()
-	AudioManager.play_sfx("shoot")
+		muzzle_flash.restart()
+		AudioManager.play_sfx("shoot")
 
 func _try_auto_fire() -> void:
 	if Time.get_ticks_msec() / 1000.0 - last_fire_time < fire_rate:
@@ -282,31 +346,52 @@ func _try_auto_fire() -> void:
 	if not nearest:
 		return
 
-	if current_weapon_node and current_weapon_node.has_method("attack"):
-		# Aim melee weapon towards enemy
-		var dir = (nearest.global_position - global_position).normalized()
-		current_weapon_node.rotation = dir.angle()
-		current_weapon_node.attack()
+	if primary_weapon_id != "crossbow":
+		if current_weapon_node and is_instance_valid(current_weapon_node) and current_weapon_node.has_method("attack"):
+			var dir = (nearest.global_position - global_position).normalized()
+			current_weapon_node.rotation = dir.angle()
+			current_weapon_node.attack()
+			last_fire_time = Time.get_ticks_msec() / 1000.0
+			return
+	else:
+		var proj = PoolManager.get_object("res://scenes/Projectile.tscn")
+		if proj:
+			if proj.get_parent() != get_tree().current_scene:
+				proj.get_parent().remove_child(proj)
+				get_tree().current_scene.add_child(proj)
+			proj.global_position = fire_point.global_position
+
+			var dir = (nearest.global_position - global_position).normalized()
+			if crossbow_pivot:
+				crossbow_pivot.rotation = dir.angle()
+
+			var proj_dir = (fire_point.global_position - crossbow_pivot.global_position).normalized()
+			proj.initialize(proj_dir, damage + damage_boost_flat)
+
 		last_fire_time = Time.get_ticks_msec() / 1000.0
+		muzzle_flash.restart()
+		AudioManager.play_sfx("shoot")
+
+func _process_secondary_weapons(delta: float) -> void:
+	if is_bat_form:
 		return
-
-	var proj = PoolManager.get_object("res://scenes/Projectile.tscn")
-	if proj:
-		if proj.get_parent() != get_tree().current_scene:
-			proj.get_parent().remove_child(proj)
-			get_tree().current_scene.add_child(proj)
-		proj.global_position = fire_point.global_position
-
-		var dir = (nearest.global_position - global_position).normalized()
-		if crossbow_pivot:
-			crossbow_pivot.rotation = dir.angle()
-
-		var proj_dir = (fire_point.global_position - crossbow_pivot.global_position).normalized()
-		proj.initialize(proj_dir, damage + damage_boost_flat)
-
-	last_fire_time = Time.get_ticks_msec() / 1000.0
-	muzzle_flash.restart()
-	AudioManager.play_sfx("shoot")
+		
+	var nearest = null
+	if GameManager.wave_manager:
+		nearest = GameManager.wave_manager.get_nearest_enemy(global_position)
+		
+	var secondary_aim_dir = last_movement_direction
+	if nearest:
+		secondary_aim_dir = (nearest.global_position - global_position).normalized()
+	elif is_aiming_with_mouse:
+		var world_aim = get_global_mouse_position()
+		secondary_aim_dir = (world_aim - global_position).normalized()
+		
+	for w in secondary_weapons:
+		if is_instance_valid(w):
+			w.rotation = secondary_aim_dir.angle()
+			if w.has_method("attack"):
+				w.attack()
 
 func take_damage(amount: int) -> void:
 	if is_bat_form or is_shielded or invulnerability_timer > 0:
@@ -430,25 +515,6 @@ func _input(event: InputEvent) -> void:
 			is_aiming_with_mouse = false
 			if event.keycode == KEY_SHIFT or event.keycode == KEY_E:
 				use_ability()
-
-	# Handle touch dragging / mouse dragging to move
-	if event is InputEventScreenDrag or (event is InputEventMouseMotion and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)):
-		var player_screen_pos = get_global_transform_with_canvas().origin
-		move_input = (event.position - player_screen_pos).normalized()
-
-	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
-		if event.pressed:
-			var player_screen_pos = get_global_transform_with_canvas().origin
-			move_input = (event.position - player_screen_pos).normalized()
-		else:
-			move_input = Vector2.ZERO
-
-	elif event is InputEventScreenTouch:
-		if event.pressed:
-			var player_screen_pos = get_global_transform_with_canvas().origin
-			move_input = (event.position - player_screen_pos).normalized()
-		else:
-			move_input = Vector2.ZERO
 
 func use_ability() -> void:
 	if ability_cooldown > 0 or is_bat_form or is_dashing:

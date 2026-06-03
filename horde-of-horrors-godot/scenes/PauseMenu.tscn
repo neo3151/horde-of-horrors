@@ -176,6 +176,20 @@ text = "[img=20x20]res://assets/sprites/ui/icons/crossbow.png[/img] Damage Boost
 [img=20x20]res://assets/sprites/ui/icons/dash.png[/img] Speed Boost: Inactive
 [img=20x20]res://assets/sprites/ui/icons/shield.png[/img] Shield: Inactive"
 
+[node name="SectionTitle3" type="Label" parent="TradePanel/VBox/HBox/InventorySection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "EQUIPPED SECONDARY ITEMS"
+horizontal_alignment = 1
+
+[node name="SecondaryList" type="RichTextLabel" parent="TradePanel/VBox/HBox/InventorySection"]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 15
+bbcode_enabled = true
+fit_content = true
+text = "No secondary weapons equipped"
+
+
 [node name="MarketSection" type="VBoxContainer" parent="TradePanel/VBox/HBox"]
 layout_mode = 2
 size_flags_horizontal = 3

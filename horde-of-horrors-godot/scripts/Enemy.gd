@@ -31,6 +31,7 @@ var separation_frame_counter: int = 0
 @export var max_health: int = 28
 @export var damage: int = 9
 @export var points: int = 12
+@export var is_mini_boss: bool = false
 
 var current_health: int
 var player: Node2D
@@ -47,6 +48,9 @@ var is_charging: bool = false
 var charge_speed_multiplier: float = 2.5 # Speed multiplier during charge
 
 var status_effects: Dictionary = {} # { "bleed": { "damage": 2, "time": 3.0, "timer": 0.0 } }
+var slow_multiplier: float = 1.0
+var slow_timer: float = 0.0
+var stun_timer: float = 0.0
 
 var knockback_velocity: Vector2 = Vector2.ZERO
 var knockback_decay: float = 12.0
@@ -95,6 +99,16 @@ func _ready() -> void:
 			speed = 95.0
 			max_health = 60
 			damage = 15
+			
+	if is_mini_boss:
+		max_health = int(max_health * 4)
+		damage = int(damage * 1.5)
+		points = int(points * 3)
+		var visuals = get_node_or_null("Visuals")
+		if visuals:
+			visuals.scale *= 1.6
+		modulate = Color(1.2, 0.9, 1.2) # Elite purple/crimson glow
+		
 	current_health = max_health
 	player = GameManager.player
 	_configure_visuals()
@@ -186,6 +200,18 @@ func _physics_process(delta: float) -> void:
 	if not player or GameManager.is_game_over:
 		return
 
+	# Process slow and stun timers
+	if slow_timer > 0:
+		slow_timer -= delta
+		if slow_timer <= 0:
+			slow_multiplier = 1.0
+			
+	if stun_timer > 0:
+		stun_timer -= delta
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
+
 	# Apply and decay knockback
 	if knockback_velocity.length() > 5.0:
 		velocity = knockback_velocity
@@ -227,7 +253,7 @@ func _physics_process(delta: float) -> void:
 		cached_separation = _get_separation_vector()
 
 	if not is_charging:
-		velocity = (dir * speed) + (cached_separation * separation_force * delta)
+		velocity = (dir * speed * slow_multiplier) + (cached_separation * separation_force * delta)
 		# Flip visuals to face movement direction
 		var visuals = $Visuals
 		if visuals and dir.x != 0:
@@ -254,7 +280,7 @@ func _process_status_effects(delta: float) -> void:
 		var effect = status_effects[effect_name]
 		effect.timer += delta
 		
-		if effect_name == "bleed":
+		if effect_name == "bleed" or effect_name == "burn":
 			# Apply damage once per second
 			if int(effect.timer) > int(effect.timer - delta):
 				take_damage(effect.damage)
@@ -271,6 +297,13 @@ func apply_status_effect(effect_name: String, amount: int, duration: float) -> v
 		"time": duration,
 		"timer": 0.0
 	}
+
+func apply_slow(multiplier: float, duration: float) -> void:
+	slow_multiplier = min(slow_multiplier, multiplier)
+	slow_timer = max(slow_timer, duration)
+
+func apply_stun(duration: float) -> void:
+	stun_timer = max(stun_timer, duration)
 
 func _update_animation() -> void:
 	if not animation_player:
@@ -385,8 +418,8 @@ func _die() -> void:
 		get_parent().add_child(decal)
 		decal.global_position = global_position
 
-	# Chance to drop a power-up (25% chance)
-	if randf() < 0.25:
+	# Chance to drop a power-up (guaranteed for mini-bosses, 25% otherwise)
+	if is_mini_boss or randf() < 0.25:
 		var rolls = randf()
 		var res: Resource = null
 

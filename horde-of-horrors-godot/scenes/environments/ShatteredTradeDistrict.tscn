@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/EnvironmentBase.gd" id="1_base"]
 [ext_resource type="Texture2D" path="res://assets/sprites/environments/trade_district.png" id="1_floor"]
+[ext_resource type="Texture2D" path="res://assets/sprites/environment/svg_levels/prop_broken_crate.svg" id="2_crate"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
 size = Vector2(80, 80)
@@ -21,20 +22,40 @@ texture = ExtResource("1_floor")
 
 [node name="Crate1" type="StaticBody2D" parent="Obstacles"]
 position = Vector2(-150, -150)
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Crate1"]
 shape = SubResource("RectangleShape2D_1")
 
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/Crate1"]
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("2_crate")
+
 [node name="Crate2" type="StaticBody2D" parent="Obstacles"]
 position = Vector2(150, 150)
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Crate2"]
 shape = SubResource("RectangleShape2D_1")
 
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/Crate2"]
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("2_crate")
+
 [node name="Crate3" type="StaticBody2D" parent="Obstacles"]
 position = Vector2(150, -150)
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Crate3"]
 shape = SubResource("RectangleShape2D_1")
 
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/Crate3"]
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("2_crate")
+
 [node name="Crate4" type="StaticBody2D" parent="Obstacles"]
 position = Vector2(-150, 150)
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Crate4"]
 shape = SubResource("RectangleShape2D_1")
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/Crate4"]
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("2_crate")

@@ -18,6 +18,18 @@ const HEAL_DATA = preload("res://resources/powerups/VampiresKissData.tres")
 @onready var gold_label = $TradePanel/VBox/GoldLabel
 @onready var upgrades_list_label = $TradePanel/VBox/HBox/InventorySection/UpgradesList
 @onready var effects_list_label = $TradePanel/VBox/HBox/InventorySection/EffectsList
+@onready var secondary_list_label = $TradePanel/VBox/HBox/InventorySection/SecondaryList
+
+const SECONDARY_WEAPONS_ICONS = {
+	"rifle": "res://assets/sprites/ui/weapon_icons/rifle_icon.svg",
+	"stake_launcher": "res://assets/sprites/ui/weapon_icons/stake_launcher_icon.svg",
+	"holy_water": "res://assets/sprites/ui/weapon_icons/holy_grenade_icon.svg",
+	"garlic_bomb": "res://assets/sprites/ui/weapon_icons/garlic_bomb_icon.svg",
+	"longbow": "res://assets/sprites/ui/weapon_icons/moonlight_bow_icon.svg",
+	"greatsword": "res://assets/sprites/ui/weapon_icons/greatsword_icon.svg",
+	"staff": "res://assets/sprites/ui/weapon_icons/crystal_staff_icon.svg",
+	"lightning_rod": "res://assets/sprites/ui/weapon_icons/lightning_rod_icon.svg"
+}
 
 @onready var buy_fury_btn = $TradePanel/VBox/HBox/MarketSection/BuyFury
 @onready var buy_speed_btn = $TradePanel/VBox/HBox/MarketSection/BuySpeed
@@ -182,8 +194,26 @@ func update_trade_ui() -> void:
 		var speed_boost = "Active (x%.1f)" % player.speed_boost_multiplier if player.speed_boost_multiplier > 1.0 else "Inactive"
 		var shield = "Active" if player.is_shielded else "Inactive"
 		effects_list_label.text = "[img=20x20]res://assets/sprites/ui/icons/crossbow.png[/img] Damage Boost: %s\n[img=20x20]res://assets/sprites/ui/icons/dash.png[/img] Speed Boost: %s\n[img=20x20]res://assets/sprites/ui/icons/shield.png[/img] Shield: %s" % [dmg_boost, speed_boost, shield]
+		
+		# Update equipped secondary weapons and levels
+		var secondary_text = ""
+		if player.secondary_weapons.is_empty():
+			secondary_text = "No secondary weapons equipped"
+		else:
+			for w in player.secondary_weapons:
+				if is_instance_valid(w) and w.has_meta("weapon_id"):
+					var w_id = w.get_meta("weapon_id")
+					var w_name = GameManager.WEAPONS.get(w_id, {}).get("name", w_id)
+					var w_lvl = player.weapon_levels.get(w_id, 1)
+					var icon_path = SECONDARY_WEAPONS_ICONS.get(w_id, "res://assets/sprites/ui/icons/crossbow.png")
+					secondary_text += "[img=20x20]%s[/img] %s: [color=#ffd700]Level %d[/color]/5\n" % [icon_path, w_name, w_lvl]
+			secondary_text = secondary_text.strip_edges()
+		if secondary_list_label:
+			secondary_list_label.text = secondary_text
 	else:
 		effects_list_label.text = "[img=20x20]res://assets/sprites/ui/icons/crossbow.png[/img] Damage Boost: Inactive\n[img=20x20]res://assets/sprites/ui/icons/dash.png[/img] Speed Boost: Inactive\n[img=20x20]res://assets/sprites/ui/icons/shield.png[/img] Shield: Inactive"
+		if secondary_list_label:
+			secondary_list_label.text = "No secondary weapons equipped"
 
 func _on_inventory_pressed() -> void:
 	show_trade_menu()

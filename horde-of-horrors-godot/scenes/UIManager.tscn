@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://cui_manager_uid"]
+[gd_scene load_steps=6 format=3 uid="uid://cui_manager_uid"]
 
 [ext_resource type="Script" path="res://scripts/UIManager.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://djq128y36lrb1_upgrademanager" path="res://scenes/UpgradeShop.tscn" id="2_upgrade_shop"]
 [ext_resource type="PackedScene" path="res://scenes/PauseMenu.tscn" id="15_pause"]
 [ext_resource type="PackedScene" uid="uid://minimap001" path="res://scenes/Minimap.tscn" id="8_minimap"]
+[ext_resource type="PackedScene" uid="uid://joystick_tscn" path="res://scenes/Joystick.tscn" id="16_joystick"]
 
 [sub_resource type="StyleBoxFlat" id="GameOverBG"]
 bg_color = Color(0.05, 0.02, 0.05, 0.88)
@@ -43,6 +44,14 @@ visible = false
 
 [node name="Minimap" parent="HUD" instance=ExtResource("8_minimap")]
 layout_mode = 1
+
+[node name="Joystick" parent="HUD" instance=ExtResource("16_joystick")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="WaveLabel" type="Label" parent="HUD"]
 layout_mode = 1
