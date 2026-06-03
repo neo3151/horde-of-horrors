@@ -1,6 +1,5 @@
 <svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
-  <rect width="128" height="128" rx="64" fill="#1A1A1A" stroke="#FF5252" stroke-width="4" />
-  <!-- Winged Boot / Speed -->
-  <path d="M40 80 L90 50 L70 50 L90 30 L40 60 L60 60 Z" fill="#FF5252" />
-  <path d="M30 75 Q45 85 60 75" fill="none" stroke="#FF8A80" stroke-width="3" />
+  <rect x="4" y="4" width="120" height="120" rx="10" fill="#1A0505" stroke="#FF5252" stroke-width="5"/>
+  <path d="M28 96 L96 48 L72 48 L96 24 L28 72 L52 72 Z" fill="#FF5252" stroke="white" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M22 86 Q46 102 70 86" fill="none" stroke="white" stroke-width="5" stroke-linecap="round"/>
 </svg>

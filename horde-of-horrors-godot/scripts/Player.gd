@@ -99,6 +99,7 @@ func _ready() -> void:
 	_setup_weapon()
 	_update_health_ui()
 	_setup_ability_icon()
+	_update_active_items_ui()
 
 	# Adjust Camera limits and zoom for top-down arena level
 	if camera:
@@ -140,7 +141,7 @@ func change_weapon(weapon_id: String) -> void:
 	if weapon_id == primary_weapon_id:
 		# Clear existing primary weapon
 		if current_weapon_node:
-			current_weapon_node.queue_free()
+			current_weapon_node.call_deferred("queue_free")
 			current_weapon_node = null
 			
 		if weapon_data["scene"] != "":
@@ -195,8 +196,9 @@ func change_weapon(weapon_id: String) -> void:
 				w_node.position = Vector2(10, 0)
 				
 				# Hide weapon visuals if character already has a baked weapon (Victor/Serena)
+				# or if it's a thrown weapon like garlic_bomb that shouldn't be held
 				var char_name = GameManager.selected_character
-				if char_name == "Victor" or char_name == "Serena":
+				if char_name == "Victor" or char_name == "Serena" or weapon_id == "garlic_bomb":
 					var weapon_visuals = w_node.get_node_or_null("Visuals")
 					if weapon_visuals:
 						weapon_visuals.visible = false
@@ -305,6 +307,9 @@ func _physics_process(delta: float) -> void:
 	# Process secondary weapons automatic aiming and firing
 	_process_secondary_weapons(delta)
 
+	# Process auto triggers
+	_process_auto_triggers(delta)
+
 	# Mobile auto-fire, PC manual fire
 	if not is_bat_form:
 		if OS.has_feature("mobile"):
@@ -323,14 +328,24 @@ func _try_manual_fire() -> void:
 			last_fire_time = Time.get_ticks_msec() / 1000.0
 			return
 	else:
-		var proj = PoolManager.get_object("res://scenes/Projectile.tscn")
-		if proj:
-			if proj.get_parent() != get_tree().current_scene:
-				proj.get_parent().remove_child(proj)
-				get_tree().current_scene.add_child(proj)
-			proj.global_position = fire_point.global_position
-			var dir = (fire_point.global_position - crossbow_pivot.global_position).normalized()
-			proj.initialize(dir, damage + damage_boost_flat)
+		var dir = (fire_point.global_position - crossbow_pivot.global_position).normalized()
+		if has_double_shot or wave_long_double_shot:
+			for angle in [-0.15, 0.15]:
+				var proj = PoolManager.get_object("res://scenes/Projectile.tscn")
+				if proj:
+					if proj.get_parent() != get_tree().current_scene:
+						proj.get_parent().remove_child(proj)
+						get_tree().current_scene.add_child(proj)
+					proj.global_position = fire_point.global_position
+					proj.initialize(dir.rotated(angle), damage + damage_boost_flat)
+		else:
+			var proj = PoolManager.get_object("res://scenes/Projectile.tscn")
+			if proj:
+				if proj.get_parent() != get_tree().current_scene:
+					proj.get_parent().remove_child(proj)
+					get_tree().current_scene.add_child(proj)
+				proj.global_position = fire_point.global_position
+				proj.initialize(dir, damage + damage_boost_flat)
 
 		last_fire_time = Time.get_ticks_msec() / 1000.0
 		muzzle_flash.restart()
@@ -354,19 +369,28 @@ func _try_auto_fire() -> void:
 			last_fire_time = Time.get_ticks_msec() / 1000.0
 			return
 	else:
-		var proj = PoolManager.get_object("res://scenes/Projectile.tscn")
-		if proj:
-			if proj.get_parent() != get_tree().current_scene:
-				proj.get_parent().remove_child(proj)
-				get_tree().current_scene.add_child(proj)
-			proj.global_position = fire_point.global_position
+		var dir = (nearest.global_position - global_position).normalized()
+		if crossbow_pivot:
+			crossbow_pivot.rotation = dir.angle()
 
-			var dir = (nearest.global_position - global_position).normalized()
-			if crossbow_pivot:
-				crossbow_pivot.rotation = dir.angle()
-
-			var proj_dir = (fire_point.global_position - crossbow_pivot.global_position).normalized()
-			proj.initialize(proj_dir, damage + damage_boost_flat)
+		var proj_dir = (fire_point.global_position - crossbow_pivot.global_position).normalized()
+		if has_double_shot or wave_long_double_shot:
+			for angle in [-0.15, 0.15]:
+				var proj = PoolManager.get_object("res://scenes/Projectile.tscn")
+				if proj:
+					if proj.get_parent() != get_tree().current_scene:
+						proj.get_parent().remove_child(proj)
+						get_tree().current_scene.add_child(proj)
+					proj.global_position = fire_point.global_position
+					proj.initialize(proj_dir.rotated(angle), damage + damage_boost_flat)
+		else:
+			var proj = PoolManager.get_object("res://scenes/Projectile.tscn")
+			if proj:
+				if proj.get_parent() != get_tree().current_scene:
+					proj.get_parent().remove_child(proj)
+					get_tree().current_scene.add_child(proj)
+				proj.global_position = fire_point.global_position
+				proj.initialize(proj_dir, damage + damage_boost_flat)
 
 		last_fire_time = Time.get_ticks_msec() / 1000.0
 		muzzle_flash.restart()
@@ -400,6 +424,24 @@ func take_damage(amount: int) -> void:
 	current_health -= amount
 	AudioManager.play_sfx("player_hurt")
 	invulnerability_timer = invulnerability_duration
+
+	# Auto-trigger checks on hit
+	if powerup_charges.get("nova", 0) > 0 and auto_trigger_cooldowns.get("nova", 0.0) <= 0:
+		use_active_charge("nova")
+		auto_trigger_cooldowns["nova"] = 3.0
+	
+	if powerup_charges.get("time_slow", 0) > 0 and auto_trigger_cooldowns.get("time_slow", 0.0) <= 0:
+		var surrounded_count = 0
+		for enemy in get_tree().get_nodes_in_group("enemy"):
+			if enemy.global_position.distance_to(global_position) < 150.0:
+				surrounded_count += 1
+		if surrounded_count >= 4:
+			use_active_charge("time_slow")
+			auto_trigger_cooldowns["time_slow"] = 5.0
+
+	if current_health < max_health * 0.30 and powerup_charges.get("rage", 0) > 0 and auto_trigger_cooldowns.get("rage", 0.0) <= 0:
+		use_active_charge("rage")
+		auto_trigger_cooldowns["rage"] = 5.0
 	
 	# Repel nearby enemies when hit
 	for enemy in get_tree().get_nodes_in_group("enemy"):
@@ -515,6 +557,16 @@ func _input(event: InputEvent) -> void:
 			is_aiming_with_mouse = false
 			if event.keycode == KEY_SHIFT or event.keycode == KEY_E:
 				use_ability()
+			elif event.keycode == KEY_1:
+				use_active_charge("dash")
+			elif event.keycode == KEY_2:
+				use_active_charge("fury")
+			elif event.keycode == KEY_3:
+				use_active_charge("nova")
+			elif event.keycode == KEY_4:
+				use_active_charge("time_slow")
+			elif event.keycode == KEY_5:
+				use_active_charge("rage")
 
 func use_ability() -> void:
 	if ability_cooldown > 0 or is_bat_form or is_dashing:
@@ -656,6 +708,24 @@ func _panic_knockback(radius: float, force: float) -> void:
 
 var has_double_shot: bool = false
 var is_ghost_form: bool = false
+var wave_long_double_shot: bool = false
+var wave_long_vampire_kiss: bool = false
+
+var powerup_charges: Dictionary = {
+	"dash": 0,
+	"fury": 0,
+	"nova": 0,
+	"time_slow": 0,
+	"rage": 0
+}
+
+var auto_trigger_cooldowns: Dictionary = {
+	"dash": 0.0,
+	"fury": 0.0,
+	"nova": 0.0,
+	"time_slow": 0.0,
+	"rage": 0.0
+}
 
 func apply_powerup(powerup: PowerUpData) -> void:
 	if not powerup:
@@ -667,94 +737,197 @@ func apply_powerup(powerup: PowerUpData) -> void:
 			_spawn_puff_particles(global_position, Color(0.2, 0.8, 0.2, 0.6))
 
 		PowerUpData.PowerUpType.SPEED_BOOST:
-			speed_boost_multiplier = powerup.value
-			_spawn_puff_particles(global_position, Color(0.8, 0.8, 0.2, 0.6))
-			modulate = Color(1.2, 1.2, 0.8)
-
-			get_tree().create_timer(powerup.duration).timeout.connect(func():
-				speed_boost_multiplier = 1.0
-				modulate = Color.WHITE
-			)
+			# Blood Rush active charge (3 charges)
+			powerup_charges["dash"] = powerup_charges.get("dash", 0) + 3
+			_spawn_puff_particles(global_position, Color(0.2, 0.8, 0.8, 0.6))
+			_update_active_items_ui()
 
 		PowerUpData.PowerUpType.DAMAGE_BOOST:
-			damage_boost_flat = int(powerup.value)
+			# Fury active charge (2 charges)
+			powerup_charges["fury"] = powerup_charges.get("fury", 0) + 2
 			_spawn_puff_particles(global_position, Color(0.8, 0.2, 0.2, 0.6))
-			modulate = Color(1.5, 0.8, 0.8)
-
-			get_tree().create_timer(powerup.duration).timeout.connect(func():
-				damage_boost_flat = 0
-				modulate = Color.WHITE
-			)
+			_update_active_items_ui()
 
 		PowerUpData.PowerUpType.SHIELD:
 			is_shielded = true
 			_spawn_puff_particles(global_position, Color(0.2, 0.6, 0.8, 0.6))
 			modulate = Color(0.8, 0.8, 1.5)
 
-			get_tree().create_timer(powerup.duration).timeout.connect(func():
+			get_tree().create_timer(30.0).timeout.connect(func():
 				is_shielded = false
 				modulate = Color.WHITE
 			)
 			
 		PowerUpData.PowerUpType.VAMPIRE_KISS:
-			# Temporary lifesteal: heal 25% of current health missing
-			var missing = max_health - current_health
-			heal(int(missing * 0.25))
+			wave_long_vampire_kiss = true
 			_spawn_puff_particles(global_position, Color(0.6, 0, 0.2, 0.8))
-			modulate = Color(1.5, 0.5, 0.5)
-			get_tree().create_timer(powerup.duration).timeout.connect(func():
-				modulate = Color.WHITE
-			)
+			_update_active_items_ui()
 
 		PowerUpData.PowerUpType.HOLY_NOVA:
+			powerup_charges["nova"] = powerup_charges.get("nova", 0) + 2
 			_spawn_puff_particles(global_position, Color(1, 1, 0.5, 0.8))
-			_panic_knockback(300.0, 1200.0) # Larger radius and force
-			# Deal damage to all in radius
-			for enemy in get_tree().get_nodes_in_group("enemy"):
-				if enemy.global_position.distance_to(global_position) < 300.0:
-					if enemy.has_method("take_damage"):
-						enemy.take_damage(int(powerup.value))
-			AudioManager.play_sfx("holy_blast")
+			_update_active_items_ui()
 
 		PowerUpData.PowerUpType.TIME_SLOW:
+			powerup_charges["time_slow"] = powerup_charges.get("time_slow", 0) + 2
 			_spawn_puff_particles(global_position, Color(0.5, 0.5, 1.0, 0.6))
-			Engine.time_scale = 0.5 # Slow down the whole game engine
-			get_tree().create_timer(powerup.duration * 0.5).timeout.connect(func():
-				Engine.time_scale = 1.0
-			)
+			_update_active_items_ui()
 
 		PowerUpData.PowerUpType.DOUBLE_SHOT:
-			has_double_shot = true
-			modulate = Color(1.0, 0.5, 1.0)
-			get_tree().create_timer(powerup.duration).timeout.connect(func():
-				has_double_shot = false
-				modulate = Color.WHITE
-			)
+			wave_long_double_shot = true
+			_spawn_puff_particles(global_position, Color(1.0, 0.5, 1.0, 0.6))
+			_update_active_items_ui()
 
 		PowerUpData.PowerUpType.BLOOD_MOON_RAGE:
-			is_shielded = true
-			damage_boost_flat = 20
-			speed_boost_multiplier = 1.5
-			modulate = Color(2.0, 0.2, 0.2)
-			_spawn_puff_particles(global_position, Color(1, 0, 0, 0.8))
-			get_tree().create_timer(powerup.duration).timeout.connect(func():
-				is_shielded = false
-				damage_boost_flat = 0
-				speed_boost_multiplier = 1.0
-				modulate = Color.WHITE
-			)
+			powerup_charges["rage"] = powerup_charges.get("rage", 0) + 2
+			_spawn_puff_particles(global_position, Color(1.0, 0.2, 0.2, 0.6))
+			_update_active_items_ui()
 
 		PowerUpData.PowerUpType.GHOST_FORM:
 			is_ghost_form = true
 			is_shielded = true # Ghost can't be hit
 			modulate.a = 0.4
 			speed_boost_multiplier = 1.3
-			get_tree().create_timer(powerup.duration).timeout.connect(func():
+			get_tree().create_timer(30.0).timeout.connect(func():
 				is_ghost_form = false
 				is_shielded = false
 				modulate.a = 1.0
 				speed_boost_multiplier = 1.0
 			)
+
+func reset_wave_passives() -> void:
+	wave_long_double_shot = false
+	wave_long_vampire_kiss = false
+	_update_active_items_ui()
+
+func use_active_charge(item_id: String) -> void:
+	if powerup_charges.get(item_id, 0) <= 0:
+		return
+		
+	powerup_charges[item_id] -= 1
+	_update_active_items_ui()
+	
+	match item_id:
+		"dash":
+			_trigger_blood_rush()
+		"fury":
+			_trigger_fury()
+		"nova":
+			_trigger_holy_nova_charge()
+		"time_slow":
+			_trigger_time_slow_charge()
+		"rage":
+			_trigger_rage_charge()
+
+func _trigger_blood_rush() -> void:
+	is_dashing = true
+	var dash_dir = last_movement_direction
+	if velocity.length() > 0:
+		dash_dir = velocity.normalized()
+	velocity = dash_dir * move_speed * 3.5
+	_spawn_puff_particles(global_position, Color(0.2, 0.8, 0.8, 0.6))
+	# Deal 20 AoE damage
+	for enemy in get_tree().get_nodes_in_group("enemy"):
+		if enemy.global_position.distance_to(global_position) < 120.0:
+			if enemy.has_method("take_damage"):
+				enemy.take_damage(20)
+	AudioManager.play_sfx("shoot")
+	
+	get_tree().create_timer(dash_duration).timeout.connect(func():
+		is_dashing = false
+		velocity = Vector2.ZERO
+	)
+
+func _trigger_fury() -> void:
+	_spawn_puff_particles(global_position, Color(0.8, 0.2, 0.2, 0.6))
+	var original_fire_rate = fire_rate
+	fire_rate = original_fire_rate * 0.5
+	modulate = Color(1.8, 0.6, 0.6)
+	get_tree().create_timer(7.0).timeout.connect(func():
+		fire_rate = original_fire_rate
+		modulate = Color.WHITE
+	)
+
+func _trigger_holy_nova_charge() -> void:
+	_spawn_puff_particles(global_position, Color(1, 1, 0.5, 0.8))
+	_panic_knockback(300.0, 1200.0)
+	for enemy in get_tree().get_nodes_in_group("enemy"):
+		if enemy.global_position.distance_to(global_position) < 300.0:
+			if enemy.has_method("take_damage"):
+				enemy.take_damage(100)
+	AudioManager.play_sfx("holy_blast")
+
+func _trigger_time_slow_charge() -> void:
+	_spawn_puff_particles(global_position, Color(0.5, 0.5, 1.0, 0.6))
+	Engine.time_scale = 0.5
+	get_tree().create_timer(4.0).timeout.connect(func():
+		Engine.time_scale = 1.0
+	)
+
+func _trigger_rage_charge() -> void:
+	is_shielded = true
+	var original_damage_boost = damage_boost_flat
+	damage_boost_flat += 20
+	var original_speed_mult = speed_boost_multiplier
+	speed_boost_multiplier = 1.5
+	modulate = Color(2.0, 0.2, 0.2)
+	_spawn_puff_particles(global_position, Color(1, 0, 0, 0.8))
+	get_tree().create_timer(7.0).timeout.connect(func():
+		is_shielded = false
+		damage_boost_flat = original_damage_boost
+		speed_boost_multiplier = original_speed_mult
+		modulate = Color.WHITE
+	)
+
+func _update_active_items_ui() -> void:
+	if has_node("/root/UIManager"):
+		get_node("/root/UIManager").update_active_items(powerup_charges, wave_long_double_shot, wave_long_vampire_kiss)
+
+func _process_auto_triggers(delta: float) -> void:
+	# Decrement cooldowns
+	for key in auto_trigger_cooldowns:
+		if auto_trigger_cooldowns[key] > 0.0:
+			auto_trigger_cooldowns[key] = max(0.0, auto_trigger_cooldowns[key] - delta)
+			
+	# Dash (Blood Rush) auto trigger
+	if powerup_charges.get("dash", 0) > 0 and auto_trigger_cooldowns.get("dash", 0.0) <= 0.0:
+		for enemy in get_tree().get_nodes_in_group("enemy"):
+			if enemy.global_position.distance_to(global_position) < 60.0:
+				use_active_charge("dash")
+				auto_trigger_cooldowns["dash"] = 2.0
+				break
+				
+	# Fury auto trigger
+	if powerup_charges.get("fury", 0) > 0 and auto_trigger_cooldowns.get("fury", 0.0) <= 0.0:
+		var count = 0
+		for enemy in get_tree().get_nodes_in_group("enemy"):
+			if enemy.global_position.distance_to(global_position) < 250.0:
+				count += 1
+		if count >= 8:
+			use_active_charge("fury")
+			auto_trigger_cooldowns["fury"] = 5.0
+			
+	# Holy Nova proximity auto trigger (on-hit trigger is in take_damage)
+	if powerup_charges.get("nova", 0) > 0 and auto_trigger_cooldowns.get("nova", 0.0) <= 0.0:
+		var count = 0
+		for enemy in get_tree().get_nodes_in_group("enemy"):
+			if enemy.global_position.distance_to(global_position) < 120.0:
+				count += 1
+		if count >= 5:
+			use_active_charge("nova")
+			auto_trigger_cooldowns["nova"] = 3.0
+			
+	# Time Slow proximity auto trigger (boss within 300px)
+	if powerup_charges.get("time_slow", 0) > 0 and auto_trigger_cooldowns.get("time_slow", 0.0) <= 0.0:
+		var boss_found = false
+		for enemy in get_tree().get_nodes_in_group("enemy"):
+			if enemy.global_position.distance_to(global_position) < 300.0:
+				if enemy.get("is_mini_boss") == true or "Werewolf" in enemy.name or "Priest" in enemy.name or "Frankenstein" in enemy.name or "Matriarch" in enemy.name:
+					boss_found = true
+					break
+		if boss_found:
+			use_active_charge("time_slow")
+			auto_trigger_cooldowns["time_slow"] = 5.0
 
 func shake_camera(intensity: float, _duration: float) -> void:
 	if camera and camera.has_method("add_shake"):

@@ -90,7 +90,7 @@ var UPGRADES = [
 	{
 		"id": "p_nova",
 		"title": "Holy Nova",
-		"description": "Radial blast that purges all nearby enemies.",
+		"description": "Adds 2 charges of a holy blast that purges nearby enemies.",
 		"action": func(player): 
 			var data = PowerUpData.new()
 			data.type = PowerUpData.PowerUpType.HOLY_NOVA
@@ -101,7 +101,7 @@ var UPGRADES = [
 	{
 		"id": "p_time",
 		"title": "Temporal Rift",
-		"description": "Slow down time for 5 seconds.",
+		"description": "Adds 2 charges to slow down time.",
 		"action": func(player): 
 			var data = PowerUpData.new()
 			data.type = PowerUpData.PowerUpType.TIME_SLOW
@@ -112,7 +112,7 @@ var UPGRADES = [
 	{
 		"id": "p_double",
 		"title": "Echo Strike",
-		"description": "Fire twice as many projectiles for 10 seconds.",
+		"description": "Fire twice as many projectiles for the entire wave.",
 		"action": func(player): 
 			var data = PowerUpData.new()
 			data.type = PowerUpData.PowerUpType.DOUBLE_SHOT
@@ -123,7 +123,7 @@ var UPGRADES = [
 	{
 		"id": "p_rage",
 		"title": "Blood Moon Rage",
-		"description": "Ultimate power! Invulnerability and massive damage for 8s.",
+		"description": "Adds 2 charges of ultimate power (invulnerability + speed + damage).",
 		"action": func(player): 
 			var data = PowerUpData.new()
 			data.type = PowerUpData.PowerUpType.BLOOD_MOON_RAGE
@@ -134,7 +134,7 @@ var UPGRADES = [
 	{
 		"id": "p_ghost",
 		"title": "Ghost Phase",
-		"description": "Become intangible and move faster for 6s.",
+		"description": "Become intangible and move faster for 30 seconds.",
 		"action": func(player): 
 			var data = PowerUpData.new()
 			data.type = PowerUpData.PowerUpType.GHOST_FORM
@@ -161,10 +161,10 @@ func show_shop() -> void:
 	_populate_upgrades()
 
 var ICONS = {
-	"damage": load("res://assets/sprites/ui/powerup_icons/fury.svg"),
+	"damage": load("res://assets/sprites/ui/powerup_icons/fury.png"),
 	"fire_rate": load("res://assets/sprites/ui/icons/rapid.png"),
-	"health": load("res://assets/sprites/ui/powerup_icons/health_pack.svg"),
-	"speed": load("res://assets/sprites/ui/powerup_icons/blood_rush.svg"),
+	"health": load("res://assets/sprites/ui/powerup_icons/health_pack.png"),
+	"speed": load("res://assets/sprites/ui/powerup_icons/blood_rush.png"),
 	"pact": load("res://assets/sprites/ui/icons/pact.png"),
 	"w_rifle": load("res://assets/sprites/ui/weapon_icons/rifle_icon.svg"),
 	"w_stake": load("res://assets/sprites/ui/weapon_icons/stake_launcher_icon.svg"),
@@ -174,11 +174,11 @@ var ICONS = {
 	"w_sword": load("res://assets/sprites/ui/weapon_icons/greatsword_icon.svg"),
 	"w_staff": load("res://assets/sprites/ui/weapon_icons/crystal_staff_icon.svg"),
 	"w_lightning": load("res://assets/sprites/ui/weapon_icons/lightning_rod_icon.svg"),
-	"p_nova": load("res://assets/sprites/ui/powerup_icons/holy_nova.svg"),
-	"p_time": load("res://assets/sprites/ui/powerup_icons/time_slow.svg"),
-	"p_double": load("res://assets/sprites/ui/powerup_icons/double_shot.svg"),
-	"p_rage": load("res://assets/sprites/ui/powerup_icons/blood_moon_rage.svg"),
-	"p_ghost": load("res://assets/sprites/ui/powerup_icons/ghost_form.svg")
+	"p_nova": load("res://assets/sprites/ui/powerup_icons/holy_nova.png"),
+	"p_time": load("res://assets/sprites/ui/powerup_icons/time_slow.png"),
+	"p_double": load("res://assets/sprites/ui/powerup_icons/double_shot.png"),
+	"p_rage": load("res://assets/sprites/ui/powerup_icons/blood_moon_rage.png"),
+	"p_ghost": load("res://assets/sprites/ui/powerup_icons/ghost_form.png")
 }
 
 func hide_shop() -> void:

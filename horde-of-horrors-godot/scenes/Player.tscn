@@ -1,9 +1,9 @@
 [gd_scene load_steps=12 format=3 uid="uid://dptt40axnfabo"]
 
-[ext_resource type="Script" path="res://scripts/Player.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://dar65x5bk6vwa" path="res://assets/sprites/player/hunter.png" id="2"]
 [ext_resource type="Texture2D" uid="uid://dtc3y0hd3y7t6" path="res://assets/sprites/weapons/crossbow.svg" id="3_svg"]
 [ext_resource type="Script" path="res://scripts/AdvancedCameraController.gd" id="4_cam"]
+[ext_resource type="Script" path="res://scripts/Player.gd" id="5_player"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1"]
 radius = 18.0
@@ -122,7 +122,7 @@ _data = {
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 collision_mask = 3
-script = ExtResource("1")
+script = ExtResource("5_player")
 test_starting_secondary_weapon = "garlic_bomb"
 test_starting_secondary_level = 5
 

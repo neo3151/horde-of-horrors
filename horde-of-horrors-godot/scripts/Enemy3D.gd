@@ -37,4 +37,4 @@ func _physics_process(delta: float) -> void:
 func take_damage(amount: int) -> void:
 	max_health -= amount
 	if max_health <= 0:
-		queue_free()
+		call_deferred("queue_free")

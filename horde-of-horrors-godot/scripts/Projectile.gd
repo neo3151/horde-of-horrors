@@ -26,20 +26,65 @@ func initialize(dir: Vector2, dmg: int) -> void:
 			PoolManager.return_object("res://scenes/Projectile.tscn", self)
 	)
 
+var pierce_count: int = 0
+var explode_on_hit: bool = false
+var hit_bodies: Array = []
+
 func _physics_process(delta: float) -> void:
 	position += direction * speed * delta
 
 func _on_body_entered(body: Node) -> void:
+	if hit_bodies.has(body):
+		return
+	hit_bodies.append(body)
+
 	if body.is_in_group("enemy"):
 		if body.has_method("take_damage"):
 			body.take_damage(damage)
 		_spawn_hit_effect()
-		PoolManager.return_object("res://scenes/Projectile.tscn", self)
+		if explode_on_hit:
+			_explode()
+		if pierce_count > 0:
+			pierce_count -= 1
+		else:
+			PoolManager.return_object("res://scenes/Projectile.tscn", self)
 	elif body.is_in_group("obstacle"):
 		if body.has_method("take_damage"):
 			body.take_damage(damage)
 		_spawn_hit_effect()
-		PoolManager.return_object("res://scenes/Projectile.tscn", self)
+		if explode_on_hit:
+			_explode()
+		if pierce_count > 0:
+			pierce_count -= 1
+		else:
+			PoolManager.return_object("res://scenes/Projectile.tscn", self)
+
+func _explode() -> void:
+	var particles = CPUParticles2D.new()
+	particles.emitting = false
+	particles.amount = 20
+	particles.one_shot = true
+	particles.explosiveness = 0.8
+	particles.spread = 180.0
+	particles.gravity = Vector2.ZERO
+	particles.initial_velocity_min = 60.0
+	particles.initial_velocity_max = 120.0
+	particles.scale_amount_min = 3.0
+	particles.scale_amount_max = 5.0
+	particles.color = Color(1.0, 0.9, 0.4)
+	get_parent().add_child(particles)
+	particles.global_position = global_position
+	particles.emitting = true
+	
+	for enemy in get_tree().get_nodes_in_group("enemy"):
+		if enemy.global_position.distance_to(global_position) < 100.0:
+			if enemy.has_method("take_damage"):
+				enemy.take_damage(damage)
+				
+	AudioManager.play_sfx("holy_blast")
+	get_tree().create_timer(1.0).timeout.connect(func():
+		particles.queue_free()
+	)
 
 func _spawn_hit_effect() -> void:
 	var hit_effect = PoolManager.get_object("res://scenes/ProjectileHitEffect.tscn")
@@ -53,5 +98,8 @@ func _spawn_hit_effect() -> void:
 
 func reset() -> void:
 	direction = Vector2.ZERO
+	pierce_count = 0
+	explode_on_hit = false
+	hit_bodies.clear()
 	if trail_particles:
 		trail_particles.emitting = false

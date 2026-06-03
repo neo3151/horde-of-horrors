@@ -4,6 +4,14 @@ extends Node2D
 @export var throw_range: float = 250.0
 
 var last_throw_time: float = 0.0
+var level: int = 1
+
+func set_level(lvl: int):
+	level = lvl
+	if level >= 3:
+		throw_cooldown = 0.8
+	else:
+		throw_cooldown = 1.5
 
 func attack():
 	var current_time = Time.get_ticks_msec() / 1000.0
@@ -16,13 +24,19 @@ func attack():
 func _throw_vial():
 	var vial_scene = load("res://scenes/HolyWaterProjectile.tscn")
 	if vial_scene:
-		var vial = vial_scene.instantiate()
-		get_tree().current_scene.add_child(vial)
-		vial.global_position = global_position
-		
-		# Target position is throw_range in current direction
-		var dir = Vector2.RIGHT.rotated(global_rotation)
-		var target_pos = global_position + dir * throw_range
-		
-		vial.initialize(target_pos)
+		var num_vials = 2 if level >= 2 else 1
+		for i in range(num_vials):
+			var vial = vial_scene.instantiate()
+			vial.set_meta("level", level)
+			get_tree().current_scene.add_child(vial)
+			vial.global_position = global_position
+			
+			var dir = Vector2.RIGHT.rotated(global_rotation)
+			if num_vials > 1:
+				var angle_offset = -0.25 if i == 0 else 0.25
+				dir = dir.rotated(angle_offset)
+				
+			var target_pos = global_position + dir * throw_range
+			vial.initialize(target_pos)
+			
 		AudioManager.play_sfx("throw")

@@ -7,4 +7,4 @@ func _on_body_entered(body: Node) -> void:
         var player = body as CharacterBody2D
         if player.has_method("heal"):
             player.heal(heal_amount)
-            queue_free() # Remove power-up after collection
+            call_deferred("queue_free") # Remove power-up after collection

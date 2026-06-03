@@ -1,7 +1,6 @@
 <svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
-  <rect width="128" height="128" rx="64" fill="#1A1A1A" stroke="#78909C" stroke-width="4" />
-  <!-- Knight Shield -->
-  <path d="M40 30 L88 30 L88 60 Q88 90 64 110 Q40 90 40 60 Z" fill="#CFD8DC" stroke="#455A64" stroke-width="2" />
-  <path d="M64 30 L64 110" stroke="#455A64" stroke-width="1" />
-  <rect x="50" y="45" width="28" height="4" fill="#455A64" />
+  <rect x="4" y="4" width="120" height="120" rx="10" fill="#0D1113" stroke="#90A4AE" stroke-width="5"/>
+  <path d="M28 20 L100 20 L100 60 Q100 100 64 118 Q28 100 28 60 Z" fill="#CFD8DC" stroke="white" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M64 20 L64 118" stroke="white" stroke-width="4"/>
+  <rect x="44" y="42" width="40" height="8" rx="4" fill="white"/>
 </svg>

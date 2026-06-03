@@ -1,12 +1,8 @@
 <svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
-  <rect width="128" height="128" rx="64" fill="#1A1A1A" stroke="#9575CD" stroke-width="4" />
-  <!-- Hourglass -->
-  <path d="M40 30 L88 30 L64 64 Z" fill="#B39DDB" />
-  <path d="M40 98 L88 98 L64 64 Z" fill="#D1C4E9" />
-  <rect x="40" y="25" width="48" height="5" fill="#512DA8" />
-  <rect x="40" y="98" width="48" height="5" fill="#512DA8" />
-  <!-- Falling sand -->
-  <circle cx="64" cy="64" r="3" fill="white">
-    <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite" />
-  </circle>
+  <rect x="4" y="4" width="120" height="120" rx="10" fill="#0D0518" stroke="#E0AAFF" stroke-width="5"/>
+  <path d="M34 18 L94 18 L94 26 L70 64 L94 102 L94 110 L34 110 L34 102 L58 64 L34 26 Z" fill="none" stroke="#C77DFF" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M38 24 L90 24 L66 60 L62 60 Z" fill="#7B2CBF"/>
+  <path d="M62 68 L66 68 L90 104 L38 104 Z" fill="#9D4EDD"/>
+  <rect x="59" y="56" width="10" height="16" rx="5" fill="white"/>
+  <circle cx="64" cy="64" r="7" fill="white"/>
 </svg>

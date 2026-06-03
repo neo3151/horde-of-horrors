@@ -26,9 +26,8 @@ UIManager="*res://scenes/UIManager.tscn"
 
 window/size/viewport_width=720
 window/size/viewport_height=1280
-window/size/resizable=false
-window/size/window_width_override=360
-window/size/window_height_override=640
+window/size/window_width_override=540
+window/size/window_height_override=960
 window/stretch/mode="canvas_items"
 window/handheld/orientation="portrait"
 window/size/initial_screen_orientation=1

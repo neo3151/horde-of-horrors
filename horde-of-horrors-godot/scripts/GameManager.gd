@@ -257,7 +257,7 @@ func _unhandled_input(event: InputEvent) -> void:
 					wave_manager.enemies_to_spawn = 0
 					for enemy in wave_manager.active_enemies:
 						if is_instance_valid(enemy):
-							enemy.queue_free()
+							enemy.call_deferred("queue_free")
 					wave_manager.active_enemies.clear()
 					print("Debug: Skipped Wave ", current_wave)
 			# Press K to jump forward 10 waves
@@ -273,7 +273,7 @@ func _unhandled_input(event: InputEvent) -> void:
 					wave_manager.enemies_to_spawn = 0
 					for enemy in wave_manager.active_enemies:
 						if is_instance_valid(enemy):
-							enemy.queue_free()
+							enemy.call_deferred("queue_free")
 					wave_manager.active_enemies.clear()
 					
 					# Manually trigger environment check and wave start

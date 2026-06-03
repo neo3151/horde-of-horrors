@@ -4,6 +4,7 @@ const FURY_DATA = preload("res://resources/powerups/FuryData.tres")
 const SPEED_DATA = preload("res://resources/powerups/BloodRushData.tres")
 const SHIELD_DATA = preload("res://resources/powerups/IronSkinData.tres")
 const HEAL_DATA = preload("res://resources/powerups/VampiresKissData.tres")
+const TIME_SLOW_DATA = preload("res://resources/powerups/TimeSlowData.tres")
 
 @onready var main_vbox = $CenterContainer/MainVBox
 @onready var options_vbox = $CenterContainer/OptionsVBox
@@ -35,6 +36,7 @@ const SECONDARY_WEAPONS_ICONS = {
 @onready var buy_speed_btn = $TradePanel/VBox/HBox/MarketSection/BuySpeed
 @onready var buy_shield_btn = $TradePanel/VBox/HBox/MarketSection/BuyShield
 @onready var buy_heal_btn = $TradePanel/VBox/HBox/MarketSection/BuyHeal
+@onready var buy_time_slow_btn = $TradePanel/VBox/HBox/MarketSection/BuyTimeSlow
 
 @onready var swap_speed_to_dmg_btn = $TradePanel/VBox/HBox/MarketSection/SwapSpeedToDamage
 @onready var swap_dmg_to_speed_btn = $TradePanel/VBox/HBox/MarketSection/SwapDamageToSpeed
@@ -69,27 +71,31 @@ func _ready() -> void:
 	buy_speed_btn.pressed.connect(func(): _buy_powerup(SPEED_DATA, 25))
 	buy_shield_btn.pressed.connect(func(): _buy_powerup(SHIELD_DATA, 30))
 	buy_heal_btn.pressed.connect(func(): _buy_powerup(HEAL_DATA, 15))
+	buy_time_slow_btn.pressed.connect(func(): _buy_powerup(TIME_SLOW_DATA, 30))
 	
 	swap_speed_to_dmg_btn.pressed.connect(_on_swap_speed_to_dmg)
 	swap_dmg_to_speed_btn.pressed.connect(_on_swap_dmg_to_speed)
 	
 	# Set icons and expand options for shop buttons
-	buy_fury_btn.icon = load("res://assets/sprites/ui/icons/rapid.png")
+	buy_fury_btn.icon = load("res://assets/sprites/ui/powerup_icons/fury.png")
 	buy_fury_btn.expand_icon = true
 	
-	buy_speed_btn.icon = load("res://assets/sprites/ui/icons/dash.png")
+	buy_speed_btn.icon = load("res://assets/sprites/ui/powerup_icons/blood_rush.png")
 	buy_speed_btn.expand_icon = true
 	
-	buy_shield_btn.icon = load("res://assets/sprites/ui/icons/shield.png")
+	buy_shield_btn.icon = load("res://assets/sprites/ui/powerup_icons/iron_skin.png")
 	buy_shield_btn.expand_icon = true
 	
-	buy_heal_btn.icon = load("res://assets/sprites/ui/icons/heart.png")
+	buy_heal_btn.icon = load("res://assets/sprites/ui/powerup_icons/vampires_kiss.png")
 	buy_heal_btn.expand_icon = true
+
+	buy_time_slow_btn.icon = load("res://assets/sprites/ui/powerup_icons/time_slow.png")
+	buy_time_slow_btn.expand_icon = true
 	
-	swap_speed_to_dmg_btn.icon = load("res://assets/sprites/ui/icons/crossbow.png")
+	swap_speed_to_dmg_btn.icon = load("res://assets/sprites/ui/powerup_icons/fury.png")
 	swap_speed_to_dmg_btn.expand_icon = true
 	
-	swap_dmg_to_speed_btn.icon = load("res://assets/sprites/ui/icons/dash.png")
+	swap_dmg_to_speed_btn.icon = load("res://assets/sprites/ui/powerup_icons/blood_rush.png")
 	swap_dmg_to_speed_btn.expand_icon = true
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -175,11 +181,11 @@ func show_trade_menu() -> void:
 	update_trade_ui()
 
 func update_trade_ui() -> void:
-	gold_label.text = "[center][color=#ffd700][img=24x24]res://assets/sprites/ui/icons/coin.png[/img] Gold: %d[/color][/center]" % GameManager.player_currency
+	gold_label.text = "[center][color=#ffd700][img=32x32]res://assets/sprites/ui/icons/coin.png[/img] Gold: %d[/color][/center]" % GameManager.player_currency
 	
 	# Update active passives count
 	var u = GameManager.purchased_upgrades
-	upgrades_list_label.text = "[img=20x20]res://assets/sprites/ui/icons/crossbow.png[/img] Crossbow Damage: +%d\n[img=20x20]res://assets/sprites/ui/icons/rapid.png[/img] Fire Rate Cooldown: -%d%%\n[img=20x20]res://assets/sprites/ui/icons/heart.png[/img] Max Health Bonus: +%d\n[img=20x20]res://assets/sprites/ui/icons/dash.png[/img] Speed Bonus: +%d%%\n[img=20x20]res://assets/sprites/ui/icons/pact.png[/img] Sinister Pact: %d" % [
+	upgrades_list_label.text = "[img=28x28]res://assets/sprites/ui/powerup_icons/fury.png[/img] Crossbow Damage: +%d\n[img=28x28]res://assets/sprites/ui/powerup_icons/double_shot.png[/img] Fire Rate Cooldown: -%d%%\n[img=28x28]res://assets/sprites/ui/powerup_icons/health_pack.png[/img] Max Health Bonus: +%d\n[img=28x28]res://assets/sprites/ui/powerup_icons/blood_rush.png[/img] Speed Bonus: +%d%%\n[img=28x28]res://assets/sprites/ui/powerup_icons/holy_nova.png[/img] Sinister Pact: %d" % [
 		u["damage"] * 3,
 		int((1.0 - pow(0.85, u["fire_rate"])) * 100),
 		u["health"] * 25,
@@ -193,7 +199,7 @@ func update_trade_ui() -> void:
 		var dmg_boost = "Active (+%d)" % player.damage_boost_flat if player.damage_boost_flat > 0 else "Inactive"
 		var speed_boost = "Active (x%.1f)" % player.speed_boost_multiplier if player.speed_boost_multiplier > 1.0 else "Inactive"
 		var shield = "Active" if player.is_shielded else "Inactive"
-		effects_list_label.text = "[img=20x20]res://assets/sprites/ui/icons/crossbow.png[/img] Damage Boost: %s\n[img=20x20]res://assets/sprites/ui/icons/dash.png[/img] Speed Boost: %s\n[img=20x20]res://assets/sprites/ui/icons/shield.png[/img] Shield: %s" % [dmg_boost, speed_boost, shield]
+		effects_list_label.text = "[img=28x28]res://assets/sprites/ui/powerup_icons/fury.png[/img] Damage Boost: %s\n[img=28x28]res://assets/sprites/ui/powerup_icons/blood_rush.png[/img] Speed Boost: %s\n[img=28x28]res://assets/sprites/ui/powerup_icons/iron_skin.png[/img] Shield: %s" % [dmg_boost, speed_boost, shield]
 		
 		# Update equipped secondary weapons and levels
 		var secondary_text = ""
@@ -205,13 +211,13 @@ func update_trade_ui() -> void:
 					var w_id = w.get_meta("weapon_id")
 					var w_name = GameManager.WEAPONS.get(w_id, {}).get("name", w_id)
 					var w_lvl = player.weapon_levels.get(w_id, 1)
-					var icon_path = SECONDARY_WEAPONS_ICONS.get(w_id, "res://assets/sprites/ui/icons/crossbow.png")
-					secondary_text += "[img=20x20]%s[/img] %s: [color=#ffd700]Level %d[/color]/5\n" % [icon_path, w_name, w_lvl]
+					var icon_path = SECONDARY_WEAPONS_ICONS.get(w_id, "res://assets/sprites/ui/powerup_icons/fury.png")
+					secondary_text += "[img=28x28]%s[/img] %s: [color=#ffd700]Level %d[/color]/5\n" % [icon_path, w_name, w_lvl]
 			secondary_text = secondary_text.strip_edges()
 		if secondary_list_label:
 			secondary_list_label.text = secondary_text
 	else:
-		effects_list_label.text = "[img=20x20]res://assets/sprites/ui/icons/crossbow.png[/img] Damage Boost: Inactive\n[img=20x20]res://assets/sprites/ui/icons/dash.png[/img] Speed Boost: Inactive\n[img=20x20]res://assets/sprites/ui/icons/shield.png[/img] Shield: Inactive"
+		effects_list_label.text = "[img=28x28]res://assets/sprites/ui/powerup_icons/fury.png[/img] Damage Boost: Inactive\n[img=28x28]res://assets/sprites/ui/powerup_icons/blood_rush.png[/img] Speed Boost: Inactive\n[img=28x28]res://assets/sprites/ui/powerup_icons/iron_skin.png[/img] Shield: Inactive"
 		if secondary_list_label:
 			secondary_list_label.text = "No secondary weapons equipped"
 

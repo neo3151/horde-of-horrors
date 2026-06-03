@@ -1,9 +1,7 @@
 <svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
-  <rect width="128" height="128" rx="64" fill="#1A1A1A" stroke="#D32F2F" stroke-width="4" />
-  <!-- Flame / Rage -->
-  <path d="M64 20 Q44 50 64 80 Q84 50 64 20" fill="#F44336" />
-  <path d="M64 40 Q54 60 64 90 Q74 60 64 40" fill="#FFEB3B" opacity="0.8" />
-  <!-- Sword silhouette -->
-  <rect x="62" y="80" width="4" height="25" fill="#EEEEEE" />
-  <rect x="54" y="85" width="20" height="4" fill="#FBC02D" />
+  <rect x="4" y="4" width="120" height="120" rx="10" fill="#1A0505" stroke="#FF5252" stroke-width="5"/>
+  <path d="M64 22 Q42 52 64 86 Q86 52 64 22" fill="#FF5252" stroke="white" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M64 44 Q54 64 64 96 Q74 64 64 44" fill="#FFEB3B" stroke="none"/>
+  <rect x="56" y="88" width="12" height="18" fill="white" rx="2"/>
+  <rect x="48" y="94" width="28" height="6" fill="#FFD54F" rx="2"/>
 </svg>

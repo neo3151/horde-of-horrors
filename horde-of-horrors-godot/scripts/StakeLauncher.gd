@@ -7,6 +7,14 @@ extends Node2D
 @onready var muzzle_flash = $FirePoint/MuzzleFlash
 
 var last_fire_time: float = 0.0
+var level: int = 1
+
+func set_level(lvl: int):
+	level = lvl
+	if level >= 3:
+		fire_rate = 0.5
+	else:
+		fire_rate = 0.9
 
 func attack():
 	var current_time = Time.get_ticks_msec() / 1000.0
@@ -17,17 +25,33 @@ func attack():
 	_fire_projectile()
 
 func _fire_projectile():
-	var proj = PoolManager.get_object("res://scenes/StakeProjectile.tscn")
-	if proj:
-		if proj.get_parent() != get_tree().current_scene:
-			if proj.get_parent(): proj.get_parent().remove_child(proj)
-			get_tree().current_scene.add_child(proj)
-		
-		proj.global_position = fire_point.global_position
-		var dir = Vector2.RIGHT.rotated(global_rotation)
-		proj.initialize(dir, damage)
+	var num_stakes = 2 if level >= 4 else 1
+	for i in range(num_stakes):
+		var proj = PoolManager.get_object("res://scenes/StakeProjectile.tscn")
+		if proj:
+			if proj.get_parent() != get_tree().current_scene:
+				if proj.get_parent(): proj.get_parent().remove_child(proj)
+				get_tree().current_scene.add_child(proj)
+			
+			proj.set_meta("level", level)
+			proj.global_position = fire_point.global_position
+			
+			var dir = Vector2.RIGHT.rotated(global_rotation)
+			if num_stakes > 1:
+				var angle_offset = -0.15 if i == 0 else 0.15
+				dir = dir.rotated(angle_offset)
+				
+			proj.initialize(dir, damage)
+			
+			# Apply Level 2 size upgrade
+			if level >= 2:
+				proj.scale = Vector2(1.4, 1.4)
+				proj.piercing_count = 4
+			else:
+				proj.scale = Vector2(1.0, 1.0)
+				proj.piercing_count = 2
 		
 		if muzzle_flash:
 			muzzle_flash.restart()
 		
-		AudioManager.play_sfx("shoot") # Should maybe be a "thunk" sound
+		AudioManager.play_sfx("shoot")

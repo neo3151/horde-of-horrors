@@ -92,7 +92,6 @@ func _update_layers() -> void:
 			s.position = Vector3(0, i * layer_height * expand_stack, 0)
 			s.scale.x = 1.0
 			s.modulate = modulate
-			s.self_modulate = self_modulate
 			add_child(s)
 			stacked_sprite_layers.append(s)
 
@@ -108,7 +107,6 @@ func _process(_delta: float) -> void:
 			l.shaded = shaded
 			l.alpha_cut = alpha_cut
 			l.modulate = modulate
-			l.self_modulate = self_modulate
 	else:
 		hframes = 1
 		vframes = 1

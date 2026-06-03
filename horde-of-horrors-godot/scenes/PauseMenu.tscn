@@ -119,72 +119,72 @@ offset_right = -30.0
 offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 35
 
 [node name="Title" type="Label" parent="TradePanel/VBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 36
 text = "INVENTORY & TRADES"
 horizontal_alignment = 1
 
 [node name="GoldLabel" type="RichTextLabel" parent="TradePanel/VBox"]
 layout_mode = 2
-theme_override_font_sizes/normal_font_size = 22
+theme_override_font_sizes/normal_font_size = 28
 bbcode_enabled = true
 fit_content = true
-text = "[center][color=#ffd700][img=24x24]res://assets/sprites/ui/icons/coin.png[/img] Gold: 0[/color][/center]"
+text = "[center][color=#ffd700][img=44x44]res://assets/sprites/ui/icons/coin.png[/img] Gold: 0[/color][/center]"
 
 [node name="HBox" type="HBoxContainer" parent="TradePanel/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 20
+theme_override_constants/separation = 40
 
 [node name="InventorySection" type="VBoxContainer" parent="TradePanel/VBox/HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 15
+theme_override_constants/separation = 25
 
 [node name="SectionTitle" type="Label" parent="TradePanel/VBox/HBox/InventorySection"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 24
 text = "ACTIVE PASSIVES"
 horizontal_alignment = 1
 
 [node name="UpgradesList" type="RichTextLabel" parent="TradePanel/VBox/HBox/InventorySection"]
 layout_mode = 2
-theme_override_font_sizes/normal_font_size = 15
+theme_override_font_sizes/normal_font_size = 20
 bbcode_enabled = true
 fit_content = true
-text = "[img=20x20]res://assets/sprites/ui/icons/crossbow.png[/img] Crossbow Damage: 0
-[img=20x20]res://assets/sprites/ui/icons/rapid.png[/img] Fire Rate: 0
-[img=20x20]res://assets/sprites/ui/icons/heart.png[/img] Max Health: 0
-[img=20x20]res://assets/sprites/ui/icons/dash.png[/img] Speed: 0
-[img=20x20]res://assets/sprites/ui/icons/pact.png[/img] Sinister Pact: 0"
+text = "[img=36x36]res://assets/sprites/ui/powerup_icons/fury.png[/img] Crossbow Damage: 0
+[img=36x36]res://assets/sprites/ui/powerup_icons/double_shot.png[/img] Fire Rate: 0
+[img=36x36]res://assets/sprites/ui/powerup_icons/health_pack.png[/img] Max Health: 0
+[img=36x36]res://assets/sprites/ui/powerup_icons/blood_rush.png[/img] Speed: 0
+[img=36x36]res://assets/sprites/ui/powerup_icons/holy_nova.png[/img] Sinister Pact: 0"
 
 [node name="SectionTitle2" type="Label" parent="TradePanel/VBox/HBox/InventorySection"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 24
 text = "TEMPORARY EFFECTS"
 horizontal_alignment = 1
 
 [node name="EffectsList" type="RichTextLabel" parent="TradePanel/VBox/HBox/InventorySection"]
 layout_mode = 2
-theme_override_font_sizes/normal_font_size = 15
+theme_override_font_sizes/normal_font_size = 20
 bbcode_enabled = true
 fit_content = true
-text = "[img=20x20]res://assets/sprites/ui/icons/crossbow.png[/img] Damage Boost: Inactive
-[img=20x20]res://assets/sprites/ui/icons/dash.png[/img] Speed Boost: Inactive
-[img=20x20]res://assets/sprites/ui/icons/shield.png[/img] Shield: Inactive"
+text = "[img=36x36]res://assets/sprites/ui/powerup_icons/fury.png[/img] Damage Boost: Inactive
+[img=36x36]res://assets/sprites/ui/powerup_icons/blood_rush.png[/img] Speed Boost: Inactive
+[img=36x36]res://assets/sprites/ui/powerup_icons/iron_skin.png[/img] Shield: Inactive"
 
 [node name="SectionTitle3" type="Label" parent="TradePanel/VBox/HBox/InventorySection"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 24
 text = "EQUIPPED SECONDARY ITEMS"
 horizontal_alignment = 1
 
 [node name="SecondaryList" type="RichTextLabel" parent="TradePanel/VBox/HBox/InventorySection"]
 layout_mode = 2
-theme_override_font_sizes/normal_font_size = 15
+theme_override_font_sizes/normal_font_size = 20
 bbcode_enabled = true
 fit_content = true
 text = "No secondary weapons equipped"
@@ -193,50 +193,71 @@ text = "No secondary weapons equipped"
 [node name="MarketSection" type="VBoxContainer" parent="TradePanel/VBox/HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 10
+theme_override_constants/separation = 20
 
 [node name="SectionTitle" type="Label" parent="TradePanel/VBox/HBox/MarketSection"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 24
 text = "ENVIRONMENT MARKET"
 horizontal_alignment = 1
 
 [node name="BuyFury" type="Button" parent="TradePanel/VBox/HBox/MarketSection"]
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_constants/icon_max_width = 36
+theme_override_font_sizes/font_size = 18
 text = "Buy Fury Elixir (25g)"
 
 [node name="BuySpeed" type="Button" parent="TradePanel/VBox/HBox/MarketSection"]
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_constants/icon_max_width = 36
+theme_override_font_sizes/font_size = 18
 text = "Buy Blood Rush (25g)"
 
 [node name="BuyShield" type="Button" parent="TradePanel/VBox/HBox/MarketSection"]
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_constants/icon_max_width = 36
+theme_override_font_sizes/font_size = 18
 text = "Buy Iron Skin (30g)"
 
 [node name="BuyHeal" type="Button" parent="TradePanel/VBox/HBox/MarketSection"]
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_constants/icon_max_width = 36
+theme_override_font_sizes/font_size = 18
 text = "Buy Vampire's Kiss (15g)"
+
+
+[node name="BuyTimeSlow" type="Button" parent="TradePanel/VBox/HBox/MarketSection"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_constants/icon_max_width = 36
+theme_override_font_sizes/font_size = 18
+text = "Buy Temporal Rift (30g)"
 
 [node name="SectionTitle2" type="Label" parent="TradePanel/VBox/HBox/MarketSection"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 22
 text = "SWAP PASSIVES"
 horizontal_alignment = 1
 
 [node name="SwapSpeedToDamage" type="Button" parent="TradePanel/VBox/HBox/MarketSection"]
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_constants/icon_max_width = 36
+theme_override_font_sizes/font_size = 18
 text = "Swap Speed ➔ Damage (10g)"
 
 [node name="SwapDamageToSpeed" type="Button" parent="TradePanel/VBox/HBox/MarketSection"]
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_constants/icon_max_width = 36
+theme_override_font_sizes/font_size = 18
 text = "Swap Damage ➔ Speed (10g)"
 
 [node name="TradeBackButton" type="Button" parent="TradePanel/VBox"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Back"

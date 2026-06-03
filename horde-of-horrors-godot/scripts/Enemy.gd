@@ -338,6 +338,14 @@ func take_damage(amount: int) -> void:
 	if is_bat_form:
 		return
 	current_health -= amount
+	
+	# Lifesteal healing hook
+	if GameManager.player and is_instance_valid(GameManager.player):
+		if GameManager.player.get("wave_long_vampire_kiss") == true:
+			var heal_amt = int(amount * 0.15)
+			if heal_amt > 0:
+				GameManager.player.heal(heal_amt)
+				
 	AudioManager.play_sfx("hit")
 	_flash()
 	
@@ -455,7 +463,7 @@ func _die() -> void:
 	GameManager.add_kill()
 	GameManager.add_currency(points)
 	GameManager.emit_signal("enemy_despawned", self)
-	queue_free()
+	call_deferred("queue_free")
 
 func _perform_ranged_attack() -> void:
 	var projectile_scene = preload("res://scenes/Projectile.tscn")

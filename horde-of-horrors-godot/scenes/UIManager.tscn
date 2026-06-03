@@ -157,7 +157,7 @@ offset_right = -20.0
 offset_bottom = 268.0
 grow_horizontal = 0
 theme_override_font_sizes/font_size = 18
-text = "PAUSE ⏸️"
+text = "PAUSE"
 
 [node name="AbilityCooldown" type="Label" parent="HUD"]
 layout_mode = 0

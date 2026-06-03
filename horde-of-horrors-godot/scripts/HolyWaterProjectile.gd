@@ -40,8 +40,10 @@ func _explode():
 	var zone_scene = load("res://scenes/SanctifiedZone.tscn")
 	if zone_scene:
 		var zone = zone_scene.instantiate()
+		var lvl = get_meta("level") if has_meta("level") else 1
+		zone.set_meta("level", lvl)
 		get_tree().current_scene.add_child(zone)
 		zone.global_position = target_position
 	
-	AudioManager.play_sfx("glass_shatter") # Assuming we have or will add this
-	queue_free()
+	AudioManager.play_sfx("glass_shatter")
+	call_deferred("queue_free")

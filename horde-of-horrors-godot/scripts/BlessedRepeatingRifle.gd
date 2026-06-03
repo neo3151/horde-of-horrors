@@ -10,6 +10,19 @@ extends Node2D
 
 var last_fire_time: float = 0.0
 var is_bursting: bool = false
+var level: int = 1
+
+func set_level(lvl: int):
+	level = lvl
+	if level >= 2:
+		burst_count = 4
+	else:
+		burst_count = 3
+		
+	if level >= 3:
+		fire_rate = 0.22
+	else:
+		fire_rate = 0.4
 
 func attack():
 	if is_bursting:
@@ -43,6 +56,12 @@ func _fire_projectile():
 		# Get direction from rifle rotation
 		var dir = Vector2.RIGHT.rotated(global_rotation)
 		proj.initialize(dir, damage)
+		
+		# Apply level upgrades to projectile properties
+		if level >= 4:
+			proj.pierce_count = 1
+		if level >= 5:
+			proj.explode_on_hit = true
 		
 		if muzzle_flash:
 			muzzle_flash.restart()

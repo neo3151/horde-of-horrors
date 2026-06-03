@@ -1,0 +1,12 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <rect width="128" height="128" rx="64" fill="#1A1A1A" stroke="#9575CD" stroke-width="4" />
+  <!-- Hourglass -->
+  <path d="M40 30 L88 30 L64 64 Z" fill="#B39DDB" />
+  <path d="M40 98 L88 98 L64 64 Z" fill="#D1C4E9" />
+  <rect x="40" y="25" width="48" height="5" fill="#512DA8" />
+  <rect x="40" y="98" width="48" height="5" fill="#512DA8" />
+  <!-- Falling sand -->
+  <circle cx="64" cy="64" r="3" fill="white">
+    <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite" />
+  </circle>
+</svg>

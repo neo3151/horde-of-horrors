@@ -140,7 +140,7 @@ func _die() -> void:
 	GameManager.add_kill()
 	GameManager.add_currency(points)
 	GameManager.emit_signal("enemy_despawned", self)
-	queue_free()
+	call_deferred("queue_free")
 
 func _on_body_entered(body: Node) -> void:
 	if body.is_in_group("player"):

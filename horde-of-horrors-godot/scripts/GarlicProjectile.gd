@@ -101,7 +101,7 @@ func _explode():
 	# Spawn explosion particles
 	_spawn_explosion_particles(target_position, radius, level)
 	
-	queue_free()
+	call_deferred("queue_free")
 
 func _create_chain_visual(from_pos: Vector2, to_pos: Vector2):
 	var line = Line2D.new()

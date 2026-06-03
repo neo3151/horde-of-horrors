@@ -10,16 +10,16 @@ func _ready() -> void:
 		setup(data)
 
 const ICONS = {
-	PowerUpData.PowerUpType.HEAL: preload("res://assets/sprites/ui/powerup_icons/health_pack.svg"),
-	PowerUpData.PowerUpType.SPEED_BOOST: preload("res://assets/sprites/ui/powerup_icons/blood_rush.svg"),
-	PowerUpData.PowerUpType.DAMAGE_BOOST: preload("res://assets/sprites/ui/powerup_icons/fury.svg"),
-	PowerUpData.PowerUpType.SHIELD: preload("res://assets/sprites/ui/powerup_icons/iron_skin.svg"),
-	PowerUpData.PowerUpType.VAMPIRE_KISS: preload("res://assets/sprites/ui/powerup_icons/vampires_kiss.svg"),
-	PowerUpData.PowerUpType.HOLY_NOVA: preload("res://assets/sprites/ui/powerup_icons/holy_nova.svg"),
-	PowerUpData.PowerUpType.TIME_SLOW: preload("res://assets/sprites/ui/powerup_icons/time_slow.svg"),
-	PowerUpData.PowerUpType.DOUBLE_SHOT: preload("res://assets/sprites/ui/powerup_icons/double_shot.svg"),
-	PowerUpData.PowerUpType.BLOOD_MOON_RAGE: preload("res://assets/sprites/ui/powerup_icons/blood_moon_rage.svg"),
-	PowerUpData.PowerUpType.GHOST_FORM: preload("res://assets/sprites/ui/powerup_icons/ghost_form.svg"),
+	PowerUpData.PowerUpType.HEAL: preload("res://assets/sprites/ui/powerup_icons/health_pack.png"),
+	PowerUpData.PowerUpType.SPEED_BOOST: preload("res://assets/sprites/ui/powerup_icons/blood_rush.png"),
+	PowerUpData.PowerUpType.DAMAGE_BOOST: preload("res://assets/sprites/ui/powerup_icons/fury.png"),
+	PowerUpData.PowerUpType.SHIELD: preload("res://assets/sprites/ui/powerup_icons/iron_skin.png"),
+	PowerUpData.PowerUpType.VAMPIRE_KISS: preload("res://assets/sprites/ui/powerup_icons/vampires_kiss.png"),
+	PowerUpData.PowerUpType.HOLY_NOVA: preload("res://assets/sprites/ui/powerup_icons/holy_nova.png"),
+	PowerUpData.PowerUpType.TIME_SLOW: preload("res://assets/sprites/ui/powerup_icons/time_slow.png"),
+	PowerUpData.PowerUpType.DOUBLE_SHOT: preload("res://assets/sprites/ui/powerup_icons/double_shot.png"),
+	PowerUpData.PowerUpType.BLOOD_MOON_RAGE: preload("res://assets/sprites/ui/powerup_icons/blood_moon_rage.png"),
+	PowerUpData.PowerUpType.GHOST_FORM: preload("res://assets/sprites/ui/powerup_icons/ghost_form.png"),
 }
 
 func setup(p_data: PowerUpData) -> void:
@@ -48,4 +48,4 @@ func _on_body_entered(body: Node) -> void:
 		if body.has_method("apply_powerup"):
 			body.apply_powerup(data)
 			# Spawn collection indicator or play sound if needed
-			queue_free()
+			call_deferred("queue_free")

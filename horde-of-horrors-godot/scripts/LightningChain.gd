@@ -10,7 +10,15 @@ func start_chain(start_pos: Vector2, initial_damage: int):
 	global_position = start_pos
 	chain_damage = initial_damage
 	damaged_bodies.clear()
-	_chain_to_nearest(start_pos, max_chains)
+	
+	var lvl = get_meta("level") if has_meta("level") else 1
+	var chains = 2
+	if lvl == 2 or lvl == 3 or lvl == 4:
+		chains = 4
+	elif lvl >= 5:
+		chains = 6
+		
+	_chain_to_nearest(start_pos, chains)
 
 func _chain_to_nearest(from_pos: Vector2, remaining_chains: int):
 	if remaining_chains <= 0:
@@ -30,26 +38,37 @@ func _chain_to_nearest(from_pos: Vector2, remaining_chains: int):
 			
 	if nearest:
 		damaged_bodies.append(nearest)
-		if nearest.has_method("take_damage"):
-			nearest.take_damage(chain_damage)
-			
-		# Draw lightning line
-		_draw_lightning(from_pos, nearest.global_position)
 		
-		# Chain again from new position
+		var lvl = get_meta("level") if has_meta("level") else 1
+		_draw_lightning(from_pos, nearest.global_position, lvl)
+		
+		var current_damage = chain_damage
+		if lvl >= 4:
+			var jump_index = damaged_bodies.size() - 1
+			current_damage = int(chain_damage * (1.0 + 0.3 * jump_index))
+			
+		if nearest.has_method("take_damage"):
+			nearest.take_damage(current_damage)
+			
+		if lvl >= 5 and nearest.has_method("apply_stun"):
+			nearest.apply_stun(0.5)
+			
 		get_tree().create_timer(0.05).timeout.connect(func():
 			_chain_to_nearest(nearest.global_position, remaining_chains - 1)
 		)
 	else:
 		get_tree().create_timer(0.2).timeout.connect(queue_free)
 
-func _draw_lightning(from: Vector2, to: Vector2):
+func _draw_lightning(from: Vector2, to: Vector2, lvl: int):
 	var line = Line2D.new()
 	get_tree().current_scene.add_child(line)
-	line.width = 2.0
-	line.default_color = Color(0.6, 0.9, 1.0, 1.0)
+	line.width = 2.5 if lvl >= 5 else 2.0
 	
-	# Create jagged lightning points
+	if lvl >= 5:
+		line.default_color = Color(1.0, 0.4, 0.8, 1.0)
+	else:
+		line.default_color = Color(0.6, 0.9, 1.0, 1.0)
+	
 	var points = []
 	var dist = from.distance_to(to)
 	var dir = (to - from).normalized()

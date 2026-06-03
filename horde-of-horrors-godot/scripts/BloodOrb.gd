@@ -35,16 +35,46 @@ func _find_target():
 
 func _on_body_entered(body):
 	if body.is_in_group("enemy"):
+		var lvl = get_meta("level") if has_meta("level") else 1
 		if body.has_method("take_damage"):
 			body.take_damage(damage)
-			# Lore: lifesteal for player
 			if GameManager.player and GameManager.player.has_method("heal"):
-				var heal_amt = int(damage * lifesteal_percent)
+				var heal_amt = 10 if lvl >= 5 else int(damage * lifesteal_percent)
 				if heal_amt > 0:
 					GameManager.player.heal(heal_amt)
 		
+		if lvl >= 5:
+			_explode()
+		
 		_spawn_hit_effect()
 		PoolManager.return_object("res://scenes/BloodOrb.tscn", self)
+
+func _explode():
+	var particles = CPUParticles2D.new()
+	particles.emitting = false
+	particles.amount = 20
+	particles.one_shot = true
+	particles.explosiveness = 0.8
+	particles.spread = 180.0
+	particles.gravity = Vector2.ZERO
+	particles.initial_velocity_min = 50.0
+	particles.initial_velocity_max = 100.0
+	particles.scale_amount_min = 3.0
+	particles.scale_amount_max = 5.0
+	particles.color = Color(1.2, 0.1, 0.1)
+	get_parent().add_child(particles)
+	particles.global_position = global_position
+	particles.emitting = true
+	
+	for enemy in get_tree().get_nodes_in_group("enemy"):
+		if enemy.global_position.distance_to(global_position) < 100.0:
+			if enemy.has_method("take_damage"):
+				enemy.take_damage(damage)
+				
+	AudioManager.play_sfx("holy_blast")
+	get_tree().create_timer(1.0).timeout.connect(func():
+		particles.queue_free()
+	)
 
 func _spawn_hit_effect():
 	var hit_effect = PoolManager.get_object("res://scenes/ProjectileHitEffect.tscn")
@@ -60,3 +90,8 @@ func _spawn_hit_effect():
 func reset():
 	direction = Vector2.ZERO
 	target = null
+	scale = Vector2(1.0, 1.0)
+	speed = 600.0
+	turn_speed = 8.0
+	if has_meta("level"):
+		remove_meta("level")

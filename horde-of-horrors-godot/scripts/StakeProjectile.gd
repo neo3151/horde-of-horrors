@@ -36,13 +36,33 @@ func _on_body_entered(body: Node) -> void:
 		_spawn_hit_effect()
 		
 		current_pierce += 1
+		var lvl = get_meta("level") if has_meta("level") else 1
 		if current_pierce >= piercing_count:
+			if lvl >= 5:
+				_spawn_splinters()
 			PoolManager.return_object("res://scenes/StakeProjectile.tscn", self)
 	elif body.is_in_group("obstacle"):
 		if body.has_method("take_damage"):
 			body.take_damage(damage)
 		_spawn_hit_effect()
+		var lvl = get_meta("level") if has_meta("level") else 1
+		if lvl >= 5:
+			_spawn_splinters()
 		PoolManager.return_object("res://scenes/StakeProjectile.tscn", self)
+
+func _spawn_splinters() -> void:
+	for angle in [0.0, PI/2.0, PI, 3.0*PI/2.0]:
+		var splinter = PoolManager.get_object("res://scenes/StakeProjectile.tscn")
+		if splinter:
+			if splinter.get_parent() != get_tree().current_scene:
+				if splinter.get_parent(): splinter.get_parent().remove_child(splinter)
+				get_tree().current_scene.add_child(splinter)
+			
+			splinter.set_meta("level", 1)
+			splinter.global_position = global_position
+			splinter.scale = Vector2(0.5, 0.5)
+			splinter.piercing_count = 1
+			splinter.initialize(Vector2.RIGHT.rotated(angle), int(damage * 0.4))
 
 func _spawn_hit_effect() -> void:
 	var hit_effect = PoolManager.get_object("res://scenes/ProjectileHitEffect.tscn")
@@ -57,5 +77,8 @@ func _spawn_hit_effect() -> void:
 func reset() -> void:
 	direction = Vector2.ZERO
 	current_pierce = 0
+	scale = Vector2(1.0, 1.0)
+	if has_meta("level"):
+		remove_meta("level")
 	if trail_particles:
 		trail_particles.emitting = false

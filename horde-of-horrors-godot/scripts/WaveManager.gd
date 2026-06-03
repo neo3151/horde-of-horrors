@@ -140,6 +140,8 @@ func _process(delta: float) -> void:
 			_trigger_cleansing_flash()
 			wave_in_progress = false
 			is_spawning_active = false
+			if is_instance_valid(GameManager.player) and GameManager.player.has_method("reset_wave_passives"):
+				GameManager.player.reset_wave_passives()
 			if has_node("/root/UIManager"):
 				get_node("/root/UIManager").update_timer_label(-1)
 				get_node("/root/UIManager").show_upgrade_shop()
@@ -161,6 +163,8 @@ func _process(delta: float) -> void:
 			print("[WaveManager] Boss defeated - wave complete!")
 			wave_in_progress = false
 			is_spawning_active = false
+			if is_instance_valid(GameManager.player) and GameManager.player.has_method("reset_wave_passives"):
+				GameManager.player.reset_wave_passives()
 			if has_node("/root/UIManager"):
 				get_node("/root/UIManager").show_upgrade_shop()
 			else:
@@ -176,7 +180,7 @@ func _trigger_cleansing_flash() -> void:
 			if enemy.has_method("take_damage"):
 				enemy.take_damage(99999)
 			else:
-				enemy.queue_free()
+				enemy.call_deferred("queue_free")
 	active_enemies.clear()
 	
 	# Blinding holy light flash effect by manipulating CanvasModulate
